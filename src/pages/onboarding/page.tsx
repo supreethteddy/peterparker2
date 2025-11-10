@@ -13,17 +13,17 @@ export default function OnboardingPage() {
     {
       title: 'Request a Valet in Seconds',
       subtitle: 'Tap once and a verified valet reaches your location fast.',
-      image: 'https://readdy.ai/api/search-image?query=Modern%20onboarding%20illustration%20of%20a%20user%20requesting%20a%20valet%20via%20mobile%20app%2C%20clean%20white%20and%20blue%20theme%2C%20minimal%20flat%20art&width=800&height=600&seq=ob1&orientation=landscape'
+      image: 'https://images.unsplash.com/photo-1556741533-f6acd6477aa2?q=80&w=1600&auto=format&fit=crop'
     },
     {
       title: 'Safe Parking & Live Updates',
       subtitle: 'Track your car status in real‑time with secure handovers.',
-      image: 'https://readdy.ai/api/search-image?query=Illustration%20showing%20secure%20parking%20garage%20with%20tracking%20updates%20on%20phone%2C%20clean%20flat%20design%2C%20blue%20accents&width=800&height=600&seq=ob2&orientation=landscape'
+      image: 'https://images.unsplash.com/photo-1483721310020-03333e577078?q=80&w=1600&auto=format&fit=crop'
     },
     {
       title: 'Seamless Payments & Rewards',
       subtitle: 'Pay with cards or UPI and earn points on every trip.',
-      image: 'https://readdy.ai/api/search-image?query=Payment%20success%20illustration%20with%20UPI%20and%20card%2C%20confetti%2C%20modern%20mobile%20UI%2C%20flat%20style&width=800&height=600&seq=ob3&orientation=landscape'
+      image: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?q=80&w=1600&auto=format&fit=crop'
     }
   ];
 
@@ -60,6 +60,22 @@ export default function OnboardingPage() {
               src={slides[index].image}
               alt={slides[index].title}
               className="w-full h-64 object-cover"
+              loading="lazy"
+              referrerPolicy="no-referrer"
+              crossOrigin="anonymous"
+              onError={(e) => {
+                const el = e.currentTarget;
+                // graceful fallback: blur gradient background
+                el.style.display = 'none';
+                const parent = el.parentElement;
+                if (parent) {
+                  parent.classList.add('bg-gradient-to-br','from-blue-200','to-indigo-200');
+                  const icon = document.createElement('div');
+                  icon.className = 'absolute inset-0 flex items-center justify-center text-white/80';
+                  icon.innerHTML = '<i class=\"ri-image-line text-5xl\"></i>';
+                  parent.appendChild(icon);
+                }
+              }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
             <div className="absolute bottom-0 left-0 right-0 p-5 text-white">
