@@ -13,17 +13,44 @@ export default function OnboardingPage() {
     {
       title: 'Request a Valet in Seconds',
       subtitle: 'Tap once and a verified valet reaches your location fast.',
-      image: 'https://images.unsplash.com/photo-1556741533-f6acd6477aa2?q=80&w=1600&auto=format&fit=crop'
+      features: [
+        { icon: 'ri-map-pin-user-line', text: 'Doorstep pickup' },
+        { icon: 'ri-time-line', text: 'Fast arrival' },
+        { icon: 'ri-verified-badge-line', text: 'Verified valets' }
+      ],
+      info: [
+        'Share your location or pick a spot on the map',
+        'Get ETA and valet details instantly',
+        'Live updates from accept to handover'
+      ]
     },
     {
       title: 'Safe Parking & Live Updates',
       subtitle: 'Track your car status in real‑time with secure handovers.',
-      image: 'https://images.unsplash.com/photo-1483721310020-03333e577078?q=80&w=1600&auto=format&fit=crop'
+      features: [
+        { icon: 'ri-shield-check-line', text: 'Secure parking' },
+        { icon: 'ri-route-line', text: 'Live tracking' },
+        { icon: 'ri-survey-line', text: 'Photo proofs' }
+      ],
+      info: [
+        'Every handover is logged with photos and time-stamps',
+        'Track parking, movement and return in-app',
+        '24×7 support for complete peace of mind'
+      ]
     },
     {
       title: 'Seamless Payments & Rewards',
       subtitle: 'Pay with cards or UPI and earn points on every trip.',
-      image: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?q=80&w=1600&auto=format&fit=crop'
+      features: [
+        { icon: 'ri-bank-card-line', text: 'Cards & UPI' },
+        { icon: 'ri-gift-line', text: 'Earn rewards' },
+        { icon: 'ri-price-tag-3-line', text: 'Clear pricing' }
+      ],
+      info: [
+        'One-tap checkout with saved methods',
+        'Transparent pricing before you confirm',
+        'Earn points and redeem on future rides'
+      ]
     }
   ];
 
@@ -53,34 +80,26 @@ export default function OnboardingPage() {
           </button>
         </div>
 
-        {/* Hero card */}
+        {/* Hero card - decorative gradient (no external images) */}
         <Card className="overflow-hidden p-0">
-          <div className="relative">
-            <img
-              src={slides[index].image}
-              alt={slides[index].title}
-              className="w-full h-64 object-cover"
-              loading="lazy"
-              referrerPolicy="no-referrer"
-              crossOrigin="anonymous"
-              onError={(e) => {
-                const el = e.currentTarget;
-                // graceful fallback: blur gradient background
-                el.style.display = 'none';
-                const parent = el.parentElement;
-                if (parent) {
-                  parent.classList.add('bg-gradient-to-br','from-blue-200','to-indigo-200');
-                  const icon = document.createElement('div');
-                  icon.className = 'absolute inset-0 flex items-center justify-center text-white/80';
-                  icon.innerHTML = '<i class=\"ri-image-line text-5xl\"></i>';
-                  parent.appendChild(icon);
+          <div className="relative h-64 bg-gradient-to-br from-blue-600 via-indigo-600 to-fuchsia-600">
+            <div className="absolute -top-10 -left-10 w-40 h-40 rounded-full bg-white/10 blur-2xl"></div>
+            <div className="absolute -bottom-12 -right-12 w-56 h-56 rounded-full bg-white/10 blur-2xl"></div>
+            <div className="absolute inset-0 flex items-center justify-center">
+              {/* Big icon per slide */}
+              <i
+                className={
+                  [
+                    'ri-map-pin-user-fill',
+                    'ri-shield-check-fill',
+                    'ri-bank-card-fill'
+                  ][index] + ' text-white/90 text-7xl'
                 }
-              }}
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-            <div className="absolute bottom-0 left-0 right-0 p-5 text-white">
+              ></i>
+            </div>
+            <div className="absolute bottom-0 left-0 right-0 p-5 text-white bg-gradient-to-t from-black/40 to-transparent">
               <h2 className="text-xl font-semibold">{slides[index].title}</h2>
-              <p className="text-white/90 mt-2">{slides[index].subtitle}</p>
+              <p className="text-white/90 mt-1">{slides[index].subtitle}</p>
             </div>
           </div>
         </Card>
@@ -97,48 +116,43 @@ export default function OnboardingPage() {
           ))}
         </div>
 
-        {/* Feature highlights */}
+        {/* Feature highlights (cards) */}
         <div className="mt-6 space-y-3">
-          {index === 0 && (
-            <div className="grid grid-cols-3 gap-3">
-              {[
-                { icon: 'ri-map-pin-user-line', text: 'Doorstep pickup' },
-                { icon: 'ri-time-line', text: 'Fast arrival' },
-                { icon: 'ri-verified-badge-line', text: 'Verified valets' }
-              ].map((f) => (
-                <Card key={f.text} className="p-3 text-center">
-                  <i className={`${f.icon} text-blue-600 text-xl block mb-1`}></i>
-                  <p className="text-xs text-gray-600">{f.text}</p>
-                </Card>
+          <div className="grid grid-cols-3 gap-3">
+            {slides[index].features.map((f) => (
+              <Card key={f.text} className="p-3 text-center">
+                <i className={`${f.icon} text-blue-600 text-xl block mb-1`}></i>
+                <p className="text-xs text-gray-600">{f.text}</p>
+              </Card>
+            ))}
+          </div>
+
+          {/* Informative list */}
+          <Card className="p-4">
+            <h3 className="font-medium mb-2">How it helps</h3>
+            <ul className="space-y-2 text-sm text-gray-600">
+              {slides[index].info.map((item) => (
+                <li key={item} className="flex items-start space-x-2">
+                  <i className="ri-check-line text-green-600 mt-[2px]"></i>
+                  <span>{item}</span>
+                </li>
               ))}
-            </div>
-          )}
-          {index === 1 && (
-            <div className="grid grid-cols-2 gap-3">
-              {[
-                { icon: 'ri-shield-check-line', text: 'Secure parking' },
-                { icon: 'ri-route-line', text: 'Live tracking' }
-              ].map((f) => (
-                <Card key={f.text} className="p-3 text-center">
-                  <i className={`${f.icon} text-blue-600 text-xl block mb-1`}></i>
-                  <p className="text-xs text-gray-600">{f.text}</p>
-                </Card>
-              ))}
-            </div>
-          )}
-          {index === 2 && (
-            <div className="grid grid-cols-2 gap-3">
-              {[
-                { icon: 'ri-bank-card-line', text: 'Cards & UPI' },
-                { icon: 'ri-gift-line', text: 'Earn rewards' }
-              ].map((f) => (
-                <Card key={f.text} className="p-3 text-center">
-                  <i className={`${f.icon} text-blue-600 text-xl block mb-1`}></i>
-                  <p className="text-xs text-gray-600">{f.text}</p>
-                </Card>
-              ))}
-            </div>
-          )}
+            </ul>
+          </Card>
+
+          {/* Trust badges */}
+          <div className="grid grid-cols-3 gap-3">
+            {[
+              { icon: 'ri-lock-2-line', text: 'Secure' },
+              { icon: 'ri-customer-service-2-line', text: '24×7 support' },
+              { icon: 'ri-star-smile-line', text: 'Loved by users' }
+            ].map((b) => (
+              <div key={b.text} className="text-center text-xs text-gray-600">
+                <i className={`${b.icon} text-blue-600 text-lg block mb-1`}></i>
+                {b.text}
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* CTA */}
