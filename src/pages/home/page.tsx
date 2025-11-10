@@ -13,10 +13,10 @@ export default function HomePage() {
   const [selectedValet, setSelectedValet] = useState<any>(null);
 
   useEffect(() => {
-    const isOnboarded = localStorage.getItem('userOnboarded');
-    if (!isOnboarded) {
-      navigate('/onboarding');
-    }
+    const isOnboarded = localStorage.getItem('userOnboarded') === 'true';
+    const isAuthed = localStorage.getItem('userAuthenticated') === 'true';
+    if (!isOnboarded) navigate('/onboarding');
+    else if (!isAuthed) navigate('/login');
   }, [navigate]);
 
   const valets = [

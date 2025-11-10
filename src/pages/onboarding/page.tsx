@@ -56,7 +56,7 @@ export default function OnboardingPage() {
 
   const finish = () => {
     localStorage.setItem('userOnboarded', 'true');
-    navigate('/');
+    navigate('/login');
   };
 
   const next = () => {

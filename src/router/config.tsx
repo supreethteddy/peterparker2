@@ -13,6 +13,7 @@ import ProfilePage from '../pages/profile/page';
 import ErrorPage from '../pages/error/page';
 import VerificationPage from '../pages/verification/page';
 import NotFound from '../pages/NotFound';
+import LoginPage from '../pages/login/page';
 
 const routes: RouteObject[] = [
   {
@@ -74,6 +75,10 @@ const routes: RouteObject[] = [
   {
     path: '/verification',
     element: <VerificationPage />
+  },
+  {
+    path: '/login',
+    element: <LoginPage />
   },
   {
     path: '*',
