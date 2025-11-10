@@ -2,225 +2,143 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../../components/base/Button';
-import Input from '../../components/base/Input';
 import Card from '../../components/base/Card';
+import { APP_NAME } from '../../config';
 
 export default function OnboardingPage() {
   const navigate = useNavigate();
-  const [step, setStep] = useState(1);
-  const [phone, setPhone] = useState('');
-  const [otp, setOtp] = useState('');
-  const [profile, setProfile] = useState({
-    name: '',
-    vehicleMake: '',
-    vehicleModel: '',
-    plateNumber: ''
-  });
-  const [paymentMethod, setPaymentMethod] = useState('card');
-  const [insurance, setInsurance] = useState(false);
+  const [index, setIndex] = useState(0);
 
-  const handlePhoneSubmit = () => {
-    if (phone.length === 10) {
-      setStep(2);
+  const slides = [
+    {
+      title: 'Request a Valet in Seconds',
+      subtitle: 'Tap once and a verified valet reaches your location fast.',
+      image: 'https://readdy.ai/api/search-image?query=Modern%20onboarding%20illustration%20of%20a%20user%20requesting%20a%20valet%20via%20mobile%20app%2C%20clean%20white%20and%20blue%20theme%2C%20minimal%20flat%20art&width=800&height=600&seq=ob1&orientation=landscape'
+    },
+    {
+      title: 'Safe Parking & Live Updates',
+      subtitle: 'Track your car status in real‑time with secure handovers.',
+      image: 'https://readdy.ai/api/search-image?query=Illustration%20showing%20secure%20parking%20garage%20with%20tracking%20updates%20on%20phone%2C%20clean%20flat%20design%2C%20blue%20accents&width=800&height=600&seq=ob2&orientation=landscape'
+    },
+    {
+      title: 'Seamless Payments & Rewards',
+      subtitle: 'Pay with cards or UPI and earn points on every trip.',
+      image: 'https://readdy.ai/api/search-image?query=Payment%20success%20illustration%20with%20UPI%20and%20card%2C%20confetti%2C%20modern%20mobile%20UI%2C%20flat%20style&width=800&height=600&seq=ob3&orientation=landscape'
     }
-  };
+  ];
 
-  const handleOtpSubmit = () => {
-    if (otp.length === 6) {
-      setStep(3);
-    }
-  };
-
-  const handleProfileSubmit = () => {
-    if (profile.name && profile.vehicleMake && profile.vehicleModel && profile.plateNumber) {
-      setStep(4);
-    }
-  };
-
-  const handlePaymentSubmit = () => {
-    setStep(5);
-  };
-
-  const handleComplete = () => {
+  const finish = () => {
     localStorage.setItem('userOnboarded', 'true');
     navigate('/');
   };
 
+  const next = () => {
+    if (index < slides.length - 1) {
+      setIndex(index + 1);
+    } else {
+      finish();
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 px-4 py-8">
-      <div className="max-w-sm mx-auto">
-        {/* Logo */}
-        <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-blue-600" style={{ fontFamily: '"Pacifico", serif' }}>
-            Peter Parker
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+      <div className="max-w-sm mx-auto px-4 pt-10 pb-6">
+        {/* Top bar */}
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-2xl text-blue-600" style={{ fontFamily: "'Pacifico', cursive" }}>
+            {APP_NAME}
           </h1>
-          <p className="text-gray-600 mt-2">Valet On Go</p>
+          <button onClick={finish} className="text-sm text-gray-500 hover:text-gray-700">
+            Skip
+          </button>
         </div>
 
-        {/* Progress Bar */}
-        <div className="flex mb-8">
-          {[1, 2, 3, 4, 5].map((num) => (
-            <div key={num} className="flex-1">
-              <div className={`h-2 rounded-full ${step >= num ? 'bg-blue-600' : 'bg-gray-200'}`}></div>
+        {/* Hero card */}
+        <Card className="overflow-hidden p-0">
+          <div className="relative">
+            <img
+              src={slides[index].image}
+              alt={slides[index].title}
+              className="w-full h-64 object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+            <div className="absolute bottom-0 left-0 right-0 p-5 text-white">
+              <h2 className="text-xl font-semibold">{slides[index].title}</h2>
+              <p className="text-white/90 mt-2">{slides[index].subtitle}</p>
             </div>
+          </div>
+        </Card>
+
+        {/* Bullets */}
+        <div className="flex items-center justify-center space-x-2 mt-6">
+          {slides.map((_, i) => (
+            <span
+              key={i}
+              className={`h-2 rounded-full transition-all ${
+                i === index ? 'w-6 bg-blue-600' : 'w-2 bg-gray-300'
+              }`}
+            />
           ))}
         </div>
 
-        {/* Step 1: Phone Number */}
-        {step === 1 && (
-          <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Enter your phone number</h2>
-            <p className="text-gray-600 mb-6">We'll send you a verification code</p>
-            <div className="space-y-4">
-              <div className="flex">
-                <div className="bg-gray-100 px-3 py-3 rounded-l-lg border border-r-0 border-gray-200">
-                  <span className="text-gray-700">+91</span>
-                </div>
-                <Input
-                  type="tel"
-                  placeholder="Enter phone number"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  maxLength={10}
-                  className="rounded-l-none"
-                />
-              </div>
-              <Button 
-                onClick={handlePhoneSubmit}
-                disabled={phone.length !== 10}
-                className="w-full"
-              >
-                Send OTP
-              </Button>
+        {/* Feature highlights */}
+        <div className="mt-6 space-y-3">
+          {index === 0 && (
+            <div className="grid grid-cols-3 gap-3">
+              {[
+                { icon: 'ri-map-pin-user-line', text: 'Doorstep pickup' },
+                { icon: 'ri-time-line', text: 'Fast arrival' },
+                { icon: 'ri-verified-badge-line', text: 'Verified valets' }
+              ].map((f) => (
+                <Card key={f.text} className="p-3 text-center">
+                  <i className={`${f.icon} text-blue-600 text-xl block mb-1`}></i>
+                  <p className="text-xs text-gray-600">{f.text}</p>
+                </Card>
+              ))}
             </div>
-          </Card>
-        )}
+          )}
+          {index === 1 && (
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { icon: 'ri-shield-check-line', text: 'Secure parking' },
+                { icon: 'ri-route-line', text: 'Live tracking' }
+              ].map((f) => (
+                <Card key={f.text} className="p-3 text-center">
+                  <i className={`${f.icon} text-blue-600 text-xl block mb-1`}></i>
+                  <p className="text-xs text-gray-600">{f.text}</p>
+                </Card>
+              ))}
+            </div>
+          )}
+          {index === 2 && (
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { icon: 'ri-bank-card-line', text: 'Cards & UPI' },
+                { icon: 'ri-gift-line', text: 'Earn rewards' }
+              ].map((f) => (
+                <Card key={f.text} className="p-3 text-center">
+                  <i className={`${f.icon} text-blue-600 text-xl block mb-1`}></i>
+                  <p className="text-xs text-gray-600">{f.text}</p>
+                </Card>
+              ))}
+            </div>
+          )}
+        </div>
 
-        {/* Step 2: OTP Verification */}
-        {step === 2 && (
-          <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Enter verification code</h2>
-            <p className="text-gray-600 mb-6">Code sent to +91 {phone}</p>
-            <div className="space-y-4">
-              <Input
-                type="text"
-                placeholder="Enter 6-digit code"
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-                maxLength={6}
-              />
-              <Button 
-                onClick={handleOtpSubmit}
-                disabled={otp.length !== 6}
-                className="w-full"
-              >
-                Verify
-              </Button>
-              <button className="w-full text-blue-600 text-sm">Resend code</button>
-            </div>
-          </Card>
-        )}
-
-        {/* Step 3: Profile Setup */}
-        {step === 3 && (
-          <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Complete your profile</h2>
-            <div className="space-y-4">
-              <Input
-                placeholder="Full name"
-                value={profile.name}
-                onChange={(e) => setProfile({...profile, name: e.target.value})}
-              />
-              <Input
-                placeholder="Vehicle make (e.g., Honda)"
-                value={profile.vehicleMake}
-                onChange={(e) => setProfile({...profile, vehicleMake: e.target.value})}
-              />
-              <Input
-                placeholder="Vehicle model (e.g., City)"
-                value={profile.vehicleModel}
-                onChange={(e) => setProfile({...profile, vehicleModel: e.target.value})}
-              />
-              <Input
-                placeholder="License plate number"
-                value={profile.plateNumber}
-                onChange={(e) => setProfile({...profile, plateNumber: e.target.value})}
-              />
-              <Button 
-                onClick={handleProfileSubmit}
-                disabled={!profile.name || !profile.vehicleMake || !profile.vehicleModel || !profile.plateNumber}
-                className="w-full"
-              >
-                Continue
-              </Button>
-            </div>
-          </Card>
-        )}
-
-        {/* Step 4: Payment Method */}
-        {step === 4 && (
-          <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Add payment method</h2>
-            <div className="space-y-4">
-              <div className="space-y-3">
-                <button
-                  onClick={() => setPaymentMethod('card')}
-                  className={`w-full p-4 border rounded-lg flex items-center space-x-3 ${
-                    paymentMethod === 'card' ? 'border-blue-600 bg-blue-50' : 'border-gray-200'
-                  }`}
-                >
-                  <i className="ri-bank-card-line text-xl"></i>
-                  <span>Credit/Debit Card</span>
-                  {paymentMethod === 'card' && <i className="ri-check-line text-blue-600 ml-auto"></i>}
-                </button>
-                <button
-                  onClick={() => setPaymentMethod('upi')}
-                  className={`w-full p-4 border rounded-lg flex items-center space-x-3 ${
-                    paymentMethod === 'upi' ? 'border-blue-600 bg-blue-50' : 'border-gray-200'
-                  }`}
-                >
-                  <i className="ri-smartphone-line text-xl"></i>
-                  <span>UPI/Digital Wallet</span>
-                  {paymentMethod === 'upi' && <i className="ri-check-line text-blue-600 ml-auto"></i>}
-                </button>
-              </div>
-              <Button onClick={handlePaymentSubmit} className="w-full">
-                Continue
-              </Button>
-            </div>
-          </Card>
-        )}
-
-        {/* Step 5: Insurance Add-on */}
-        {step === 5 && (
-          <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Insurance protection</h2>
-            <p className="text-gray-600 mb-6">Optional coverage for your vehicle during valet service</p>
-            <div className="space-y-4">
-              <div 
-                onClick={() => setInsurance(!insurance)}
-                className={`p-4 border rounded-lg cursor-pointer ${
-                  insurance ? 'border-blue-600 bg-blue-50' : 'border-gray-200'
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="font-medium">Vehicle Protection</h3>
-                    <p className="text-sm text-gray-600">₹20 per trip</p>
-                  </div>
-                  <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                    insurance ? 'border-blue-600 bg-blue-600' : 'border-gray-300'
-                  }`}>
-                    {insurance && <i className="ri-check-line text-white text-sm"></i>}
-                  </div>
-                </div>
-              </div>
-              <Button onClick={handleComplete} className="w-full">
-                Get Started
-              </Button>
-            </div>
-          </Card>
-        )}
+        {/* CTA */}
+        <div className="mt-8">
+          <Button onClick={next} className="w-full py-4">
+            {index < slides.length - 1 ? 'Next' : 'Get Started'}
+          </Button>
+          {index > 0 && (
+            <button
+              className="w-full mt-3 text-sm text-gray-500"
+              onClick={() => setIndex(index - 1)}
+            >
+              Back
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
