@@ -14,6 +14,7 @@ export default function LoginPage() {
   const handleSignIn = () => {
     if (emailOrPhone && password) {
       localStorage.setItem('userAuthenticated', 'true');
+      localStorage.setItem('userOnboarded', 'true');
       navigate('/home');
     }
   };

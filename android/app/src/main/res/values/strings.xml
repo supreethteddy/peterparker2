@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">quickParker</string>
+    <string name="title_activity_main">quickParker</string>
+    <string name="package_name">com.quickparker.app</string>
+    <string name="custom_url_scheme">com.quickparker.app</string>
+</resources>

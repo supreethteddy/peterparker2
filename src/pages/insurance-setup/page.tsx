@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import Card from '../../components/base/Card';
 import Button from '../../components/base/Button';
 import Header from '../../components/feature/Header';
-import Badge from '../../components/base/Badge';
 import { Shield, Check, ArrowRight, Info } from 'lucide-react';
 
 export default function InsuranceSetupPage() {
@@ -12,7 +11,9 @@ export default function InsuranceSetupPage() {
 
   const handleContinue = () => {
     localStorage.setItem('insuranceEnabled', JSON.stringify(insuranceEnabled));
-    navigate('/');
+    localStorage.setItem('userOnboarded', 'true');
+    localStorage.setItem('userAuthenticated', 'true');
+    navigate('/home');
   };
 
   return (
