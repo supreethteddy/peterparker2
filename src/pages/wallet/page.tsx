@@ -88,7 +88,7 @@ export default function WalletPage() {
         {/* Balance Cards */}
         <div className="grid grid-cols-2 gap-3 mb-6">
           {/* Available Balance */}
-          <Card className="p-4 bg-green-700 text-white">
+          <Card className="p-4 bg-white border-2 border-green-700">
             <p className="text-sm opacity-90 mb-2">Available Balance</p>
             <p className="text-3xl font-bold">${balance}</p>
           </Card>
