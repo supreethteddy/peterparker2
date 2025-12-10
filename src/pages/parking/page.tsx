@@ -4,34 +4,100 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../../components/feature/Header';
 import Button from '../../components/base/Button';
 import Card from '../../components/base/Card';
+import logoDesign from '../../assets/Logo-design.svg';
+import { MapPin, Clock, Shield, Car, ArrowLeft } from 'lucide-react';
 
 export default function ParkingPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const valet = location.state?.valet;
-  const [timeLeft, setTimeLeft] = useState(30 * 60); // 30 minutes in seconds
+  const parkingLocationFromState = location.state?.parkingLocation;
+  const timeLeftFromState = location.state?.timeLeft;
+  
+  const [timeLeft, setTimeLeft] = useState(timeLeftFromState || 30 * 60); // 30 minutes in seconds
   const [showExtendOptions, setShowExtendOptions] = useState(false);
-  const [parkingLocation, setParkingLocation] = useState('');
+  const [parkingLocation, setParkingLocation] = useState(parkingLocationFromState || '');
 
   useEffect(() => {
-    // Simulate parking completion
-    setTimeout(() => {
-      setParkingLocation('Phoenix MarketCity - Level 2, Zone B, Slot 45');
-    }, 3000);
+    // If parking location is not provided, simulate parking completion
+    if (!parkingLocationFromState) {
+      setTimeout(() => {
+        const parkingLoc = 'Phoenix MarketCity - Level 2, Zone B, Slot 45';
+        setParkingLocation(parkingLoc);
+        
+        // Create parking session in localStorage if coming from handover
+        if (valet) {
+          const savedParking = localStorage.getItem('parkingSessions');
+          const sessions = savedParking ? JSON.parse(savedParking) : [];
+          const existingSession = sessions.find((s: any) => 
+            s.status === 'ongoing' && s.valet?.name === valet.name
+          );
+          
+          if (!existingSession) {
+            const newSession = {
+              id: Date.now(),
+              valet: valet,
+              parkingLocation: parkingLoc,
+              startTime: new Date().toISOString(),
+              timeLeft: timeLeft,
+              status: 'ongoing',
+              pickupLocation: location.state?.pickupLocation || location.state?.from || '',
+              dropLocation: location.state?.dropLocation || location.state?.to || ''
+            };
+            sessions.push(newSession);
+            localStorage.setItem('parkingSessions', JSON.stringify(sessions));
+          }
+        }
+      }, 3000);
+    } else {
+      // Update existing session if parking location is already set
+      const savedParking = localStorage.getItem('parkingSessions');
+      if (savedParking && valet) {
+        const sessions = JSON.parse(savedParking);
+        const updatedSessions = sessions.map((session: any) => {
+          if (session.status === 'ongoing' && session.valet?.name === valet.name) {
+            return {
+              ...session,
+              parkingLocation: parkingLocationFromState,
+              timeLeft: timeLeftFromState || session.timeLeft
+            };
+          }
+          return session;
+        });
+        localStorage.setItem('parkingSessions', JSON.stringify(updatedSessions));
+      }
+    }
 
     // Timer countdown
     const timer = setInterval(() => {
       setTimeLeft(prev => {
-        if (prev <= 0) {
-          clearInterval(timer);
-          return 0;
+        const newTime = prev <= 0 ? 0 : prev - 1;
+        
+        // Update localStorage timer
+        const savedParking = localStorage.getItem('parkingSessions');
+        if (savedParking && valet) {
+          const sessions = JSON.parse(savedParking);
+          const updatedSessions = sessions.map((session: any) => {
+            if (session.status === 'ongoing' && session.valet?.name === valet.name) {
+              return {
+                ...session,
+                timeLeft: newTime
+              };
+            }
+            return session;
+          });
+          localStorage.setItem('parkingSessions', JSON.stringify(updatedSessions));
         }
-        return prev - 1;
+        
+        if (newTime <= 0) {
+          clearInterval(timer);
+        }
+        return newTime;
       });
     }, 1000);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [parkingLocationFromState, valet, timeLeftFromState]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -42,40 +108,92 @@ export default function ParkingPage() {
   const handleExtendStay = (minutes: number) => {
     setTimeLeft(prev => prev + (minutes * 60));
     setShowExtendOptions(false);
+    
+    // Update localStorage parking sessions
+    const savedParking = localStorage.getItem('parkingSessions');
+    if (savedParking) {
+      const sessions = JSON.parse(savedParking);
+      const updatedSessions = sessions.map((session: any) => {
+        if (session.status === 'ongoing' && session.valet?.name === valet?.name) {
+          return {
+            ...session,
+            timeLeft: timeLeft + (minutes * 60)
+          };
+        }
+        return session;
+      });
+      localStorage.setItem('parkingSessions', JSON.stringify(updatedSessions));
+    }
   };
 
   const handleReturnRequest = () => {
     navigate('/return', { state: { valet, parkingLocation } });
   };
 
-  if (!valet) {
-    navigate('/');
-    return null;
-  }
+  // Load valet from localStorage if not in state
+  useEffect(() => {
+    if (!valet) {
+      const savedParking = localStorage.getItem('parkingSessions');
+      if (savedParking) {
+        const sessions = JSON.parse(savedParking);
+        const ongoingSession = sessions.find((s: any) => s.status === 'ongoing');
+        if (ongoingSession) {
+          setParkingLocation(ongoingSession.parkingLocation || '');
+          setTimeLeft(ongoingSession.timeLeft || 30 * 60);
+        }
+      }
+    }
+  }, [valet]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Header 
-        title="Parking & Wait"
-        leftIcon={<i className="ri-arrow-left-line"></i>}
-        onLeftClick={() => navigate('/')}
-      />
+    <div className="min-h-screen bg-white safe-top safe-bottom">
+      {/* Status Bar Area */}
+      <div className="flex items-center justify-between px-6 pt-safe-top pb-2">
+        <div className="flex items-center gap-1 text-sm font-semibold text-neutral-900">
+          <span>9:41</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <div className="w-4 h-3 border border-neutral-900 rounded-sm relative overflow-hidden">
+            <div className="absolute inset-0 bg-neutral-900 rounded-sm" style={{ width: '65%' }}></div>
+          </div>
+          <div className="w-1 h-1 bg-neutral-900 rounded-full"></div>
+          <div className="w-6 h-3 border border-neutral-900 rounded-sm relative overflow-hidden">
+            <div className="absolute inset-0 bg-neutral-900 rounded-sm m-0.5" style={{ width: '75%' }}></div>
+          </div>
+        </div>
+      </div>
 
-      <div className="pt-20 px-4 pb-6">
+      {/* Logo and Back Button */}
+      <div className="px-6 mb-4 flex items-center justify-between pt-2">
+        <button
+          onClick={() => navigate('/parking-list')}
+          className="text-base text-neutral-600 hover:text-[#0F1415] font-semibold flex items-center gap-2"
+        >
+          <ArrowLeft className="w-5 h-5" />
+          Back
+        </button>
+        <img 
+          src={logoDesign} 
+          alt="quickParker Logo" 
+          className="h-14 w-36 object-cover"
+        />
+      </div>
+
+      <div className="px-6 pb-6">
         {!parkingLocation ? (
           /* Parking in Progress */
           <div className="text-center py-12">
-            <div className="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
-              <i className="ri-parking-line text-blue-600 text-3xl"></i>
+            <div className="w-24 h-24 bg-green-700 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
+              <Car className="w-12 h-12 text-white" />
             </div>
-            <h2 className="text-xl font-semibold mb-2">Parking Your Vehicle</h2>
-            <p className="text-gray-600 mb-6">{valet.name} is finding a secure parking spot</p>
+            <h2 className="text-2xl font-bold text-[#0F1415] mb-2">Parking in progress...</h2>
+            <p className="text-neutral-600 mb-6">{valet?.name || 'Valet'} is finding a secure parking spot</p>
             
-            <Card className="p-4">
-              <div className="flex items-center justify-center space-x-2">
-                <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"></div>
-                <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+            <Card className="p-4 bg-white border border-neutral-200">
+              <div className="flex items-center justify-center gap-2">
+                <div className="w-2 h-2 bg-green-700 rounded-full animate-bounce"></div>
+                <div className="w-2 h-2 bg-green-700 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                <div className="w-2 h-2 bg-green-700 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
               </div>
             </Card>
           </div>
@@ -84,37 +202,41 @@ export default function ParkingPage() {
           <>
             {/* Timer */}
             <Card className="p-6 mb-6 text-center">
-              <h2 className="text-2xl font-bold text-blue-600 mb-2">{formatTime(timeLeft)}</h2>
-              <p className="text-gray-600">Free time remaining</p>
+              <h2 className="text-4xl font-bold text-green-700 mb-2">
+                {formatTime(timeLeft)}
+              </h2>
+              <p className="text-neutral-600 font-semibold">Free time remaining</p>
               {timeLeft < 300 && (
-                <p className="text-red-600 text-sm mt-1">⚠️ Less than 5 minutes left</p>
+                <p className="text-[#EF4444] text-sm mt-2 font-semibold">⚠️ Less than 5 minutes left</p>
               )}
             </Card>
 
             {/* Parking Details */}
-            <Card className="p-4 mb-6">
-              <h3 className="font-semibold mb-3">Vehicle Parked</h3>
-              <div className="space-y-3">
-                <div className="flex items-start space-x-3">
-                  <i className="ri-map-pin-line text-green-600 text-xl mt-1"></i>
-                  <div>
-                    <p className="font-medium">Parking Location</p>
-                    <p className="text-sm text-gray-600">{parkingLocation}</p>
+            <Card className="p-4 mb-6 bg-white border border-neutral-200">
+              <h3 className="font-bold text-[#0F1415] mb-4">Vehicle Parked</h3>
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <MapPin className="w-5 h-5 text-green-700 flex-shrink-0 mt-0.5" />
+                  <div className="flex-1">
+                    <p className="font-semibold text-[#0F1415] mb-1">Parking Location</p>
+                    <p className="text-sm text-neutral-600">{parkingLocation}</p>
                   </div>
                 </div>
-                <div className="flex items-center space-x-3">
-                  <i className="ri-file-text-line text-blue-600 text-xl"></i>
-                  <div>
-                    <p className="font-medium">Parking Receipt</p>
-                    <button className="text-blue-600 text-sm">View Receipt</button>
+                <div className="flex items-center gap-3">
+                  <Shield className="w-5 h-5 text-green-700 flex-shrink-0" />
+                  <div className="flex-1">
+                    <p className="font-semibold text-[#0F1415] mb-1">Parking Receipt</p>
+                    <button className="text-green-700 text-sm font-semibold hover:underline">
+                      View Receipt
+                    </button>
                   </div>
                 </div>
               </div>
             </Card>
 
             {/* Map View */}
-            <Card className="p-4 mb-6">
-              <h3 className="font-semibold mb-3">Live Location</h3>
+            <Card className="p-4 mb-6 bg-white border border-neutral-200">
+              <h3 className="font-semibold mb-3 text-[#0F1415]">Live Location</h3>
               <div className="h-32 bg-gray-200 rounded-lg relative overflow-hidden">
                 <img 
                   src="https://readdy.ai/api/search-image?query=Parking%20lot%20aerial%20view%20with%20car%20location%20pin%2C%20modern%20shopping%20mall%20parking%20area%2C%20clear%20markings%20and%20organized%20layout%2C%20satellite%20view%20style&width=400&height=128&seq=parking1&orientation=landscape"
@@ -134,31 +256,37 @@ export default function ParkingPage() {
               <Button 
                 variant="outline" 
                 onClick={() => setShowExtendOptions(true)}
-                className="py-3"
+                fullWidth
               >
-                <i className="ri-time-line mr-2"></i>
+                <Clock className="w-5 h-5 mr-2" />
                 Extend Stay
               </Button>
               <Button 
                 variant="outline" 
-                className="py-3"
+                onClick={() => navigate('/select-location')}
+                fullWidth
               >
-                <i className="ri-map-line mr-2"></i>
+                <MapPin className="w-5 h-5 mr-2" />
                 Change Location
               </Button>
             </div>
 
             {/* Return Car Button */}
-            <Button onClick={handleReturnRequest} className="w-full py-4 mb-6">
-              <i className="ri-car-line mr-2"></i>
+            <Button 
+              onClick={handleReturnRequest} 
+              fullWidth
+              size="lg"
+              className="text-lg font-bold mb-6"
+            >
+              <Car className="w-5 h-5 mr-2" />
               Return My Car
             </Button>
 
             {/* Extend Stay Options */}
             {showExtendOptions && (
-              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-end z-50">
-                <div className="bg-white w-full rounded-t-2xl p-6">
-                  <h3 className="font-semibold mb-4">Extend Your Stay</h3>
+              <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-end z-50 safe-bottom">
+                <div className="bg-white w-full rounded-t-3xl p-6 shadow-[0_-8px_32px_rgba(0,0,0,0.2)]">
+                  <h3 className="text-xl font-bold text-[#0F1415] mb-4">Extend Your Stay</h3>
                   <div className="space-y-3 mb-6">
                     {[
                       { time: 15, price: 25 },
@@ -168,11 +296,13 @@ export default function ParkingPage() {
                       <button
                         key={option.time}
                         onClick={() => handleExtendStay(option.time)}
-                        className="w-full p-4 border border-gray-200 rounded-lg text-left hover:border-blue-600"
+                        className="w-full p-4 border-2 border-neutral-200 rounded-xl text-left hover:border-green-700 transition-all"
                       >
-                        <div className="flex justify-between">
-                          <span className="font-medium">+{option.time} minutes</span>
-                          <span className="text-blue-600">₹{option.price}</span>
+                        <div className="flex justify-between items-center">
+                          <span className="font-semibold text-[#0F1415]">+{option.time} minutes</span>
+                          <span className="font-bold text-green-700">
+                            ₹{option.price}
+                          </span>
                         </div>
                       </button>
                     ))}
@@ -180,7 +310,7 @@ export default function ParkingPage() {
                   <Button 
                     variant="outline" 
                     onClick={() => setShowExtendOptions(false)}
-                    className="w-full"
+                    fullWidth
                   >
                     Cancel
                   </Button>
@@ -190,12 +320,12 @@ export default function ParkingPage() {
 
             {/* Overtime Warning */}
             {timeLeft === 0 && (
-              <Card className="p-4 bg-red-50 border-red-200">
-                <div className="flex items-center space-x-3">
-                  <i className="ri-alarm-warning-line text-red-600 text-xl"></i>
+              <Card className="p-4 bg-gradient-to-r from-[#EF4444]/10 to-[#EF4444]/5 border-2 border-[#EF4444]/20">
+                <div className="flex items-center gap-3">
+                  <Shield className="w-5 h-5 text-[#EF4444]" />
                   <div>
-                    <h3 className="font-medium text-red-800">Overtime Charges Apply</h3>
-                    <p className="text-sm text-red-600">₹10 per 10 minutes after free time</p>
+                    <h3 className="font-semibold text-[#EF4444]">Overtime Charges Apply</h3>
+                    <p className="text-sm text-[#EF4444]">₹10 per 10 minutes after free time</p>
                   </div>
                 </div>
               </Card>

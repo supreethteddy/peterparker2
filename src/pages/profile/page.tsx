@@ -47,14 +47,24 @@ export default function ProfilePage() {
       action: () => navigate('/notifications')
     },
     {
+      icon: 'ri-map-pin-line',
+      title: 'Saved Addresses',
+      action: () => navigate('/saved-addresses')
+    },
+    {
       icon: 'ri-gift-line',
-      title: 'Referral Program',
-      action: () => navigate('/referral')
+      title: 'Promotions & Offers',
+      action: () => navigate('/promotions')
     },
     {
       icon: 'ri-settings-line',
-      title: 'App Settings',
+      title: 'Settings',
       action: () => navigate('/settings')
+    },
+    {
+      icon: 'ri-phone-line',
+      title: 'Emergency Contacts',
+      action: () => navigate('/emergency')
     },
     {
       icon: 'ri-logout-circle-line',
@@ -66,75 +76,77 @@ export default function ProfilePage() {
 
   const handleLogout = () => {
     localStorage.removeItem('userOnboarded');
-    navigate('/onboarding');
+      navigate('/welcome');
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white safe-top safe-bottom">
       <Header title="Profile" />
 
       <div className="pt-20 px-4 pb-24">
         {/* Profile Header */}
         <Card className="p-6 mb-6">
-          <div className="flex items-center space-x-4 mb-4">
-            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
-              <span className="text-2xl font-bold text-blue-600">
+            <div className="flex items-center gap-4 mb-6">
+            <div className="w-20 h-20 rounded-full bg-green-700 flex items-center justify-center text-white">
+              <span className="text-2xl font-bold">
                 {userProfile.name.split(' ').map(n => n[0]).join('')}
               </span>
             </div>
             <div className="flex-1">
-              <h2 className="text-xl font-semibold">{userProfile.name}</h2>
-              <p className="text-gray-600">{userProfile.phone}</p>
-              <p className="text-sm text-gray-500">Member since {userProfile.memberSince}</p>
+              <h2 className="text-2xl font-semibold text-[#0F1415] mb-1">{userProfile.name}</h2>
+              <p className="text-base text-neutral-600 mb-1">{userProfile.phone}</p>
+              <p className="text-sm text-neutral-500">Member since {userProfile.memberSince}</p>
             </div>
           </div>
           
-          <div className="grid grid-cols-3 gap-4 pt-4 border-t">
+          <div className="grid grid-cols-3 gap-4 pt-6 border-t border-neutral-200">
             <div className="text-center">
-              <h3 className="text-lg font-bold text-blue-600">{userProfile.totalTrips}</h3>
-              <p className="text-sm text-gray-600">Total Trips</p>
+              <h3 className="text-2xl font-bold text-green-700">{userProfile.totalTrips}</h3>
+              <p className="text-sm text-neutral-600 mt-1">Total Trips</p>
             </div>
             <div className="text-center">
-              <h3 className="text-lg font-bold text-green-600">{userProfile.rating}</h3>
-              <p className="text-sm text-gray-600">Rating</p>
+              <h3 className="text-2xl font-bold text-green-700">{userProfile.rating}</h3>
+              <p className="text-sm text-neutral-600 mt-1">Rating</p>
             </div>
             <div className="text-center">
-              <h3 className="text-lg font-bold text-purple-600">₹240</h3>
-              <p className="text-sm text-gray-600">Saved</p>
+              <h3 className="text-2xl font-bold text-green-700">₹240</h3>
+              <p className="text-sm text-neutral-600 mt-1">Saved</p>
             </div>
           </div>
         </Card>
 
         {/* Vehicle Info */}
         <Card className="p-4 mb-6">
-          <div className="flex items-center space-x-3">
-            <i className="ri-car-line text-blue-600 text-xl"></i>
-            <div className="flex-1">
-              <h3 className="font-medium">Registered Vehicle</h3>
-              <p className="text-sm text-gray-600">{userProfile.vehicle}</p>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-green-700/10 flex items-center justify-center">
+              <i className="ri-car-line text-green-700 text-xl"></i>
             </div>
-            <i className="ri-arrow-right-s-line text-gray-400"></i>
+            <div className="flex-1">
+              <h3 className="text-base font-semibold text-[#0F1415]">Registered Vehicle</h3>
+              <p className="text-sm text-neutral-600">{userProfile.vehicle}</p>
+            </div>
+            <i className="ri-arrow-right-s-line text-neutral-400"></i>
           </div>
         </Card>
 
         {/* Menu Items */}
         <div className="space-y-2">
           {menuItems.map((item, index) => (
-            <Card key={index} className="p-4" onClick={item.action}>
-              <div className="flex items-center space-x-3">
+            <Card key={index} className="p-4 cursor-pointer hover:shadow-lg transition-all" onClick={item.action}>
+              <div className="flex items-center gap-3">
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                  item.danger ? 'bg-red-100' : 'bg-gray-100'
+                  item.danger ? 'bg-[#EF4444]/10' : 'bg-green-700/10'
                 }`}>
                   <i className={`${item.icon} text-xl ${
-                    item.danger ? 'text-red-600' : 'text-gray-600'
+                    item.danger ? 'text-[#EF4444]' : 'text-green-700'
                   }`}></i>
                 </div>
                 <div className="flex-1">
-                  <h3 className={`font-medium ${item.danger ? 'text-red-600' : ''}`}>
+                  <h3 className={`text-base font-medium ${item.danger ? 'text-[#EF4444]' : 'text-[#0F1415]'}`}>
                     {item.title}
                   </h3>
                 </div>
-                <i className="ri-arrow-right-s-line text-gray-400"></i>
+                <i className="ri-arrow-right-s-line text-neutral-400"></i>
               </div>
             </Card>
           ))}
@@ -142,7 +154,7 @@ export default function ProfilePage() {
 
         {/* App Version */}
         <div className="text-center mt-8">
-          <p className="text-sm text-gray-500">Peter Parker v1.0.0</p>
+          <p className="text-caption text-neutral-500">quickParker v1.0.0</p>
         </div>
       </div>
 

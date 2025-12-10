@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../../components/feature/Header';
 import Button from '../../components/base/Button';
 import Card from '../../components/base/Card';
+import { MapPin, Phone, MessageCircle, Car, Navigation } from 'lucide-react';
 
 export default function ReturnPage() {
   const navigate = useNavigate();
@@ -55,158 +56,171 @@ export default function ReturnPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Header 
-        title="Return Request"
-        leftIcon={<i className="ri-arrow-left-line"></i>}
-        onLeftClick={() => navigate('/parking')}
-      />
-
-      <div className="pt-20 px-4 pb-6">
-        {/* Return Status */}
-        <Card className="p-6 mb-6 text-center">
-          <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <i className="ri-car-line text-blue-600 text-2xl"></i>
+    <div className="relative min-h-screen bg-neutral-100 safe-top safe-bottom">
+      {/* Map Background */}
+      <div className="absolute inset-0 z-0">
+        <img 
+          src="https://readdy.ai/api/search-image?query=Bangalore%20city%20map%20view%20with%20location%20pins%2C%20modern%20urban%20area%2C%20streets%20and%20buildings%20visible%2C%20satellite%20view%20style%2C%20clean%20and%20detailed&width=800&height=1200&seq=map1&orientation=portrait"
+          alt="Map"
+          className="w-full h-full object-cover"
+        />
+        
+        {/* User Location Marker */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
+          <div className="relative">
+            <div className="absolute inset-0 w-8 h-8 bg-[#66BD59] rounded-full animate-ping opacity-75"></div>
+            <div className="relative w-8 h-8 bg-white rounded-full border-4 border-[#66BD59] shadow-lg"></div>
+            <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-8 border-transparent border-t-[#66BD59]"></div>
           </div>
-          <h2 className="text-xl font-semibold mb-2">Car Return Requested</h2>
-          <p className="text-gray-600">{valet.name} is bringing your car back</p>
-        </Card>
+        </div>
 
-        {/* ETA Card */}
-        <Card className="p-4 mb-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <i className="ri-time-line text-blue-600 text-xl"></i>
-              <div>
-                <h3 className="font-medium">Estimated Arrival</h3>
-                <p className="text-sm text-gray-600">Your valet is en route</p>
+        {/* Valet/Car Location Marker */}
+        <div className="absolute top-[45%] left-[60%] z-10">
+          <div className="relative">
+            <Car className="w-8 h-8 text-[#34C0CA]" />
+          </div>
+        </div>
+      </div>
+
+      {/* Top Bar */}
+      <div className="absolute top-0 left-0 right-0 z-10 pt-safe-top">
+        <Header 
+          title="Car Return"
+          onLeftClick={() => navigate('/parking')}
+        />
+      </div>
+
+      {/* ETA Banner */}
+      <div className="absolute top-20 left-0 right-0 z-10 px-4">
+        <Card className="p-4 bg-white/95 backdrop-blur-sm">
+          <div className="text-center">
+            <p className="text-sm text-neutral-600 mb-1">Your car is on the way</p>
+            <p className="text-3xl font-bold bg-gradient-to-r from-[#34C0CA] to-[#66BD59] bg-clip-text text-transparent">
+              {eta}
+            </p>
+          </div>
+        </Card>
+      </div>
+
+      {/* Bottom Card */}
+      <div className="fixed bottom-0 left-0 right-0 z-20 safe-bottom">
+        <div className="bg-white rounded-t-3xl shadow-[0_-8px_32px_rgba(0,0,0,0.2)] border-t border-neutral-100">
+          <div className="px-6 pt-6 pb-6">
+            {/* Valet Info */}
+            <Card className="p-4 mb-4">
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#34C0CA] to-[#66BD59] flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
+                  {valet.name.charAt(0)}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-bold text-[#0F1415] mb-1">{valet.name}</h3>
+                  <div className="flex items-center gap-2 text-sm text-neutral-600">
+                    <span>⭐ {valet.rating}</span>
+                    <span>•</span>
+                    <span>Returning from {parkingLocation?.split(' - ')[0] || 'Parking'}</span>
+                  </div>
+                </div>
               </div>
-            </div>
-            <div className="text-right">
-              <p className="text-2xl font-bold text-blue-600">{eta}</p>
-            </div>
-          </div>
-        </Card>
+            </Card>
 
-        {/* Live Tracking */}
-        <Card className="p-4 mb-6">
-          <h3 className="font-semibold mb-3">Live Tracking</h3>
-          <div className="h-40 bg-gray-200 rounded-lg relative overflow-hidden">
-            <img 
-              src="https://readdy.ai/api/search-image?query=Live%20GPS%20tracking%20map%20showing%20route%20from%20parking%20to%20pickup%20location%2C%20modern%20navigation%20interface%2C%20clear%20path%20markers%20and%20location%20pins&width=400&height=160&seq=tracking1&orientation=landscape"
-              alt="Live tracking"
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute top-3 left-3">
-              <div className="bg-white px-2 py-1 rounded text-xs font-medium shadow">
-                📍 Valet Location
+            {/* Pickup Location */}
+            <Card className="p-4 mb-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <MapPin className="w-5 h-5 text-[#66BD59] flex-shrink-0" />
+                  <div>
+                    <p className="text-sm text-neutral-600 mb-1">Pickup location</p>
+                    <p className="font-semibold text-[#0F1415]">
+                      {newPickupPoint || 'Current Location'}
+                    </p>
+                  </div>
+                </div>
+                <button 
+                  onClick={handleLocationChange}
+                  className="text-[#34C0CA] text-sm font-semibold hover:underline"
+                >
+                  Change
+                </button>
               </div>
-            </div>
-            <div className="absolute bottom-3 right-3">
-              <div className="bg-blue-600 text-white px-2 py-1 rounded text-xs font-medium">
-                🎯 Your Location
-              </div>
-            </div>
-          </div>
-        </Card>
+              {distanceCharge > 0 && (
+                <div className="mt-3 p-3 bg-gradient-to-r from-[#F59E0B]/10 to-[#F59E0B]/5 rounded-xl border border-[#F59E0B]/20">
+                  <p className="text-sm font-semibold text-[#F59E0B]">
+                    Additional distance charge: ₹{distanceCharge}
+                  </p>
+                </div>
+              )}
+            </Card>
 
-        {/* Valet Info */}
-        <Card className="p-4 mb-6">
-          <div className="flex items-center space-x-3">
-            <img 
-              src={valet.photo}
-              alt={valet.name}
-              className="w-12 h-12 rounded-full object-cover"
-            />
-            <div className="flex-1">
-              <h3 className="font-medium">{valet.name}</h3>
-              <p className="text-sm text-gray-600">⭐ {valet.rating} • Returning from {parkingLocation?.split(' - ')[0]}</p>
+            {/* Action Buttons */}
+            <div className="flex gap-3 mb-4">
+              <Button
+                onClick={() => navigate('/calling', { state: { valet } })}
+                variant="outline"
+                className="flex-1"
+              >
+                <Phone className="w-5 h-5 mr-2" />
+                Call
+              </Button>
+              <Button
+                onClick={() => navigate('/message', { state: { valet } })}
+                className="flex-1"
+              >
+                <MessageCircle className="w-5 h-5 mr-2" />
+                Message
+              </Button>
             </div>
-            <button className="bg-green-500 text-white px-4 py-2 rounded-lg">
-              <i className="ri-phone-line mr-1"></i>
-              Call
-            </button>
-          </div>
-        </Card>
 
-        {/* Pickup Location */}
-        <Card className="p-4 mb-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <i className="ri-map-pin-line text-green-600 text-xl"></i>
-              <div>
-                <h3 className="font-medium">Pickup Location</h3>
-                <p className="text-sm text-gray-600">
-                  {newPickupPoint || 'Original drop-off location'}
+            {/* Complete Return Button */}
+            <Button
+              onClick={handleCarArrived}
+              fullWidth
+              size="lg"
+              className="text-lg font-bold"
+            >
+              Car Arrived - Complete Return
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Location Change Modal */}
+      {showLocationChange && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-end z-50 safe-bottom">
+          <div className="bg-white w-full rounded-t-3xl p-6 shadow-[0_-8px_32px_rgba(0,0,0,0.2)]">
+            <h3 className="text-xl font-bold text-[#0F1415] mb-4">Change Pickup Location</h3>
+            <div className="space-y-4 mb-6">
+              <input
+                type="text"
+                placeholder="Enter new pickup address"
+                value={newPickupPoint}
+                onChange={(e) => setNewPickupPoint(e.target.value)}
+                className="w-full px-4 py-3.5 border-2 border-neutral-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-[#34C0CA]/10 focus:border-[#34C0CA] text-base"
+              />
+              <div className="p-3 bg-gradient-to-r from-[#F59E0B]/10 to-[#F59E0B]/5 rounded-xl border border-[#F59E0B]/20">
+                <p className="text-sm font-semibold text-[#F59E0B]">
+                  ⚠️ Additional charges may apply for distance changes
                 </p>
               </div>
             </div>
-            <button 
-              onClick={handleLocationChange}
-              className="text-blue-600 text-sm"
-            >
-              Change
-            </button>
-          </div>
-          {distanceCharge > 0 && (
-            <div className="mt-3 p-3 bg-yellow-50 rounded-lg">
-              <p className="text-sm text-yellow-800">
-                Additional distance charge: ₹{distanceCharge}
-              </p>
+            <div className="flex gap-3">
+              <Button 
+                variant="outline" 
+                onClick={() => setShowLocationChange(false)}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+              <Button 
+                onClick={handleConfirmLocationChange}
+                disabled={!newPickupPoint}
+                className="flex-1"
+              >
+                Confirm Change
+              </Button>
             </div>
-          )}
-        </Card>
-
-        {/* Action Buttons */}
-        <div className="space-y-3">
-          <Button onClick={handleCarArrived} className="w-full py-4">
-            Car Arrived - Complete Return
-          </Button>
-          <Button variant="outline" className="w-full py-3">
-            <i className="ri-message-line mr-2"></i>
-            Message Valet
-          </Button>
+          </div>
         </div>
-
-        {/* Location Change Modal */}
-        {showLocationChange && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-end z-50">
-            <div className="bg-white w-full rounded-t-2xl p-6">
-              <h3 className="font-semibold mb-4">Change Pickup Location</h3>
-              <div className="space-y-4 mb-6">
-                <input
-                  type="text"
-                  placeholder="Enter new pickup address"
-                  value={newPickupPoint}
-                  onChange={(e) => setNewPickupPoint(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <div className="bg-yellow-50 p-3 rounded-lg">
-                  <p className="text-sm text-yellow-800">
-                    ⚠️ Additional charges may apply for distance changes
-                  </p>
-                </div>
-              </div>
-              <div className="flex space-x-3">
-                <Button 
-                  variant="outline" 
-                  onClick={() => setShowLocationChange(false)}
-                  className="flex-1"
-                >
-                  Cancel
-                </Button>
-                <Button 
-                  onClick={handleConfirmLocationChange}
-                  disabled={!newPickupPoint}
-                  className="flex-1"
-                >
-                  Confirm Change
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
+      )}
     </div>
   );
 }

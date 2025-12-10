@@ -1,16 +1,27 @@
-
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 interface CardProps {
   children: ReactNode;
   className?: string;
   onClick?: () => void;
+  variant?: 'default' | 'elevated' | 'outlined';
 }
 
-export default function Card({ children, className = '', onClick }: CardProps) {
+export default function Card({ 
+  children, 
+  className = '', 
+  onClick,
+  variant = 'default'
+}: CardProps) {
+  const variantClasses = {
+    default: 'bg-white shadow-[0_2px_8px_rgba(0,0,0,0.08)] border border-neutral-200 rounded-xl',
+    elevated: 'bg-white shadow-[0_8px_24px_rgba(0,0,0,0.12)] border border-neutral-200 rounded-xl',
+    outlined: 'bg-white border-2 border-neutral-200 rounded-xl'
+  };
+  
   return (
     <div 
-      className={`bg-white rounded-xl shadow-sm border border-gray-100 ${onClick ? 'cursor-pointer hover:shadow-md transition-shadow' : ''} ${className}`}
+      className={`${variantClasses[variant]} ${onClick ? 'cursor-pointer hover:shadow-[0_12px_32px_rgba(0,0,0,0.15)] hover:-translate-y-1 transition-all duration-300 ease-out active:translate-y-0' : 'transition-shadow duration-200'} ${className}`}
       onClick={onClick}
     >
       {children}
