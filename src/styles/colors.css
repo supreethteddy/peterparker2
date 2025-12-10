@@ -1,0 +1,18 @@
+/* Quick reference color utilities - using exact logo colors */
+/* These can be used as Tailwind classes or CSS variables */
+
+:root {
+  --color-primary-dark: #0F1415;
+  --color-primary-accent: #34C0CA;
+  --color-primary-accent-hover: #2BA8B2;
+  --color-primary-accent-active: #25909A;
+  --color-secondary-accent: #66BD59;
+  --color-secondary-accent-hover: #52A547;
+  --color-secondary-accent-active: #3D8A35;
+  --color-surface: #FFFFFF;
+  --color-status-success: #66BD59;
+  --color-status-warning: #F59E0B;
+  --color-status-error: #EF4444;
+  --color-status-info: #34C0CA;
+}
+

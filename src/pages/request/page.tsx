@@ -1,96 +1,123 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../../components/feature/Header';
 import Button from '../../components/base/Button';
 import Card from '../../components/base/Card';
+import { MapPin } from 'lucide-react';
 
 export default function RequestPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const valet = location.state?.valet;
-  const [pickupPoint, setPickupPoint] = useState('Current Location');
-  const [dropPoint, setDropPoint] = useState('');
+  const locationData = location.state;
+  const [pickupPoint, setPickupPoint] = useState(locationData?.from || 'Current Location');
+  const [dropPoint, setDropPoint] = useState(locationData?.to || '');
   const [insurance, setInsurance] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
   const handleConfirmRequest = () => {
-    setShowConfirm(true);
-    setTimeout(() => {
-      navigate('/handover', { state: { valet } });
-    }, 3000);
+    // Navigate to searching for valet
+    navigate('/searching-valet', { 
+      state: { 
+        from: pickupPoint,
+        to: dropPoint,
+        insurance 
+      } 
+    });
   };
 
-  if (!valet) {
-    navigate('/');
-    return null;
-  }
+  // Load location data from localStorage if not in state
+  useEffect(() => {
+    if (!locationData?.from || !locationData?.to) {
+      const savedLocation = localStorage.getItem('bookingLocation');
+      if (savedLocation) {
+        try {
+          const loc = JSON.parse(savedLocation);
+          setPickupPoint(loc.from || 'Current Location');
+          setDropPoint(loc.to || '');
+        } catch (e) {
+          console.error('Error parsing location data:', e);
+        }
+      }
+    }
+  }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-neutral-50 safe-top safe-bottom">
       <Header 
         title="Request Valet"
-        leftIcon={<i className="ri-arrow-left-line"></i>}
-        onLeftClick={() => navigate('/')}
+        onLeftClick={() => navigate('/home')}
       />
 
       <div className="pt-20 px-4 pb-6">
         {!showConfirm ? (
           <>
-            {/* Selected Valet */}
-            <Card className="p-4 mb-6">
-              <div className="flex items-center space-x-3">
-                <img 
-                  src={valet.photo}
-                  alt={valet.name}
-                  className="w-16 h-16 rounded-full object-cover"
-                />
-                <div className="flex-1">
-                  <div className="flex items-center space-x-2">
-                    <h3 className="font-semibold">{valet.name}</h3>
-                    <i className="ri-verified-badge-fill text-green-500"></i>
+            {/* Selected Valet - Only show if valet exists */}
+            {valet && (
+              <Card className="p-4 mb-6">
+                <div className="flex items-center space-x-3">
+                  <div className="w-16 h-16 rounded-full bg-green-700 flex items-center justify-center text-white text-2xl font-bold">
+                    {valet.name?.charAt(0) || 'V'}
                   </div>
-                  <div className="flex items-center space-x-4 text-sm text-gray-600">
-                    <span>⭐ {valet.rating}</span>
-                    <span>🚗 {valet.vehicle}</span>
-                    <span>📍 {valet.eta}</span>
-                  </div>
-                  <div className="flex items-center space-x-2 mt-1">
-                    <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">DL Verified</span>
-                    <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">Police Verified</span>
+                  <div className="flex-1">
+                    <div className="flex items-center space-x-2">
+                      <h3 className="font-semibold text-[#0F1415]">{valet.name || 'Valet Driver'}</h3>
+                      <span className="text-[#66BD59]">✓</span>
+                    </div>
+                    <div className="flex items-center space-x-4 text-sm text-neutral-600 mt-1">
+                      <span>⭐ {valet.rating || '4.8'}</span>
+                      <span>🚗 {valet.vehicle || 'Car'}</span>
+                      <span>📍 {valet.eta || '5 min'}</span>
+                    </div>
+                    <div className="flex items-center space-x-2 mt-1">
+                      <span className="text-xs bg-[#66BD59]/10 text-[#66BD59] px-2 py-1 rounded font-semibold">DL Verified</span>
+                      <span className="text-xs bg-[#66BD59]/10 text-[#66BD59] px-2 py-1 rounded font-semibold">Police Verified</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </Card>
+              </Card>
+            )}
 
             {/* Pickup Point */}
             <Card className="p-4 mb-4">
-              <h3 className="font-medium mb-3">Pickup Point</h3>
-              <div className="flex items-center space-x-3">
-                <i className="ri-map-pin-line text-green-600 text-xl"></i>
+              <h3 className="font-semibold text-[#0F1415] mb-3">Pickup Point</h3>
+              <div className="flex items-center gap-3">
+                <MapPin className="w-5 h-5 text-green-700 flex-shrink-0" />
                 <div className="flex-1">
-                  <p className="font-medium">{pickupPoint}</p>
-                  <p className="text-sm text-gray-600">Koramangala 5th Block, Bangalore</p>
+                  <p className="font-medium text-[#0F1415]">{pickupPoint}</p>
+                  <p className="text-sm text-neutral-600">Current location</p>
                 </div>
-                <button className="text-blue-600 text-sm">
-                  <i className="ri-camera-line mr-1"></i>
-                  Photo
+                <button 
+                  onClick={() => navigate('/select-location')}
+                  className="text-green-700 text-sm font-semibold hover:underline"
+                >
+                  Change
                 </button>
               </div>
             </Card>
 
             {/* Drop Point */}
             <Card className="p-4 mb-4">
-              <h3 className="font-medium mb-3">Drop Point</h3>
-              <div className="flex items-center space-x-3">
-                <i className="ri-map-pin-2-line text-red-600 text-xl"></i>
-                <input
-                  type="text"
-                  placeholder="Enter parking destination"
-                  value={dropPoint}
-                  onChange={(e) => setDropPoint(e.target.value)}
-                  className="flex-1 text-base focus:outline-none"
-                />
+              <h3 className="font-semibold text-[#0F1415] mb-3">Drop Point</h3>
+              <div className="flex items-center gap-3">
+                <MapPin className="w-5 h-5 text-green-700 flex-shrink-0" />
+                <div className="flex-1">
+                  {dropPoint ? (
+                    <>
+                      <p className="font-medium text-[#0F1415]">{dropPoint}</p>
+                      <p className="text-sm text-neutral-600">Parking destination</p>
+                    </>
+                  ) : (
+                    <p className="text-neutral-500">No destination selected</p>
+                  )}
+                </div>
+                <button 
+                  onClick={() => navigate('/select-location')}
+                  className="text-green-700 text-sm font-semibold hover:underline"
+                >
+                  {dropPoint ? 'Change' : 'Select'}
+                </button>
               </div>
             </Card>
 
@@ -101,66 +128,76 @@ export default function RequestPage() {
                 className="flex items-center justify-between cursor-pointer"
               >
                 <div>
-                  <h3 className="font-medium">Vehicle Protection</h3>
-                  <p className="text-sm text-gray-600">₹20 coverage for damages</p>
+                  <h3 className="font-semibold text-[#0F1415]">Vehicle Protection</h3>
+                  <p className="text-sm text-neutral-600">₹20 coverage for damages</p>
                 </div>
-                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                  insurance ? 'border-blue-600 bg-blue-600' : 'border-gray-300'
+                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                  insurance ? 'border-green-700 bg-green-700' : 'border-neutral-300'
                 }`}>
-                  {insurance && <i className="ri-check-line text-white text-sm"></i>}
+                  {insurance && <span className="text-white text-xs">✓</span>}
                 </div>
               </div>
             </Card>
 
             {/* Price Breakdown */}
             <Card className="p-4 mb-6">
-              <h3 className="font-medium mb-3">Price Breakdown</h3>
+              <h3 className="font-semibold text-[#0F1415] mb-3">Price Breakdown</h3>
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Pickup</span>
-                  <span>₹40</span>
+                  <span className="text-neutral-600">Pickup</span>
+                  <span className="font-semibold">₹40</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Drop</span>
-                  <span>₹40</span>
+                  <span className="text-neutral-600">Drop</span>
+                  <span className="font-semibold">₹40</span>
                 </div>
                 {insurance && (
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Insurance</span>
-                    <span>₹20</span>
+                    <span className="text-neutral-600">Insurance</span>
+                    <span className="font-semibold">₹20</span>
                   </div>
                 )}
-                <div className="border-t pt-2">
-                  <div className="flex justify-between font-semibold">
-                    <span>Total</span>
-                    <span className="text-blue-600">₹{insurance ? 100 : 80}</span>
+                <div className="border-t border-neutral-200 pt-2 mt-2">
+                  <div className="flex justify-between font-bold text-lg">
+                    <span className="text-[#0F1415]">Total</span>
+                    <span className="text-green-700">
+                      ₹{insurance ? 100 : 80}
+                    </span>
                   </div>
                 </div>
               </div>
             </Card>
 
-            <Button onClick={handleConfirmRequest} className="w-full py-4">
+            <Button 
+              onClick={handleConfirmRequest} 
+              disabled={!dropPoint}
+              fullWidth
+              size="lg"
+              className="text-lg font-bold"
+            >
               Request Valet Service
             </Button>
           </>
         ) : (
           /* Confirmation Screen */
           <div className="text-center py-12">
-            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <i className="ri-check-line text-green-600 text-3xl"></i>
+            <div className="w-20 h-20 bg-gradient-to-br from-[#66BD59] to-[#52A547] rounded-full flex items-center justify-center mx-auto mb-6">
+              <span className="text-white text-3xl">✓</span>
             </div>
-            <h2 className="text-xl font-semibold mb-2">Request Confirmed!</h2>
-            <p className="text-gray-600 mb-6">{valet.name} is on the way</p>
+            <h2 className="text-2xl font-bold text-[#0F1415] mb-2">Request Confirmed!</h2>
+            <p className="text-neutral-600 mb-6">
+              {valet?.name || 'Valet'} is on the way
+            </p>
             
             <Card className="p-4 mb-6">
               <div className="flex items-center justify-between">
-                <span className="text-gray-600">ETA</span>
-                <span className="font-semibold text-blue-600">{valet.eta}</span>
+                <span className="text-neutral-600 font-semibold">ETA</span>
+                <span className="font-bold text-green-700 text-lg">{valet?.eta || '5 min'}</span>
               </div>
             </Card>
 
             <div className="animate-pulse">
-              <p className="text-sm text-gray-500">Preparing handover screen...</p>
+              <p className="text-sm text-neutral-500">Preparing handover screen...</p>
             </div>
           </div>
         )}
