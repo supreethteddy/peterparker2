@@ -149,21 +149,21 @@ export default function AddAmountPage() {
                 onClick={() => setSelectedPaymentMethod(method.id)}
                 className={`w-full p-4 rounded-xl border-2 text-left transition-all ${
                   selectedPaymentMethod === method.id
-                    ? 'bg-green-50/100 border-green-700'
+                    ? 'bg-[#66BD59]/10 border-[#66BD59]'
                     : 'bg-white border-neutral-200 hover:border-neutral-300'
                 }`}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    {method.type === 'card' && <CreditCard className="w-5 h-5 text-green-700" />}
+                    {method.type === 'card' && <CreditCard className="w-5 h-5 text-[#66BD59]" />}
                     {method.type === 'email' && (
-                      <div className="w-8 h-8 rounded-full bg-green-700/10 flex items-center justify-center">
-                        <span className="text-green-700 font-bold text-sm">P</span>
+                      <div className="w-8 h-8 rounded-full bg-[#66BD59]/10 flex items-center justify-center">
+                        <span className="text-[#66BD59] font-bold text-sm">P</span>
                       </div>
                     )}
                     {method.type === 'cash' && (
-                      <div className="w-8 h-8 rounded-full bg-green-700/10 flex items-center justify-center">
-                        <span className="text-green-700 font-bold text-lg">$</span>
+                      <div className="w-8 h-8 rounded-full bg-[#66BD59]/10 flex items-center justify-center">
+                        <span className="text-[#66BD59] font-bold text-lg">$</span>
                       </div>
                     )}
                     <div>
@@ -179,7 +179,7 @@ export default function AddAmountPage() {
                     </div>
                   </div>
                   {selectedPaymentMethod === method.id && (
-                    <div className="w-5 h-5 rounded-full border-2 border-green-700 bg-green-700 flex items-center justify-center">
+                    <div className="w-5 h-5 rounded-full border-2 border-[#66BD59] bg-[#66BD59] flex items-center justify-center">
                       <span className="text-white text-xs">✓</span>
                     </div>
                   )}

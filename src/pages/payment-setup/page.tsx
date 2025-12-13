@@ -56,15 +56,15 @@ export default function PaymentSetupPage() {
             onClick={() => setSelectedMethod('card')}
             className={`p-4 bg-white border-2 rounded-xl transition-all text-center ${
               selectedMethod === 'card' 
-                ? 'border-green-700 shadow-md bg-green-50/100' 
+                ? 'border-[#66BD59] shadow-md bg-[#66BD59]/10' 
                 : 'border-neutral-200 hover:border-neutral-300'
             }`}
           >
             <CreditCard className={`w-8 h-8 mb-2 mx-auto ${
-              selectedMethod === 'card' ? 'text-green-700 bg-green-50/100' : 'text-neutral-400'
+              selectedMethod === 'card' ? 'text-[#66BD59] bg-[#66BD59]/10' : 'text-neutral-400'
             }`} />
             <p className={`text-base font-medium ${
-              selectedMethod === 'card' ? 'text-green-700' : 'text-[#0F1415]'
+              selectedMethod === 'card' ? 'text-[#66BD59]' : 'text-[#0F1415]'
             }`}>Card</p>
           </button>
           
@@ -72,15 +72,15 @@ export default function PaymentSetupPage() {
             onClick={() => setSelectedMethod('wallet')}
             className={`p-4 bg-white border-2 rounded-xl transition-all text-center ${
               selectedMethod === 'wallet' 
-                ? 'border-green-700 shadow-md bg-green-50/100' 
+                ? 'border-[#66BD59] shadow-md bg-[#66BD59]/10' 
                 : 'border-neutral-200 hover:border-neutral-300'
             }`}
           >
             <Wallet className={`w-8 h-8 mb-2 mx-auto ${
-              selectedMethod === 'wallet' ? 'text-green-700' : 'text-neutral-400'
+              selectedMethod === 'wallet' ? 'text-[#66BD59]' : 'text-neutral-400'
             }`} />
             <p className={`text-base font-medium ${
-              selectedMethod === 'wallet' ? 'text-green-700' : 'text-[#0F1415]'
+              selectedMethod === 'wallet' ? 'text-[#66BD59]' : 'text-[#0F1415]'
             }`}>Wallet/UPI</p>
           </button>
         </div>
@@ -126,7 +126,7 @@ export default function PaymentSetupPage() {
                   type="checkbox"
                   checked={isDefault}
                   onChange={(e) => setIsDefault(e.target.checked)}
-                  className="w-5 h-5 rounded border-neutral-300 text-green-700 focus:ring-green-700 focus:ring-2"
+                  className="w-5 h-5 rounded border-neutral-300 text-[#66BD59] focus:ring-[#66BD59] focus:ring-2"
                 />
                 <span className="text-base text-[#0F1415] font-medium">Set as default payment method</span>
               </label>

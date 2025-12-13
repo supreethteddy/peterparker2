@@ -88,13 +88,13 @@ export default function WalletPage() {
         {/* Balance Cards */}
         <div className="grid grid-cols-2 gap-3 mb-6">
           {/* Available Balance */}
-          <Card className="p-4 bg-white border-2 border-green-700">
+          <Card className="p-4 bg-white border-2 border-[#66BD59]">
             <p className="text-sm opacity-90 mb-2">Available Balance</p>
             <p className="text-3xl font-bold">${balance}</p>
           </Card>
 
           {/* Total Expend */}
-          <Card className="p-4 bg-white border-2 border-green-700">
+          <Card className="p-4 bg-white border-2 border-[#66BD59]">
             <p className="text-sm text-neutral-600 mb-2">Total Expend</p>
             <p className="text-3xl font-bold text-[#0F1415]">${totalExpend}</p>
           </Card>
@@ -105,7 +105,6 @@ export default function WalletPage() {
             variant="outline"
             fullWidth
             onClick={() => navigate("/wallet/add-amount")}
-            className="border-green-700 text-green-700"
           >
             Add Money
           </Button>
@@ -117,7 +116,7 @@ export default function WalletPage() {
             <h2 className="text-xl font-semibold text-[#0F1415]">
               Transactions
             </h2>
-            <button className="text-green-700 font-medium text-sm">
+            <button className="text-[#66BD59] font-medium text-sm">
               See All
             </button>
           </div>
@@ -135,7 +134,7 @@ export default function WalletPage() {
                       {txn.icon === "pink" ? (
                         <Circle className="w-5 h-5 text-pink-600" />
                       ) : (
-                        <Circle className="w-5 h-5 text-green-700" />
+                        <Circle className="w-5 h-5 text-[#66BD59]" />
                       )}
                     </div>
                     <div>

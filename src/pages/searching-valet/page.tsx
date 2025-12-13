@@ -113,7 +113,7 @@ export default function SearchingValetPage() {
               <>
                 {/* Searching State */}
                 <div className="text-center py-8">
-                  <div className="w-20 h-20 bg-green-700 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
+                  <div className="w-20 h-20 bg-gradient-to-r from-[#34C0CA] to-[#66BD59] rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
                     <MapPin className="w-10 h-10 text-white" />
                   </div>
                   <h2 className="text-2xl font-bold text-[#0F1415] mb-2">
@@ -154,7 +154,7 @@ export default function SearchingValetPage() {
                       onClick={() => handleSelectValet(valet)}
                     >
                       <div className="flex items-center gap-4">
-                        <div className="w-16 h-16 rounded-full bg-green-700 flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
+                        <div className="w-16 h-16 rounded-full bg-gradient-to-r from-[#34C0CA] to-[#66BD59] flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
                           {valet.name.charAt(0)}
                         </div>
                         <div className="flex-1 min-w-0">
@@ -179,7 +179,7 @@ export default function SearchingValetPage() {
                           </div>
                         </div>
                         <div className="text-right flex-shrink-0">
-                          <p className="font-bold text-green-700 text-lg">{valet.eta}</p>
+                          <p className="font-bold text-[#66BD59] text-lg">{valet.eta}</p>
                           <p className="text-xs text-neutral-500">{valet.vehicle}</p>
                         </div>
                       </div>

@@ -183,7 +183,7 @@ export default function ParkingPage() {
         {!parkingLocation ? (
           /* Parking in Progress */
           <div className="text-center py-12">
-            <div className="w-24 h-24 bg-green-700 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
+            <div className="w-24 h-24 bg-gradient-to-r from-[#34C0CA] to-[#66BD59] rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
               <Car className="w-12 h-12 text-white" />
             </div>
             <h2 className="text-2xl font-bold text-[#0F1415] mb-2">Parking in progress...</h2>
@@ -191,9 +191,9 @@ export default function ParkingPage() {
             
             <Card className="p-4 bg-white border border-neutral-200">
               <div className="flex items-center justify-center gap-2">
-                <div className="w-2 h-2 bg-green-700 rounded-full animate-bounce"></div>
-                <div className="w-2 h-2 bg-green-700 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                <div className="w-2 h-2 bg-green-700 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                <div className="w-2 h-2 bg-[#66BD59] rounded-full animate-bounce"></div>
+                <div className="w-2 h-2 bg-[#66BD59] rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                <div className="w-2 h-2 bg-[#66BD59] rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
               </div>
             </Card>
           </div>
@@ -202,7 +202,7 @@ export default function ParkingPage() {
           <>
             {/* Timer */}
             <Card className="p-6 mb-6 text-center">
-              <h2 className="text-4xl font-bold text-green-700 mb-2">
+              <h2 className="text-4xl font-bold text-[#66BD59] mb-2">
                 {formatTime(timeLeft)}
               </h2>
               <p className="text-neutral-600 font-semibold">Free time remaining</p>
@@ -216,17 +216,17 @@ export default function ParkingPage() {
               <h3 className="font-bold text-[#0F1415] mb-4">Vehicle Parked</h3>
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
-                  <MapPin className="w-5 h-5 text-green-700 flex-shrink-0 mt-0.5" />
+                  <MapPin className="w-5 h-5 text-[#66BD59] flex-shrink-0 mt-0.5" />
                   <div className="flex-1">
                     <p className="font-semibold text-[#0F1415] mb-1">Parking Location</p>
                     <p className="text-sm text-neutral-600">{parkingLocation}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <Shield className="w-5 h-5 text-green-700 flex-shrink-0" />
+                  <Shield className="w-5 h-5 text-[#66BD59] flex-shrink-0" />
                   <div className="flex-1">
                     <p className="font-semibold text-[#0F1415] mb-1">Parking Receipt</p>
-                    <button className="text-green-700 text-sm font-semibold hover:underline">
+                    <button className="text-[#66BD59] text-sm font-semibold hover:underline">
                       View Receipt
                     </button>
                   </div>
@@ -296,11 +296,11 @@ export default function ParkingPage() {
                       <button
                         key={option.time}
                         onClick={() => handleExtendStay(option.time)}
-                        className="w-full p-4 border-2 border-neutral-200 rounded-xl text-left hover:border-green-700 transition-all"
+                        className="w-full p-4 border-2 border-neutral-200 rounded-xl text-left hover:border-[#66BD59] transition-all"
                       >
                         <div className="flex justify-between items-center">
                           <span className="font-semibold text-[#0F1415]">+{option.time} minutes</span>
-                          <span className="font-bold text-green-700">
+                          <span className="font-bold text-[#66BD59]">
                             ₹{option.price}
                           </span>
                         </div>

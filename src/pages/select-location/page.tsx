@@ -74,7 +74,7 @@ export default function SelectLocationPage() {
             {/* From Input */}
             <div className="relative">
               <div className="absolute left-4 top-1/2 -translate-y-1/2 z-10">
-                <MapPin className="w-5 h-5 text-green-700" />
+                <MapPin className="w-5 h-5 text-[#66BD59]" />
               </div>
               <input
                 type="text"
@@ -94,7 +94,7 @@ export default function SelectLocationPage() {
                     className="w-full flex items-center gap-3 p-3 hover:bg-neutral-50 rounded-lg transition-colors"
                   >
                     <div className="relative">
-                      <MapPin className="w-5 h-5 text-green-700" />
+                      <MapPin className="w-5 h-5 text-[#66BD59]" />
                       <div className="absolute -top-1 -right-1 w-3 h-3 bg-[#EF4444] rounded-full border-2 border-white"></div>
                     </div>
                     <div className="flex-1 text-left">
@@ -108,7 +108,7 @@ export default function SelectLocationPage() {
             {/* To Input */}
             <div className="relative">
               <div className="absolute left-4 top-1/2 -translate-y-1/2 z-10">
-                      <MapPin className="w-5 h-5 text-green-700" />
+                      <MapPin className="w-5 h-5 text-[#66BD59]" />
               </div>
               <input
                 type="text"
@@ -129,7 +129,7 @@ export default function SelectLocationPage() {
                     className="w-full flex items-center gap-3 p-3 hover:bg-neutral-50 rounded-lg transition-colors mb-2"
                   >
                     <div className="relative">
-                      <MapPin className="w-5 h-5 text-green-700" />
+                      <MapPin className="w-5 h-5 text-[#66BD59]" />
                       <div className="absolute -top-1 -right-1 w-3 h-3 bg-[#EF4444] rounded-full border-2 border-white"></div>
                     </div>
                     <div className="flex-1 text-left">

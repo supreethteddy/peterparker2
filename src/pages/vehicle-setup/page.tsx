@@ -101,7 +101,7 @@ export default function VehicleSetupPage() {
                   {!vehicle.isDefault && (
                     <button
                       onClick={() => handleSetDefault(vehicle.id)}
-                      className="text-green-700 text-sm font-medium hover:text-green-800 transition-colors"
+                      className="text-[#66BD59] text-sm font-medium hover:text-[#52A547] transition-colors"
                     >
                       Set Default
                     </button>
@@ -153,7 +153,7 @@ export default function VehicleSetupPage() {
                       onClick={() => setFormData({ ...formData, color })}
                       className={`px-3 py-2.5 rounded-xl border-2 transition-all text-sm font-medium ${
                         formData.color === color
-                          ? 'border-green-700 bg-green-700/10 text-green-700'
+                          ? 'border-[#66BD59] bg-[#66BD59]/10 text-[#66BD59]'
                           : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300'
                       }`}
                     >
@@ -174,7 +174,7 @@ export default function VehicleSetupPage() {
                   type="checkbox"
                   checked={formData.isDefault}
                   onChange={(e) => setFormData({ ...formData, isDefault: e.target.checked })}
-                  className="w-5 h-5 rounded border-neutral-300 text-green-700 focus:ring-green-700 focus:ring-2"
+                  className="w-5 h-5 rounded border-neutral-300 text-[#66BD59] focus:ring-[#66BD59] focus:ring-2"
                 />
                 <span className="text-base text-[#0F1415] font-medium">Set as default vehicle</span>
               </label>

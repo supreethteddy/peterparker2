@@ -83,8 +83,8 @@ export default function WalletSuccessPage() {
         {/* Success Content */}
         <div className="text-center">
           {/* Success Icon */}
-          <div className="w-20 h-20 bg-green-700/10 rounded-full flex items-center justify-center mx-auto mb-6">
-            <CheckCircle className="w-12 h-12 text-green-700" />
+          <div className="w-20 h-20 bg-[#66BD59]/10 rounded-full flex items-center justify-center mx-auto mb-6">
+            <CheckCircle className="w-12 h-12 text-[#66BD59]" />
           </div>
 
           {/* Title */}

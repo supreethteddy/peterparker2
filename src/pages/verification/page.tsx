@@ -132,7 +132,7 @@ export default function VerificationPage() {
                   <div className="absolute inset-0 flex items-center justify-center bg-green-50">
                     <div className="text-center">
                       <i className="ri-check-line text-green-600 text-4xl mb-2 block"></i>
-                      <p className="text-green-700">Selfie captured successfully!</p>
+                      <p className="text-[#66BD59]">Selfie captured successfully!</p>
                     </div>
                   </div>
                 )}

@@ -66,8 +66,8 @@ export default function ValetEnroutePage() {
         {/* User Location Marker */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
           <div className="relative">
-            <div className="absolute inset-0 w-8 h-8 bg-green-700 rounded-full animate-ping opacity-75"></div>
-            <div className="relative w-8 h-8 bg-white rounded-full border-4 border-green-700 shadow-lg"></div>
+            <div className="absolute inset-0 w-8 h-8 bg-[#66BD59] rounded-full animate-ping opacity-75"></div>
+            <div className="relative w-8 h-8 bg-white rounded-full border-4 border-[#66BD59] shadow-lg"></div>
             <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-8 border-transparent border-t-[#66BD59]"></div>
           </div>
         </div>
@@ -75,7 +75,7 @@ export default function ValetEnroutePage() {
         {/* Valet Location Marker */}
         <div className="absolute top-[45%] left-[60%] z-10">
           <div className="relative">
-            <Car className="w-8 h-8 text-green-700" />
+            <Car className="w-8 h-8 text-[#66BD59]" />
           </div>
         </div>
       </div>
@@ -93,7 +93,7 @@ export default function ValetEnroutePage() {
         <Card className="p-4 bg-white/95 backdrop-blur-sm">
           <div className="text-center">
             <p className="text-sm text-neutral-600 mb-1">Your driver is coming in</p>
-            <p className="text-3xl font-bold text-green-700">
+            <p className="text-3xl font-bold text-[#66BD59]">
               {formatTime(eta)}
             </p>
             <p className="text-xs text-neutral-500 mt-1">{distance}m away</p>
@@ -108,7 +108,7 @@ export default function ValetEnroutePage() {
             {/* Valet Info */}
             <Card className="p-4 mb-4">
               <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-full bg-green-700 flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-r from-[#34C0CA] to-[#66BD59] flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
                   {valet.name.charAt(0)}
                 </div>
                 <div className="flex-1 min-w-0">
@@ -118,7 +118,7 @@ export default function ValetEnroutePage() {
                   </div>
                 </div>
                 <div className="w-12 h-12 rounded-lg bg-neutral-100 flex items-center justify-center">
-                  <Car className="w-6 h-6 text-green-700" />
+                  <Car className="w-6 h-6 text-[#66BD59]" />
                 </div>
               </div>
             </Card>
@@ -126,14 +126,14 @@ export default function ValetEnroutePage() {
             {/* Pickup Location */}
             <Card className="p-4 mb-4">
               <div className="flex items-center gap-3">
-                <MapPin className="w-5 h-5 text-green-700 flex-shrink-0" />
+                <MapPin className="w-5 h-5 text-[#66BD59] flex-shrink-0" />
                 <div className="flex-1">
                   <p className="text-sm text-neutral-600 mb-1">Pickup location</p>
                   <p className="font-semibold text-[#0F1415]">{location.state?.pickupLocation || 'Current Location'}</p>
                 </div>
                 <button
                   onClick={() => navigate('/select-location')}
-                  className="text-green-700 text-sm font-semibold hover:underline"
+                  className="text-[#66BD59] text-sm font-semibold hover:underline"
                 >
                   Change
                 </button>

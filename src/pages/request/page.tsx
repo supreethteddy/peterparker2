@@ -57,7 +57,7 @@ export default function RequestPage() {
             {valet && (
               <Card className="p-4 mb-6">
                 <div className="flex items-center space-x-3">
-                  <div className="w-16 h-16 rounded-full bg-green-700 flex items-center justify-center text-white text-2xl font-bold">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-r from-[#34C0CA] to-[#66BD59] flex items-center justify-center text-white text-2xl font-bold">
                     {valet.name?.charAt(0) || 'V'}
                   </div>
                   <div className="flex-1">
@@ -83,14 +83,14 @@ export default function RequestPage() {
             <Card className="p-4 mb-4">
               <h3 className="font-semibold text-[#0F1415] mb-3">Pickup Point</h3>
               <div className="flex items-center gap-3">
-                <MapPin className="w-5 h-5 text-green-700 flex-shrink-0" />
+                <MapPin className="w-5 h-5 text-[#66BD59] flex-shrink-0" />
                 <div className="flex-1">
                   <p className="font-medium text-[#0F1415]">{pickupPoint}</p>
                   <p className="text-sm text-neutral-600">Current location</p>
                 </div>
                 <button 
                   onClick={() => navigate('/select-location')}
-                  className="text-green-700 text-sm font-semibold hover:underline"
+                  className="text-[#66BD59] text-sm font-semibold hover:underline"
                 >
                   Change
                 </button>
@@ -101,7 +101,7 @@ export default function RequestPage() {
             <Card className="p-4 mb-4">
               <h3 className="font-semibold text-[#0F1415] mb-3">Drop Point</h3>
               <div className="flex items-center gap-3">
-                <MapPin className="w-5 h-5 text-green-700 flex-shrink-0" />
+                <MapPin className="w-5 h-5 text-[#66BD59] flex-shrink-0" />
                 <div className="flex-1">
                   {dropPoint ? (
                     <>
@@ -114,7 +114,7 @@ export default function RequestPage() {
                 </div>
                 <button 
                   onClick={() => navigate('/select-location')}
-                  className="text-green-700 text-sm font-semibold hover:underline"
+                  className="text-[#66BD59] text-sm font-semibold hover:underline"
                 >
                   {dropPoint ? 'Change' : 'Select'}
                 </button>
@@ -132,7 +132,7 @@ export default function RequestPage() {
                   <p className="text-sm text-neutral-600">₹20 coverage for damages</p>
                 </div>
                 <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
-                  insurance ? 'border-green-700 bg-green-700' : 'border-neutral-300'
+                  insurance ? 'border-[#66BD59] bg-[#66BD59]' : 'border-neutral-300'
                 }`}>
                   {insurance && <span className="text-white text-xs">✓</span>}
                 </div>
@@ -160,7 +160,7 @@ export default function RequestPage() {
                 <div className="border-t border-neutral-200 pt-2 mt-2">
                   <div className="flex justify-between font-bold text-lg">
                     <span className="text-[#0F1415]">Total</span>
-                    <span className="text-green-700">
+                    <span className="text-[#66BD59]">
                       ₹{insurance ? 100 : 80}
                     </span>
                   </div>
@@ -192,7 +192,7 @@ export default function RequestPage() {
             <Card className="p-4 mb-6">
               <div className="flex items-center justify-between">
                 <span className="text-neutral-600 font-semibold">ETA</span>
-                <span className="font-bold text-green-700 text-lg">{valet?.eta || '5 min'}</span>
+                <span className="font-bold text-[#66BD59] text-lg">{valet?.eta || '5 min'}</span>
               </div>
             </Card>
 
