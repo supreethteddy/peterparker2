@@ -31,22 +31,6 @@ export default function SignUpPage() {
 
   return (
     <div className="min-h-screen bg-white safe-top safe-bottom flex flex-col">
-      {/* Status Bar Area */}
-      <div className="flex items-center justify-between px-6 pt-safe-top pb-2">
-        <div className="flex items-center gap-1 text-sm font-semibold text-neutral-900">
-          <span>9:41</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <div className="w-4 h-3 border border-neutral-900 rounded-sm relative overflow-hidden">
-            <div className="absolute inset-0 bg-neutral-900 rounded-sm" style={{ width: '65%' }}></div>
-          </div>
-          <div className="w-1 h-1 bg-neutral-900 rounded-full"></div>
-          <div className="w-6 h-3 border border-neutral-900 rounded-sm relative overflow-hidden">
-            <div className="absolute inset-0 bg-neutral-900 rounded-sm m-0.5" style={{ width: '75%' }}></div>
-          </div>
-        </div>
-      </div>
-
       {/* Logo and Back Button */}
       <div className="px-6 mb-4 flex items-center justify-between pt-2">
         <button

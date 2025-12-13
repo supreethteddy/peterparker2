@@ -41,22 +41,6 @@ export default function WalletSuccessPage() {
 
   return (
     <div className="min-h-screen bg-white safe-top safe-bottom flex items-center justify-center">
-      {/* Status Bar Area */}
-      <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-6 pt-safe-top pb-2">
-        <div className="flex items-center gap-1 text-sm font-semibold text-neutral-900">
-          <span>9:41</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <div className="w-4 h-3 border border-neutral-900 rounded-sm relative overflow-hidden">
-            <div className="absolute inset-0 bg-neutral-900 rounded-sm" style={{ width: '65%' }}></div>
-          </div>
-          <div className="w-1 h-1 bg-neutral-900 rounded-full"></div>
-          <div className="w-6 h-3 border border-neutral-900 rounded-sm relative overflow-hidden">
-            <div className="absolute inset-0 bg-neutral-900 rounded-sm m-0.5" style={{ width: '75%' }}></div>
-          </div>
-        </div>
-      </div>
-
       {/* Header */}
       <div className="absolute top-12 left-0 right-0 px-6 py-4 flex items-center gap-3">
         <button
