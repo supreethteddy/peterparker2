@@ -121,7 +121,7 @@ export default function HistoryPage() {
                   <h3 className="font-medium">{trip.location}</h3>
                   <span className={`px-2 py-1 rounded-full text-xs ${
                     trip.status === 'completed' 
-                      ? 'bg-green-100 text-green-700' 
+                      ? 'bg-[#66BD59]/10 text-[#66BD59]' 
                       : 'bg-red-100 text-red-700'
                   }`}>
                     {trip.status}

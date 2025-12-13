@@ -86,7 +86,7 @@ export default function ProfileSetupPage() {
               </div>
               <button
                 onClick={handlePhotoUpload}
-                className="absolute bottom-0 right-0 w-10 h-10 bg-green-700 rounded-full flex items-center justify-center shadow-md hover:bg-green-800 transition-colors"
+                className="absolute bottom-0 right-0 w-10 h-10 bg-gradient-to-r from-[#34C0CA] to-[#66BD59] rounded-full flex items-center justify-center shadow-md hover:from-[#2BA8B2] hover:to-[#52A547] transition-colors"
               >
                 <Camera className="w-5 h-5 text-white" />
               </button>
@@ -107,14 +107,14 @@ export default function ProfileSetupPage() {
                 <select
                   value={formData.countryCode}
                   onChange={(e) => setFormData({ ...formData, countryCode: e.target.value })}
-                  className="px-4 py-3.5 border-2 border-neutral-200 rounded-xl bg-white text-base font-medium focus:outline-none focus:ring-4 focus:ring-green-700/10 focus:border-green-700 appearance-none pr-10 transition-all duration-200 w-24"
+                  className="px-4 py-3.5 border-2 border-neutral-200 rounded-xl bg-white text-base font-medium focus:outline-none focus:ring-4 focus:ring-[#66BD59]/10 focus:border-[#66BD59] appearance-none pr-10 transition-all duration-200 w-24"
                 >
                   <option value="+880">+880</option>
                   <option value="+91">+91</option>
                   <option value="+1">+1</option>
                   <option value="+44">+44</option>
                 </select>
-                <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-green-700 pointer-events-none" />
+                <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-[#66BD59] pointer-events-none" />
               </div>
               <Input
                 type="tel"
@@ -143,7 +143,7 @@ export default function ProfileSetupPage() {
               <select
                 value={formData.city}
                 onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                className="w-full px-4 py-3.5 border-2 border-neutral-200 rounded-xl bg-white text-base font-medium focus:outline-none focus:ring-4 focus:ring-green-700/10 focus:border-green-700 appearance-none pr-10 transition-all duration-200 text-[#0F1415]"
+                className="w-full px-4 py-3.5 border-2 border-neutral-200 rounded-xl bg-white text-base font-medium focus:outline-none focus:ring-4 focus:ring-[#66BD59]/10 focus:border-[#66BD59] appearance-none pr-10 transition-all duration-200 text-[#0F1415]"
               >
                 <option value="">City</option>
                 <option value="dhaka">Dhaka</option>
@@ -159,7 +159,7 @@ export default function ProfileSetupPage() {
               <select
                 value={formData.district}
                 onChange={(e) => setFormData({ ...formData, district: e.target.value })}
-                className="w-full px-4 py-3.5 border-2 border-neutral-200 rounded-xl bg-white text-base font-medium focus:outline-none focus:ring-4 focus:ring-green-700/10 focus:border-green-700 appearance-none pr-10 transition-all duration-200 text-[#0F1415]"
+                className="w-full px-4 py-3.5 border-2 border-neutral-200 rounded-xl bg-white text-base font-medium focus:outline-none focus:ring-4 focus:ring-[#66BD59]/10 focus:border-[#66BD59] appearance-none pr-10 transition-all duration-200 text-[#0F1415]"
               >
                 <option value="">District</option>
                 <option value="dhaka">Dhaka</option>

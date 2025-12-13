@@ -100,7 +100,7 @@ export default function AddBankPage() {
             <select
               value={paymentMethodType}
               onChange={(e) => setPaymentMethodType(e.target.value)}
-              className="w-full px-4 py-3.5 border-2 border-neutral-200 rounded-xl bg-white text-base font-medium focus:outline-none focus:ring-4 focus:ring-green-700/10 focus:border-green-700 appearance-none pr-10 transition-all duration-200"
+              className="w-full px-4 py-3.5 border-2 border-neutral-200 rounded-xl bg-white text-base font-medium focus:outline-none focus:ring-4 focus:ring-[#66BD59]/10 focus:border-[#66BD59] appearance-none pr-10 transition-all duration-200"
             >
               <option value="">Select Payment Method</option>
               {paymentMethodTypes.map((type) => (
@@ -140,11 +140,11 @@ export default function AddBankPage() {
               {existingMethods.slice(0, 1).map((method) => (
                 <Card
                   key={method.id}
-                  className="p-4 bg-green-50/100 border-green-700 border-2"
+                  className="p-4 bg-[#66BD59]/10 border-[#66BD59] border-2"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <CreditCard className="w-5 h-5 text-green-700" />
+                      <CreditCard className="w-5 h-5 text-[#66BD59]" />
                       <div>
                         <p className="font-semibold text-[#0F1415]">
                           {method.type === 'card' ? `${method.name} **** **** ${method.number}` : method.name}
@@ -154,7 +154,7 @@ export default function AddBankPage() {
                         )}
                       </div>
                     </div>
-                    <div className="w-5 h-5 rounded-full border-2 border-green-700 bg-green-700 flex items-center justify-center">
+                    <div className="w-5 h-5 rounded-full border-2 border-[#66BD59] bg-[#66BD59] flex items-center justify-center">
                       <span className="text-white text-xs">✓</span>
                     </div>
                   </div>

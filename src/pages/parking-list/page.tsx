@@ -169,7 +169,7 @@ export default function ParkingListPage() {
               {tab.count > 0 && (
                 <span className={`ml-2 px-2 py-0.5 rounded-full text-xs ${
                   activeTab === tab.key
-                    ? 'bg-green-700 text-white'
+                    ? 'bg-gradient-to-r from-[#34C0CA] to-[#66BD59] text-white'
                     : 'bg-neutral-200 text-neutral-600'
                 }`}>
                   {tab.count}
@@ -194,13 +194,13 @@ export default function ParkingListPage() {
                     <img 
                       src={session.valet.photo} 
                       alt={session.valet.name}
-                      className="w-16 h-16 rounded-full object-cover border-2 border-green-700/20"
+                      className="w-16 h-16 rounded-full object-cover border-2 border-[#66BD59]/20"
                       onError={() => {
                         setImageErrors(prev => new Set(prev).add(session.id));
                       }}
                     />
                   ) : (
-                    <div className="w-16 h-16 rounded-full bg-green-700 text-white flex items-center justify-center font-bold text-lg border-2 border-green-700/20">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-r from-[#34C0CA] to-[#66BD59] text-white flex items-center justify-center font-bold text-lg border-2 border-[#66BD59]/20">
                       {session.valet.name.split(' ').map((n: string) => n.charAt(0)).join('').toUpperCase()}
                     </div>
                   )}
@@ -220,8 +220,8 @@ export default function ParkingListPage() {
                       </div>
                     </div>
                     {session.status === 'ongoing' ? (
-                      <span className="px-3 py-1 bg-green-700/10 text-green-700 rounded-full text-xs font-semibold flex items-center gap-1">
-                        <div className="w-2 h-2 bg-green-700 rounded-full animate-pulse"></div>
+                      <span className="px-3 py-1 bg-[#66BD59]/10 text-[#66BD59] rounded-full text-xs font-semibold flex items-center gap-1">
+                        <div className="w-2 h-2 bg-[#66BD59] rounded-full animate-pulse"></div>
                         Active
                       </span>
                     ) : (
@@ -234,7 +234,7 @@ export default function ParkingListPage() {
 
                   {/* Parking Location */}
                   <div className="flex items-start gap-2 mb-3">
-                    <MapPin className="w-4 h-4 text-green-700 flex-shrink-0 mt-0.5" />
+                    <MapPin className="w-4 h-4 text-[#66BD59] flex-shrink-0 mt-0.5" />
                     <p className="text-sm text-neutral-600 flex-1">
                       {session.parkingLocation}
                     </p>
@@ -242,11 +242,11 @@ export default function ParkingListPage() {
 
                   {/* Time Left or Completed Info */}
                   {session.status === 'ongoing' ? (
-                    <div className="flex items-center gap-2 p-3 bg-green-700/5 rounded-lg border border-green-700/20">
-                      <Clock className="w-5 h-5 text-green-700" />
+                    <div className="flex items-center gap-2 p-3 bg-[#66BD59]/5 rounded-lg border border-[#66BD59]/20">
+                      <Clock className="w-5 h-5 text-[#66BD59]" />
                       <div className="flex-1">
                         <p className="text-xs text-neutral-600 mb-1">Free time remaining</p>
-                        <p className="text-xl font-bold text-green-700">
+                        <p className="text-xl font-bold text-[#66BD59]">
                           {formatTime(session.timeLeft)}
                         </p>
                       </div>
@@ -277,8 +277,8 @@ export default function ParkingListPage() {
         {/* Empty State */}
         {filteredSessions.length === 0 && (
           <div className="text-center py-16">
-            <div className="w-20 h-20 bg-green-700/10 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Car className="w-10 h-10 text-green-700" />
+            <div className="w-20 h-20 bg-[#66BD59]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Car className="w-10 h-10 text-[#66BD59]" />
             </div>
             <h3 className="font-bold text-[#0F1415] text-lg mb-2">
               No {activeTab === 'ongoing' ? 'ongoing' : 'completed'} parking
@@ -291,7 +291,7 @@ export default function ParkingListPage() {
             {activeTab === 'ongoing' && (
               <button
                 onClick={() => navigate('/select-location')}
-                className="px-6 py-3 bg-green-700 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
+                className="px-6 py-3 bg-gradient-to-r from-[#34C0CA] to-[#66BD59] text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 hover:from-[#2BA8B2] hover:to-[#52A547]"
               >
                 Book Valet Service
               </button>

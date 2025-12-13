@@ -60,17 +60,17 @@ export default function PromotionsPage() {
       
       <div className="pt-20 pb-24 px-6 max-w-md mx-auto">
         {/* Header Banner */}
-        <Card className="p-6 mb-6 bg-white border-2 border-green-700">
+        <Card className="p-6 mb-6 bg-white border-2 border-[#66BD59]">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 rounded-full bg-green-700/10 flex items-center justify-center">
-              <Sparkles className="w-6 h-6 text-green-700" />
+            <div className="w-12 h-12 rounded-full bg-[#66BD59]/10 flex items-center justify-center">
+              <Sparkles className="w-6 h-6 text-[#66BD59]" />
             </div>
             <div className="flex-1">
               <h2 className="text-xl font-semibold mb-1 text-[#0F1415]">Special Offers</h2>
               <p className="text-base text-neutral-600">Save more on every trip</p>
             </div>
           </div>
-          <Badge variant="info" size="md" className="bg-green-700/10 text-green-700 border-green-700/30">
+          <Badge variant="info" size="md" className="bg-[#66BD59]/10 text-[#66BD59] border-[#66BD59]/30">
             {promotions.length} Active Offers
           </Badge>
         </Card>
@@ -79,7 +79,7 @@ export default function PromotionsPage() {
         <div className="space-y-4 mb-6">
           {promotions.map((promo) => (
             <Card key={promo.id} className="p-0 overflow-hidden">
-              <div className="bg-green-700 p-6 text-white">
+              <div className="bg-gradient-to-r from-[#34C0CA] to-[#66BD59] p-6 text-white">
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
@@ -127,7 +127,7 @@ export default function PromotionsPage() {
           <h3 className="text-xl font-semibold text-[#0F1415] mb-4">How to Use</h3>
           <div className="space-y-3">
             <div className="flex items-start gap-3">
-              <div className="w-6 h-6 rounded-full bg-green-700 text-white flex items-center justify-center flex-shrink-0 text-sm font-semibold">
+              <div className="w-6 h-6 rounded-full bg-gradient-to-r from-[#34C0CA] to-[#66BD59] text-white flex items-center justify-center flex-shrink-0 text-sm font-semibold">
                 1
               </div>
               <div className="flex-1">
@@ -135,7 +135,7 @@ export default function PromotionsPage() {
               </div>
             </div>
             <div className="flex items-start gap-3">
-              <div className="w-6 h-6 rounded-full bg-green-700 text-white flex items-center justify-center flex-shrink-0 text-sm font-semibold">
+              <div className="w-6 h-6 rounded-full bg-gradient-to-r from-[#34C0CA] to-[#66BD59] text-white flex items-center justify-center flex-shrink-0 text-sm font-semibold">
                 2
               </div>
               <div className="flex-1">
@@ -143,7 +143,7 @@ export default function PromotionsPage() {
               </div>
             </div>
             <div className="flex items-start gap-3">
-              <div className="w-6 h-6 rounded-full bg-green-700 text-white flex items-center justify-center flex-shrink-0 text-sm font-semibold">
+              <div className="w-6 h-6 rounded-full bg-gradient-to-r from-[#34C0CA] to-[#66BD59] text-white flex items-center justify-center flex-shrink-0 text-sm font-semibold">
                 3
               </div>
               <div className="flex-1">

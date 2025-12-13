@@ -60,7 +60,7 @@ export default function ValetAssignedPage() {
             {/* Valet Info */}
             <Card className="p-4 mb-4">
               <div className="flex items-center gap-4 mb-4">
-                <div className="w-20 h-20 rounded-full bg-green-700 flex items-center justify-center text-white text-2xl font-bold flex-shrink-0">
+                <div className="w-20 h-20 rounded-full bg-gradient-to-r from-[#34C0CA] to-[#66BD59] flex items-center justify-center text-white text-2xl font-bold flex-shrink-0">
                   {valet.name.charAt(0)}
                 </div>
                 <div className="flex-1 min-w-0">
@@ -102,12 +102,12 @@ export default function ValetAssignedPage() {
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-neutral-600">30 min included</span>
-                    <span className="text-green-700 font-semibold">Free</span>
+                    <span className="text-[#66BD59] font-semibold">Free</span>
                 </div>
                 <div className="border-t border-neutral-200 pt-2 mt-2">
                   <div className="flex justify-between">
                     <span className="font-bold text-[#0F1415]">Starting from</span>
-                    <span className="font-bold text-green-700">
+                    <span className="font-bold text-[#66BD59]">
                       ₹80
                     </span>
                   </div>

@@ -26,11 +26,11 @@ export default function Button({
   const baseClasses = 'font-semibold rounded-xl transition-all duration-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:transform-none min-h-[48px] font-medium tracking-wide';
   
   const variantClasses = {
-    primary: 'bg-green-700 text-white hover:bg-green-800 active:bg-green-900 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0',
+    primary: 'bg-gradient-to-r from-[#34C0CA] to-[#66BD59] text-white hover:from-[#2BA8B2] hover:to-[#52A547] active:from-[#25909A] active:to-[#3D8A35] shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0',
     secondary: 'bg-white text-[#0F1415] border-2 border-neutral-200 hover:border-neutral-300 hover:bg-neutral-50 active:bg-neutral-100 shadow-sm hover:shadow-md',
-    outline: 'border-2 border-green-700 text-green-700 bg-white hover:bg-green-50 active:bg-green-100 shadow-sm hover:shadow-md',
+    outline: 'border-2 border-[#66BD59] text-[#66BD59] bg-white hover:bg-[#66BD59]/10 active:bg-[#66BD59]/20 shadow-sm hover:shadow-md',
     danger: 'bg-gradient-to-r from-[#EF4444] to-[#DC2626] text-white hover:from-[#DC2626] hover:to-[#B91C1C] shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0',
-    ghost: 'text-green-700 bg-transparent hover:bg-green-50 active:bg-green-100'
+    ghost: 'text-[#66BD59] bg-transparent hover:bg-[#66BD59]/10 active:bg-[#66BD59]/20'
   };
   
   const sizeClasses = {

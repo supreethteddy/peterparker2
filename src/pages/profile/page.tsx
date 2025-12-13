@@ -87,7 +87,7 @@ export default function ProfilePage() {
         {/* Profile Header */}
         <Card className="p-6 mb-6">
             <div className="flex items-center gap-4 mb-6">
-            <div className="w-20 h-20 rounded-full bg-green-700 flex items-center justify-center text-white">
+            <div className="w-20 h-20 rounded-full bg-gradient-to-r from-[#34C0CA] to-[#66BD59] flex items-center justify-center text-white">
               <span className="text-2xl font-bold">
                 {userProfile.name.split(' ').map(n => n[0]).join('')}
               </span>
@@ -101,15 +101,15 @@ export default function ProfilePage() {
           
           <div className="grid grid-cols-3 gap-4 pt-6 border-t border-neutral-200">
             <div className="text-center">
-              <h3 className="text-2xl font-bold text-green-700">{userProfile.totalTrips}</h3>
+              <h3 className="text-2xl font-bold text-[#66BD59]">{userProfile.totalTrips}</h3>
               <p className="text-sm text-neutral-600 mt-1">Total Trips</p>
             </div>
             <div className="text-center">
-              <h3 className="text-2xl font-bold text-green-700">{userProfile.rating}</h3>
+              <h3 className="text-2xl font-bold text-[#66BD59]">{userProfile.rating}</h3>
               <p className="text-sm text-neutral-600 mt-1">Rating</p>
             </div>
             <div className="text-center">
-              <h3 className="text-2xl font-bold text-green-700">₹240</h3>
+              <h3 className="text-2xl font-bold text-[#66BD59]">₹240</h3>
               <p className="text-sm text-neutral-600 mt-1">Saved</p>
             </div>
           </div>
@@ -118,8 +118,8 @@ export default function ProfilePage() {
         {/* Vehicle Info */}
         <Card className="p-4 mb-6">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-green-700/10 flex items-center justify-center">
-              <i className="ri-car-line text-green-700 text-xl"></i>
+            <div className="w-10 h-10 rounded-full bg-[#66BD59]/10 flex items-center justify-center">
+              <i className="ri-car-line text-[#66BD59] text-xl"></i>
             </div>
             <div className="flex-1">
               <h3 className="text-base font-semibold text-[#0F1415]">Registered Vehicle</h3>
@@ -135,10 +135,10 @@ export default function ProfilePage() {
             <Card key={index} className="p-4 cursor-pointer hover:shadow-lg transition-all" onClick={item.action}>
               <div className="flex items-center gap-3">
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                  item.danger ? 'bg-[#EF4444]/10' : 'bg-green-700/10'
+                  item.danger ? 'bg-[#EF4444]/10' : 'bg-[#66BD59]/10'
                 }`}>
                   <i className={`${item.icon} text-xl ${
-                    item.danger ? 'text-[#EF4444]' : 'text-green-700'
+                    item.danger ? 'text-[#EF4444]' : 'text-[#66BD59]'
                   }`}></i>
                 </div>
                 <div className="flex-1">
