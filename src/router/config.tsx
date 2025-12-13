@@ -1,4 +1,3 @@
-
 import { RouteObject } from 'react-router-dom';
 import SplashPage from '../pages/splash/page';
 import HomePage from '../pages/home/page';
@@ -48,175 +47,175 @@ import NotFound from '../pages/NotFound';
 const routes: RouteObject[] = [
   {
     path: '/',
-    element: <SplashPage />
+    Component: SplashPage
   },
   {
     path: '/splash',
-    element: <SplashPage />
+    Component: SplashPage
   },
   {
     path: '/home',
-    element: <HomePage />
+    Component: HomePage
   },
   {
     path: '/select-location',
-    element: <SelectLocationPage />
+    Component: SelectLocationPage
   },
   {
     path: '/welcome',
-    element: <WelcomePage />
+    Component: WelcomePage
   },
   {
     path: '/login',
-    element: <LoginPage />
+    Component: LoginPage
   },
   {
     path: '/signup',
-    element: <SignUpPage />
+    Component: SignUpPage
   },
   {
     path: '/verify-otp',
-    element: <VerifyOTPPage />
+    Component: VerifyOTPPage
   },
   {
     path: '/set-password',
-    element: <SetPasswordPage />
+    Component: SetPasswordPage
   },
   {
     path: '/send-verification',
-    element: <SendVerificationPage />
+    Component: SendVerificationPage
   },
   {
     path: '/phone-verify-otp',
-    element: <PhoneVerifyOTPPage />
+    Component: PhoneVerifyOTPPage
   },
   {
     path: '/set-new-password',
-    element: <SetNewPasswordPage />
+    Component: SetNewPasswordPage
   },
   {
     path: '/forgot-password',
-    element: <SendVerificationPage />
+    Component: SendVerificationPage
   },
   {
     path: '/profile-setup',
-    element: <ProfileSetupPage />
+    Component: ProfileSetupPage
   },
   {
     path: '/vehicle-setup',
-    element: <VehicleSetupPage />
+    Component: VehicleSetupPage
   },
   {
     path: '/payment-setup',
-    element: <PaymentSetupPage />
+    Component: PaymentSetupPage
   },
   {
     path: '/insurance-setup',
-    element: <InsuranceSetupPage />
+    Component: InsuranceSetupPage
   },
   {
     path: '/request',
-    element: <RequestPage />
+    Component: RequestPage
   },
   {
     path: '/searching-valet',
-    element: <SearchingValetPage />
+    Component: SearchingValetPage
   },
   {
     path: '/valet-assigned',
-    element: <ValetAssignedPage />
+    Component: ValetAssignedPage
   },
   {
     path: '/confirm-pickup',
-    element: <ConfirmPickupPage />
+    Component: ConfirmPickupPage
   },
   {
     path: '/valet-enroute',
-    element: <ValetEnroutePage />
+    Component: ValetEnroutePage
   },
   {
     path: '/handover',
-    element: <HandoverPage />
+    Component: HandoverPage
   },
   {
     path: '/parking',
-    element: <ParkingPage />
+    Component: ParkingPage
   },
   {
     path: '/parking-list',
-    element: <ParkingListPage />
+    Component: ParkingListPage
   },
   {
     path: '/return',
-    element: <ReturnPage />
+    Component: ReturnPage
   },
   {
     path: '/payment',
-    element: <PaymentPage />
+    Component: PaymentPage
   },
   {
     path: '/review',
-    element: <ReviewPage />
+    Component: ReviewPage
   },
   {
     path: '/message',
-    element: <MessagePage />
+    Component: MessagePage
   },
   {
     path: '/calling',
-    element: <CallingPage />
+    Component: CallingPage
   },
   {
     path: '/history',
-    element: <HistoryPage />
+    Component: HistoryPage
   },
   {
     path: '/wallet',
-    element: <WalletPage />
+    Component: WalletPage
   },
   {
     path: '/wallet/add-amount',
-    element: <AddAmountPage />
+    Component: AddAmountPage
   },
   {
     path: '/wallet/add-bank',
-    element: <AddBankPage />
+    Component: AddBankPage
   },
   {
     path: '/wallet/success',
-    element: <WalletSuccessPage />
+    Component: WalletSuccessPage
   },
   {
     path: '/support',
-    element: <SupportPage />
+    Component: SupportPage
   },
   {
     path: '/profile',
-    element: <ProfilePage />
+    Component: ProfilePage
   },
   {
     path: '/trip-details',
-    element: <TripDetailsPage />
+    Component: TripDetailsPage
   },
   {
     path: '/promotions',
-    element: <PromotionsPage />
+    Component: PromotionsPage
   },
   {
     path: '/saved-addresses',
-    element: <SavedAddressesPage />
+    Component: SavedAddressesPage
   },
   {
     path: '/notifications',
-    element: <NotificationsPage />
+    Component: NotificationsPage
   },
   {
     path: '/settings',
-    element: <SettingsPage />
+    Component: SettingsPage
   },
   {
     path: '/emergency',
-    element: <EmergencyPage />
+    Component: EmergencyPage
   },
   {
     path: '/error/no-valets',
@@ -236,11 +235,11 @@ const routes: RouteObject[] = [
   },
   {
     path: '/verification',
-    element: <VerificationPage />
+    Component: VerificationPage
   },
   {
     path: '*',
-    element: <NotFound />
+    Component: NotFound
   }
 ];
 
