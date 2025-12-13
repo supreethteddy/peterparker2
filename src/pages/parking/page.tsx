@@ -1,7 +1,6 @@
 
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import Header from '../../components/feature/Header';
 import Button from '../../components/base/Button';
 import Card from '../../components/base/Card';
 import logoDesign from '../../assets/Logo-design.svg';
@@ -70,7 +69,7 @@ export default function ParkingPage() {
 
     // Timer countdown
     const timer = setInterval(() => {
-      setTimeLeft(prev => {
+      setTimeLeft((prev: number) => {
         const newTime = prev <= 0 ? 0 : prev - 1;
         
         // Update localStorage timer
@@ -106,7 +105,7 @@ export default function ParkingPage() {
   };
 
   const handleExtendStay = (minutes: number) => {
-    setTimeLeft(prev => prev + (minutes * 60));
+    setTimeLeft((prev: number) => prev + (minutes * 60));
     setShowExtendOptions(false);
     
     // Update localStorage parking sessions
@@ -147,22 +146,6 @@ export default function ParkingPage() {
 
   return (
     <div className="min-h-screen bg-white safe-top safe-bottom">
-      {/* Status Bar Area */}
-      <div className="flex items-center justify-between px-6 pt-safe-top pb-2">
-        <div className="flex items-center gap-1 text-sm font-semibold text-neutral-900">
-          <span>9:41</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <div className="w-4 h-3 border border-neutral-900 rounded-sm relative overflow-hidden">
-            <div className="absolute inset-0 bg-neutral-900 rounded-sm" style={{ width: '65%' }}></div>
-          </div>
-          <div className="w-1 h-1 bg-neutral-900 rounded-full"></div>
-          <div className="w-6 h-3 border border-neutral-900 rounded-sm relative overflow-hidden">
-            <div className="absolute inset-0 bg-neutral-900 rounded-sm m-0.5" style={{ width: '75%' }}></div>
-          </div>
-        </div>
-      </div>
-
       {/* Logo and Back Button */}
       <div className="px-6 mb-4 flex items-center justify-between pt-2">
         <button
