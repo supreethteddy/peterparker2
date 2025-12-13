@@ -41,28 +41,25 @@ export default function HomePage() {
     checkActiveParking();
 
     const timer = setInterval(() => {
-      if (activeParking) {
-        setTimeLeft(prev => {
-          const newTime = Math.max(0, prev - 1);
-          const savedParking = localStorage.getItem('parkingSessions');
-          if (savedParking) {
-            const sessions = JSON.parse(savedParking);
-            const updatedSessions = sessions.map((s: any) =>
-              s.status === 'ongoing' && s.id === activeParking.id
-                ? { ...s, timeLeft: newTime }
-                : s
-            );
-            localStorage.setItem('parkingSessions', JSON.stringify(updatedSessions));
-          }
-          return newTime;
-        });
-      } else {
-        checkActiveParking();
+      const savedParking = localStorage.getItem('parkingSessions');
+      if (savedParking) {
+        const sessions = JSON.parse(savedParking);
+        const ongoing = sessions.find((s: any) => s.status === 'ongoing');
+        if (ongoing) {
+          setTimeLeft(ongoing.timeLeft || 0);
+          const newTime = Math.max(0, (ongoing.timeLeft || 0) - 1);
+          const updatedSessions = sessions.map((s: any) =>
+            s.status === 'ongoing' && s.id === ongoing.id
+              ? { ...s, timeLeft: newTime }
+              : s
+          );
+          localStorage.setItem('parkingSessions', JSON.stringify(updatedSessions));
+        }
       }
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [activeParking]);
+  }, []);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -73,22 +70,23 @@ export default function HomePage() {
   const handleQuickAction = (actionId: string) => {
     switch (actionId) {
       case 'book':
-        navigate('/select-location');
+        navigate('/select-location', { replace: false });
         break;
       case 'return':
         if (activeParking) {
           navigate('/return', {
+            replace: false,
             state: {
               valet: activeParking.valet,
               parkingLocation: activeParking.parkingLocation
             }
           });
         } else {
-          navigate('/parking-list');
+          navigate('/parking-list', { replace: false });
         }
         break;
       case 'parking':
-        navigate('/parking-list');
+        navigate('/parking-list', { replace: false });
         break;
     }
   };
@@ -206,10 +204,17 @@ export default function HomePage() {
               return (
                 <button
                   key={action.id}
-                  onClick={() => handleQuickAction(action.id)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (!action.disabled) {
+                      handleQuickAction(action.id);
+                    }
+                  }}
                   disabled={action.disabled}
+                  type="button"
                   className={`p-4 bg-white border border-[#E8F3EF] rounded-xl shadow-sm flex flex-col items-center text-center 
-                    transition active:scale-95 ${action.disabled ? 'opacity-50' : ''}`}
+                    transition active:scale-95 ${action.disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                 >
                   <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${action.gradient} flex items-center justify-center mb-2 shadow-md`}>
                     <Icon className="w-5 h-5 text-white" />
