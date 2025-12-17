@@ -4,7 +4,11 @@ import Button from '../../components/base/Button';
 import Card from '../../components/base/Card';
 import BottomNav from '../../components/feature/BottomNav';
 import LogoDesign from '../../assets/Logo-design.svg';
-import { Bell, Car, MapPin, Clock, Shield, Sparkles, TrendingUp, Zap, ArrowRight } from 'lucide-react';
+import { IoNotifications } from 'react-icons/io5';
+import { FaCarSide } from 'react-icons/fa';
+import { TbArrowBack } from 'react-icons/tb';
+import { RiParkingBoxFill } from 'react-icons/ri';
+import { HiLocationMarker, HiClock, HiShieldCheck, HiSparkles, HiLightningBolt, HiTrendingUp, HiArrowRight } from 'react-icons/hi';
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -96,23 +100,29 @@ export default function HomePage() {
       id: 'book',
       title: 'Book Valet',
       subtitle: 'Instant Pickup',
-      icon: Car,
+      icon: FaCarSide,
       gradient: 'from-[#34C0CA] to-[#66BD59]',
+      isPrimary: true,
+      iconSize: 'w-6 h-6',
     },
     {
       id: 'return',
       title: 'Request Return',
       subtitle: activeParking ? 'Get your vehicle' : 'No active session',
-      icon: MapPin,
+      icon: TbArrowBack,
       gradient: 'from-[#66BD59] to-[#34C0CA]',
       disabled: !activeParking,
+      isPrimary: true,
+      iconSize: 'w-6 h-6',
     },
     {
       id: 'parking',
       title: 'My Parking',
       subtitle: 'View history',
-      icon: Clock,
-      gradient: 'from-[#34C0CA] via-[#66BD59] to-[#34C0CA]',
+      icon: RiParkingBoxFill,
+      gradient: 'from-[#34C0CA] to-[#66BD59]',
+      isPrimary: true,
+      iconSize: 'w-6 h-6',
     }
   ];
 
@@ -130,7 +140,7 @@ export default function HomePage() {
             onClick={() => navigate('/notifications')}
             className="w-11 h-11 rounded-full bg-[#F0F7F5] flex items-center justify-center shadow-sm active:scale-95 transition"
           >
-            <Bell className="w-5 h-5 text-[#34C0CA]" />
+            <IoNotifications className="w-5 h-5 text-[#34C0CA]" />
           </button>
         </div>
 
@@ -152,13 +162,13 @@ export default function HomePage() {
                 <h2 className="text-lg font-semibold text-[#0F1415]">Your Vehicle Is Parked</h2>
               </div>
               <div className="w-10 h-10 rounded-full bg-[#E8F6E9] flex items-center justify-center">
-                <Shield className="w-5 h-5 text-[#66BD59]" />
+                <HiShieldCheck className="w-5 h-5 text-[#66BD59]" />
               </div>
             </div>
 
             <div className="space-y-3">
               <div className="flex items-center gap-2 text-sm text-neutral-600">
-                <MapPin className="w-4 h-4 text-[#34C0CA]" />
+                <HiLocationMarker className="w-4 h-4 text-[#34C0CA]" />
                 <p>{activeParking.parkingLocation || 'Phoenix MarketCity'}</p>
               </div>
 
@@ -213,13 +223,23 @@ export default function HomePage() {
                   }}
                   disabled={action.disabled}
                   type="button"
-                  className={`p-4 bg-white border border-[#E8F3EF] rounded-xl shadow-sm flex flex-col items-center text-center 
-                    transition active:scale-95 ${action.disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                  className={`p-4 rounded-xl flex flex-col items-center text-center 
+                    transition-all duration-200 active:scale-95 ${action.disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} ${
+                    action.isPrimary 
+                      ? 'bg-white border border-[#E8F3EF] shadow-md' 
+                      : 'bg-[#F8FDFC] border border-transparent'
+                  }`}
                 >
-                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${action.gradient} flex items-center justify-center mb-2 shadow-md`}>
-                    <Icon className="w-5 h-5 text-white" />
-                  </div>
-                  <p className="text-xs font-bold text-[#0F1415]">{action.title}</p>
+                  {action.isPrimary ? (
+                    <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${action.gradient} flex items-center justify-center mb-2 shadow-lg`}>
+                      <Icon className={`${action.iconSize} text-white`} />
+                    </div>
+                  ) : (
+                    <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-2">
+                      <Icon className={`${action.iconSize} text-[#66BD59]`} />
+                    </div>
+                  )}
+                  <p className={`text-xs text-[#0F1415] ${action.isPrimary ? 'font-bold' : 'font-medium'}`}>{action.title}</p>
                   <p className="text-[10px] text-neutral-500">{action.subtitle}</p>
                 </button>
               );
@@ -231,27 +251,27 @@ export default function HomePage() {
         <Card className="p-4 bg-white shadow-md border border-[#E8F3EF] rounded-2xl">
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-base font-bold text-[#0F1415]">Why Choose Us</h3>
-            <Sparkles className="w-4 h-4 text-[#34C0CA]" />
+            <HiSparkles className="w-4 h-4 text-[#34C0CA]" />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div className="p-3 bg-[#F8FDFC] border border-[#E8F3EF] rounded-xl">
-              <Shield className="w-4 h-4 text-[#34C0CA] mb-1" />
+              <HiShieldCheck className="w-4 h-4 text-[#34C0CA] mb-1" />
               <p className="text-xs font-bold">Fully Insured</p>
               <p className="text-[11px] text-neutral-500">Your vehicle is protected</p>
             </div>
             <div className="p-3 bg-[#F8FDFC] border border-[#E8F3EF] rounded-xl">
-              <Zap className="w-4 h-4 text-[#66BD59] mb-1" />
+              <HiLightningBolt className="w-4 h-4 text-[#66BD59] mb-1" />
               <p className="text-xs font-bold">Fast Pickup</p>
               <p className="text-[11px] text-neutral-500">Quick & reliable service</p>
             </div>
             <div className="p-3 bg-[#F8FDFC] border border-[#E8F3EF] rounded-xl">
-              <TrendingUp className="w-4 h-4 text-[#34C0CA] mb-1" />
+              <HiTrendingUp className="w-4 h-4 text-[#34C0CA] mb-1" />
               <p className="text-xs font-bold">30 Min Free</p>
               <p className="text-[11px] text-neutral-500">Complimentary parking time</p>
             </div>
             <div className="p-3 bg-[#F8FDFC] border border-[#E8F3EF] rounded-xl">
-              <MapPin className="w-4 h-4 text-[#66BD59] mb-1" />
+              <HiLocationMarker className="w-4 h-4 text-[#66BD59] mb-1" />
               <p className="text-xs font-bold">Live Tracking</p>
               <p className="text-[11px] text-neutral-500">Real-time valet updates</p>
             </div>
@@ -265,7 +285,7 @@ export default function HomePage() {
             onClick={() => navigate('/promotions')}
             className="text-xs font-semibold text-[#34C0CA] flex items-center gap-1"
           >
-            View All <ArrowRight className="w-3 h-3" />
+            View All <HiArrowRight className="w-3 h-3" />
           </button>
         </div>
 
@@ -279,7 +299,7 @@ export default function HomePage() {
               <p className="text-[11px] text-white/80">Get ₹100 off your first valet booking</p>
             </div>
             <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-              <Sparkles className="w-5 h-5" />
+              <HiSparkles className="w-5 h-5" />
             </div>
           </div>
         </Card>

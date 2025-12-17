@@ -3,7 +3,7 @@ import Header from '../../components/feature/Header';
 import Card from '../../components/base/Card';
 import Badge from '../../components/base/Badge';
 import BottomNav from '../../components/feature/BottomNav';
-import { Bell, CheckCircle, AlertCircle, Info, Gift, Shield, Clock } from 'lucide-react';
+import { HiBell, HiCheckCircle, HiExclamationCircle, HiInformationCircle, HiGift, HiClock } from 'react-icons/hi';
 
 interface Notification {
   id: string;
@@ -61,13 +61,13 @@ export default function NotificationsPage() {
   const getIcon = (type: string) => {
     switch (type) {
       case 'success':
-        return <CheckCircle className="w-5 h-5 text-secondary-accent" />;
+        return <HiCheckCircle className="w-5 h-5 text-secondary-accent" />;
       case 'warning':
-        return <AlertCircle className="w-5 h-5 text-status-warning" />;
+        return <HiExclamationCircle className="w-5 h-5 text-status-warning" />;
       case 'promotion':
-        return <Gift className="w-5 h-5 text-primary-accent" />;
+        return <HiGift className="w-5 h-5 text-primary-accent" />;
       default:
-        return <Info className="w-5 h-5 text-primary-accent" />;
+        return <HiInformationCircle className="w-5 h-5 text-primary-accent" />;
     }
   };
 
@@ -96,7 +96,7 @@ export default function NotificationsPage() {
           <Card className="p-4 mb-6 bg-gradient-to-r from-primary-accent to-secondary-accent text-white">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <Bell className="w-6 h-6" />
+                <HiBell className="w-6 h-6" />
                 <div>
                   <p className="text-body font-semibold">{unreadCount} Unread</p>
                   <p className="text-caption opacity-90">You have new notifications</p>
@@ -131,7 +131,7 @@ export default function NotificationsPage() {
                   </div>
                   <p className="text-caption text-neutral-600 mb-2">{notification.message}</p>
                   <div className="flex items-center gap-2 text-caption text-neutral-500">
-                    <Clock className="w-3 h-3" />
+                    <HiClock className="w-3 h-3" />
                     <span>{notification.time}</span>
                   </div>
                 </div>
@@ -144,7 +144,7 @@ export default function NotificationsPage() {
         {notifications.length === 0 && (
           <div className="text-center py-12">
             <div className="w-20 h-20 rounded-full bg-neutral-100 flex items-center justify-center mx-auto mb-4">
-              <Bell className="w-10 h-10 text-neutral-400" />
+              <HiBell className="w-10 h-10 text-neutral-400" />
             </div>
             <h3 className="text-h2 font-semibold text-primary-dark mb-2">No notifications</h3>
             <p className="text-body text-neutral-600">
@@ -158,4 +158,3 @@ export default function NotificationsPage() {
     </div>
   );
 }
-

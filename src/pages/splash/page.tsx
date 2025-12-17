@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { ChevronRight } from 'lucide-react';
+import { HiChevronRight } from 'react-icons/hi';
 import splashScreen1 from '../../assets/splash-screen-1.png';
 import splashScreen2 from '../../assets/splash-screen-2.png';
 import splashScreen3 from '../../assets/splash-screen-3.png';
@@ -11,7 +11,6 @@ export default function SplashPage() {
   const location = useLocation();
   const [index, setIndex] = useState(0);
   
-  // Check if this is accessed via /splash route (for testing/preview)
   const isDirectAccess = location.pathname === '/splash';
 
   const slides = [
@@ -56,10 +55,8 @@ export default function SplashPage() {
     }
   };
 
-  // Auto-advance after 5 seconds if user doesn't interact (only for root path)
   useEffect(() => {
     if (isDirectAccess) {
-      // If accessed via /splash, don't auto-advance - allow manual navigation
       return;
     }
     
@@ -74,10 +71,8 @@ export default function SplashPage() {
     return () => clearTimeout(timer);
   }, [index, finish, isDirectAccess]);
 
-  // Check if user should skip splash screens (only for root path, not /splash)
   useEffect(() => {
     if (isDirectAccess) {
-      // If accessed via /splash, don't auto-redirect - allow viewing
       return;
     }
     
@@ -91,7 +86,6 @@ export default function SplashPage() {
 
   return (
     <div className="min-h-screen bg-white safe-top safe-bottom flex flex-col">
-      {/* Logo and Skip Button Container */}
       <div className="px-6 mb-4 flex items-center justify-between pt-safe-top">
         <img 
           src={logoDesign} 
@@ -106,7 +100,6 @@ export default function SplashPage() {
         </button>
       </div>
 
-      {/* Illustration - Takes more space */}
       <div className="relative flex-1 flex items-center justify-center px-6 py-4">
         <img 
           src={slides[index].illustration} 
@@ -115,7 +108,6 @@ export default function SplashPage() {
         />
       </div>
 
-      {/* Content */}
       <div className="px-6 mb-6">
         <h1 className="text-3xl font-bold text-[#0F1415] mb-3 tracking-tight">
           {slides[index].title}
@@ -125,7 +117,6 @@ export default function SplashPage() {
         </p>
       </div>
 
-      {/* Progress Indicators */}
       <div className="flex items-center justify-center space-x-2 mb-6 px-6">
         {slides.map((_, i) => (
           <span
@@ -137,7 +128,6 @@ export default function SplashPage() {
         ))}
       </div>
 
-      {/* Navigation Button - Bottom Right */}
       <div className="px-6 pb-safe-bottom mb-6">
         <div className="flex justify-end">
           <button
@@ -145,7 +135,7 @@ export default function SplashPage() {
             className="w-16 h-16 bg-gradient-to-r from-[#34C0CA] to-[#66BD59] rounded-full flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-110 active:scale-95 transition-all duration-200"
           >
             {index < slides.length - 1 ? (
-              <ChevronRight className="w-6 h-6 text-white" />
+              <HiChevronRight className="w-6 h-6 text-white" />
             ) : (
               <span className="text-white font-bold text-sm">Go</span>
             )}
@@ -155,4 +145,3 @@ export default function SplashPage() {
     </div>
   );
 }
-

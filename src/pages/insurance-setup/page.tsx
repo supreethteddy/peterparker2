@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Card from '../../components/base/Card';
 import Button from '../../components/base/Button';
 import Header from '../../components/feature/Header';
-import { Shield, Check, ArrowRight, Info } from 'lucide-react';
+import { FaShieldAlt, FaCheck, FaArrowRight, FaInfoCircle } from 'react-icons/fa';
 
 export default function InsuranceSetupPage() {
   const navigate = useNavigate();
@@ -27,7 +27,7 @@ export default function InsuranceSetupPage() {
         <Card className="p-6 mb-6 bg-green-50/100">
           <div className="flex items-start gap-4 mb-6">
             <div className="w-12 h-12 bg-primary-accent/10 rounded-full flex items-center justify-center flex-shrink-0">
-              <Shield className="w-6 h-6 text-primary-accent" />
+              <FaShieldAlt className="w-6 h-6 text-primary-accent" />
             </div>
             <div className="flex-1">
               <h2 className="text-h2 font-semibold text-primary-dark mb-2">
@@ -74,20 +74,20 @@ export default function InsuranceSetupPage() {
           {insuranceEnabled && (
             <Card variant="outlined" className="p-4 bg-secondary-accent/5 border-secondary-accent/20">
               <div className="flex items-start gap-3">
-                <Info className="w-5 h-5 text-secondary-accent mt-0.5 flex-shrink-0" />
+                <FaInfoCircle className="w-5 h-5 text-secondary-accent mt-0.5 flex-shrink-0" />
                 <div className="flex-1">
                   <p className="text-body font-medium text-primary-dark mb-2">Coverage Includes:</p>
                   <ul className="space-y-2 text-caption text-neutral-700">
                     <li className="flex items-start gap-2">
-                      <Check className="w-4 h-4 text-secondary-accent mt-0.5 flex-shrink-0" />
+                      <FaCheck className="w-4 h-4 text-secondary-accent mt-0.5 flex-shrink-0" />
                       <span>Vehicle damage protection</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <Check className="w-4 h-4 text-secondary-accent mt-0.5 flex-shrink-0" />
+                      <FaCheck className="w-4 h-4 text-secondary-accent mt-0.5 flex-shrink-0" />
                       <span>Theft and vandalism coverage</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <Check className="w-4 h-4 text-secondary-accent mt-0.5 flex-shrink-0" />
+                      <FaCheck className="w-4 h-4 text-secondary-accent mt-0.5 flex-shrink-0" />
                       <span>24/7 claim support</span>
                     </li>
                   </ul>
@@ -102,7 +102,7 @@ export default function InsuranceSetupPage() {
 
         <Button onClick={handleContinue} fullWidth size="lg">
           Complete Setup
-          <ArrowRight className="ml-2 w-5 h-5" />
+          <FaArrowRight className="ml-2 w-5 h-5" />
         </Button>
       </div>
     </div>

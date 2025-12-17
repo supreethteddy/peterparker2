@@ -2,7 +2,7 @@ import { useState, useRef, KeyboardEvent, ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../../components/base/Button';
 import logoDesign from '../../assets/Logo-design.svg';
-import { ArrowLeft, Delete } from 'lucide-react';
+import { HiArrowLeft, HiBackspace } from 'react-icons/hi';
 
 export default function VerifyOTPPage() {
   const navigate = useNavigate();
@@ -18,7 +18,6 @@ export default function VerifyOTPPage() {
     newOtp[index] = value;
     setOtp(newOtp);
 
-    // Auto-focus next input
     if (value && index < 4) {
       inputRefs.current[index + 1]?.focus();
     }
@@ -57,7 +56,6 @@ export default function VerifyOTPPage() {
   const handleResend = () => {
     if (resendTimer === 0) {
       setResendTimer(60);
-      // Start timer
       const interval = setInterval(() => {
         setResendTimer((prev) => {
           if (prev <= 1) {
@@ -72,13 +70,12 @@ export default function VerifyOTPPage() {
 
   return (
     <div className="min-h-screen bg-white safe-top safe-bottom flex flex-col">
-      {/* Logo and Back Button */}
       <div className="px-6 mb-4 flex items-center justify-between pt-2">
         <button
           onClick={() => navigate('/signup')}
           className="text-base text-neutral-600 hover:text-[#0F1415] font-semibold flex items-center gap-2"
         >
-          <ArrowLeft className="w-5 h-5" />
+          <HiArrowLeft className="w-5 h-5" />
           Back
         </button>
         <img 
@@ -88,7 +85,6 @@ export default function VerifyOTPPage() {
         />
       </div>
 
-      {/* Content */}
       <div className="px-6 flex-1 flex flex-col">
         <div className="flex-1">
           <h1 className="text-3xl font-bold text-[#0F1415] mb-2 tracking-tight">
@@ -98,7 +94,6 @@ export default function VerifyOTPPage() {
             Enter your OTP code
           </p>
 
-          {/* OTP Input */}
           <div className="flex gap-3 justify-center mb-6">
             {otp.map((digit, index) => (
               <input
@@ -115,7 +110,6 @@ export default function VerifyOTPPage() {
             ))}
           </div>
 
-          {/* Resend Link */}
           <div className="text-center mb-8">
             {resendTimer > 0 ? (
               <p className="text-base text-neutral-600">
@@ -142,7 +136,6 @@ export default function VerifyOTPPage() {
           </Button>
         </div>
 
-        {/* Numeric Keypad */}
         <div className="pb-safe-bottom mb-6">
           <div className="grid grid-cols-3 gap-3">
             {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((digit) => (
@@ -164,7 +157,7 @@ export default function VerifyOTPPage() {
               onClick={handleBackspace}
               className="h-14 bg-white border-2 border-neutral-200 rounded-xl text-[#0F1415] hover:bg-neutral-50 active:bg-neutral-100 transition-all duration-200 flex items-center justify-center"
             >
-              <Delete className="w-6 h-6" />
+              <HiBackspace className="w-6 h-6" />
             </button>
           </div>
         </div>
@@ -172,4 +165,3 @@ export default function VerifyOTPPage() {
     </div>
   );
 }
-

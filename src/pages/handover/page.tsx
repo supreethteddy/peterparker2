@@ -1,10 +1,10 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../../components/feature/Header';
 import Button from '../../components/base/Button';
 import Card from '../../components/base/Card';
-import { Camera, CheckCircle2, Car, Fuel, FileText, Shield } from 'lucide-react';
+import { HiCamera, HiCheckCircle, HiShieldCheck } from 'react-icons/hi';
+import { FaCarSide, FaGasPump, FaFileAlt } from 'react-icons/fa';
 
 export default function HandoverPage() {
   const navigate = useNavigate();
@@ -22,7 +22,6 @@ export default function HandoverPage() {
   const [confirmHandover, setConfirmHandover] = useState(false);
 
   useEffect(() => {
-    // Auto-advance to handover start after showing arrival
     if (step === 1) {
       setTimeout(() => setStep(2), 2000);
     }
@@ -51,6 +50,13 @@ export default function HandoverPage() {
     return null;
   }
 
+  const checklistItems = [
+    { key: 'exteriorCheck', label: 'Exterior Condition Check', description: 'Check for scratches or dents', icon: FaCarSide },
+    { key: 'interiorCheck', label: 'Interior Condition Check', description: 'Check interior items', icon: HiShieldCheck },
+    { key: 'fuelLevel', label: 'Fuel Level Noted', description: 'Current fuel level recorded', icon: FaGasPump },
+    { key: 'documents', label: 'Documents Verified', description: 'RC, Insurance verified', icon: FaFileAlt }
+  ];
+
   return (
     <div className="min-h-screen bg-neutral-50 safe-top safe-bottom">
       <Header 
@@ -59,11 +65,10 @@ export default function HandoverPage() {
       />
 
       <div className="pt-20 px-4 pb-6">
-        {/* Step 1: Valet Arrived */}
         {step === 1 && (
           <div className="text-center py-12">
             <div className="w-24 h-24 bg-gradient-to-br from-[#66BD59] to-[#52A547] rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
-              <CheckCircle2 className="w-12 h-12 text-white" />
+              <HiCheckCircle className="w-12 h-12 text-white" />
             </div>
             <h2 className="text-2xl font-bold text-[#0F1415] mb-2">{valet.name} has arrived</h2>
             <p className="text-neutral-600 mb-8">Let's begin the secure handover process</p>
@@ -82,7 +87,6 @@ export default function HandoverPage() {
           </div>
         )}
 
-        {/* Step 2: Selfie Verification */}
         {step === 2 && (
           <div className="py-8">
             <div className="text-center mb-8">
@@ -97,9 +101,9 @@ export default function HandoverPage() {
                     userSelfie ? 'border-[#66BD59] bg-[#66BD59]/10' : 'border-neutral-300 bg-neutral-50'
                   }`}>
                     {userSelfie ? (
-                      <CheckCircle2 className="w-10 h-10 text-[#66BD59]" />
+                      <HiCheckCircle className="w-10 h-10 text-[#66BD59]" />
                     ) : (
-                      <Camera className="w-10 h-10 text-neutral-400" />
+                      <HiCamera className="w-10 h-10 text-neutral-400" />
                     )}
                   </div>
                   <div className="flex-1 text-left">
@@ -117,9 +121,9 @@ export default function HandoverPage() {
                     valetSelfie ? 'border-[#66BD59] bg-[#66BD59]/10' : 'border-neutral-300 bg-neutral-50'
                   }`}>
                     {valetSelfie ? (
-                      <CheckCircle2 className="w-10 h-10 text-[#66BD59]" />
+                      <HiCheckCircle className="w-10 h-10 text-[#66BD59]" />
                     ) : (
-                      <Camera className="w-10 h-10 text-neutral-400" />
+                      <HiCamera className="w-10 h-10 text-neutral-400" />
                     )}
                   </div>
                   <div className="flex-1 text-left">
@@ -139,14 +143,13 @@ export default function HandoverPage() {
                 size="lg"
                 className="text-lg font-bold"
               >
-                <Camera className="w-5 h-5 mr-2" />
+                <HiCamera className="w-5 h-5 mr-2" />
                 Take Selfie Together
               </Button>
             )}
           </div>
         )}
 
-        {/* Step 3: Handover Checklist */}
         {step === 3 && (
           <div className="py-6">
             <div className="text-center mb-6">
@@ -155,12 +158,7 @@ export default function HandoverPage() {
             </div>
             
             <div className="space-y-3 mb-6">
-              {[
-                { key: 'exteriorCheck', label: 'Exterior Condition Check', description: 'Check for scratches or dents', icon: Car },
-                { key: 'interiorCheck', label: 'Interior Condition Check', description: 'Check interior items', icon: Shield },
-                { key: 'fuelLevel', label: 'Fuel Level Noted', description: 'Current fuel level recorded', icon: Fuel },
-                { key: 'documents', label: 'Documents Verified', description: 'RC, Insurance verified', icon: FileText }
-              ].map((item) => {
+              {checklistItems.map((item) => {
                 const Icon = item.icon;
                 const isChecked = checklist[item.key as keyof typeof checklist];
                 return (
@@ -182,7 +180,7 @@ export default function HandoverPage() {
                       <div className={`w-7 h-7 rounded-full border-2 flex items-center justify-center transition-all ${
                         isChecked ? 'border-[#66BD59] bg-[#66BD59]' : 'border-neutral-300'
                       }`}>
-                        {isChecked && <CheckCircle2 className="w-5 h-5 text-white" />}
+                        {isChecked && <HiCheckCircle className="w-5 h-5 text-white" />}
                       </div>
                     </div>
                   </Card>
@@ -190,7 +188,6 @@ export default function HandoverPage() {
               })}
             </div>
 
-            {/* Final Confirmation */}
             <Card className="p-4 mb-6 bg-gradient-to-r from-[#34C0CA]/5 to-[#66BD59]/5 border-2 border-[#34C0CA]/20">
               <label className="flex items-start gap-3 cursor-pointer">
                 <input
@@ -208,7 +205,7 @@ export default function HandoverPage() {
 
             <div className="bg-gradient-to-r from-[#34C0CA]/10 to-[#66BD59]/10 p-4 rounded-xl mb-6">
               <div className="flex items-center gap-2">
-                <Shield className="w-5 h-5 text-[#34C0CA]" />
+                <HiShieldCheck className="w-5 h-5 text-[#34C0CA]" />
                 <span className="text-sm font-semibold text-[#0F1415]">
                   30-minute timer starts after handover completion
                 </span>

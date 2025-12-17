@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import Card from '../../components/base/Card';
 import BottomNav from '../../components/feature/BottomNav';
 import logoDesign from '../../assets/Logo-design.svg';
-import { Car, MapPin, Clock, CheckCircle, AlertCircle } from 'lucide-react';
+import { HiLocationMarker, HiClock, HiCheckCircle, HiExclamationCircle } from 'react-icons/hi';
+import { FaCarSide } from 'react-icons/fa';
 
 export default function ParkingListPage() {
   const navigate = useNavigate();
@@ -12,12 +13,10 @@ export default function ParkingListPage() {
   const [imageErrors, setImageErrors] = useState<Set<number>>(new Set());
 
   useEffect(() => {
-    // Load parking sessions from localStorage
     const savedParking = localStorage.getItem('parkingSessions');
     if (savedParking) {
       setParkingSessions(JSON.parse(savedParking));
     } else {
-      // Sample data for demo
       const sampleSessions = [
         {
           id: 1,
@@ -27,8 +26,8 @@ export default function ParkingListPage() {
             rating: 4.8
           },
           parkingLocation: 'Phoenix MarketCity - Level 2, Zone B, Slot 45',
-          startTime: new Date(Date.now() - 15 * 60 * 1000).toISOString(), // 15 minutes ago
-          timeLeft: 15 * 60, // 15 minutes in seconds
+          startTime: new Date(Date.now() - 15 * 60 * 1000).toISOString(),
+          timeLeft: 15 * 60,
           status: 'ongoing',
           pickupLocation: '123 Main Street',
           dropLocation: 'Phoenix MarketCity'
@@ -41,7 +40,7 @@ export default function ParkingListPage() {
             rating: 4.9
           },
           parkingLocation: 'UB City Mall - Level 1, Zone A, Slot 12',
-          startTime: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
+          startTime: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
           timeLeft: 0,
           status: 'completed',
           pickupLocation: '456 Park Avenue',
@@ -55,7 +54,6 @@ export default function ParkingListPage() {
     }
   }, []);
 
-  // Update ongoing parking timers
   useEffect(() => {
     const timer = setInterval(() => {
       setParkingSessions(prev => {
@@ -110,7 +108,6 @@ export default function ParkingListPage() {
         } 
       });
     } else {
-      // For completed sessions, show details
       navigate('/trip-details', { state: { trip: session } });
     }
   };
@@ -120,7 +117,6 @@ export default function ParkingListPage() {
 
   return (
     <div className="min-h-screen bg-white safe-top safe-bottom">
-      {/* Logo */}
       <div className="px-6 mb-4 flex items-center justify-center pt-2">
         <img 
           src={logoDesign} 
@@ -134,7 +130,6 @@ export default function ParkingListPage() {
           My Parking
         </h1>
 
-        {/* Tab Switcher */}
         <div className="flex bg-neutral-100 rounded-xl p-1 mb-6">
           {[
             { key: 'ongoing', label: 'Ongoing', count: ongoingCount },
@@ -163,7 +158,6 @@ export default function ParkingListPage() {
           ))}
         </div>
 
-        {/* Parking Sessions List */}
         <div className="space-y-4">
           {filteredSessions.map((session) => (
             <Card 
@@ -172,7 +166,6 @@ export default function ParkingListPage() {
               onClick={() => handleParkingClick(session)}
             >
               <div className="flex items-start gap-4">
-                {/* Valet Photo */}
                 <div className="flex-shrink-0">
                   {session.valet.photo && !imageErrors.has(session.id) ? (
                     <img 
@@ -190,7 +183,6 @@ export default function ParkingListPage() {
                   )}
                 </div>
 
-                {/* Content */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between mb-2">
                     <div>
@@ -210,24 +202,22 @@ export default function ParkingListPage() {
                       </span>
                     ) : (
                       <span className="px-3 py-1 bg-neutral-100 text-neutral-600 rounded-full text-xs font-semibold flex items-center gap-1">
-                        <CheckCircle className="w-3 h-3" />
+                        <HiCheckCircle className="w-3 h-3" />
                         Completed
                       </span>
                     )}
                   </div>
 
-                  {/* Parking Location */}
                   <div className="flex items-start gap-2 mb-3">
-                    <MapPin className="w-4 h-4 text-[#66BD59] flex-shrink-0 mt-0.5" />
+                    <HiLocationMarker className="w-4 h-4 text-[#66BD59] flex-shrink-0 mt-0.5" />
                     <p className="text-sm text-neutral-600 flex-1">
                       {session.parkingLocation}
                     </p>
                   </div>
 
-                  {/* Time Left or Completed Info */}
                   {session.status === 'ongoing' ? (
                     <div className="flex items-center gap-2 p-3 bg-[#66BD59]/5 rounded-lg border border-[#66BD59]/20">
-                      <Clock className="w-5 h-5 text-[#66BD59]" />
+                      <HiClock className="w-5 h-5 text-[#66BD59]" />
                       <div className="flex-1">
                         <p className="text-xs text-neutral-600 mb-1">Free time remaining</p>
                         <p className="text-xl font-bold text-[#66BD59]">
@@ -235,7 +225,7 @@ export default function ParkingListPage() {
                         </p>
                       </div>
                       {session.timeLeft < 300 && (
-                        <AlertCircle className="w-5 h-5 text-[#EF4444]" />
+                        <HiExclamationCircle className="w-5 h-5 text-[#EF4444]" />
                       )}
                     </div>
                   ) : (
@@ -258,11 +248,10 @@ export default function ParkingListPage() {
           ))}
         </div>
 
-        {/* Empty State */}
         {filteredSessions.length === 0 && (
           <div className="text-center py-16">
             <div className="w-20 h-20 bg-[#66BD59]/10 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Car className="w-10 h-10 text-[#66BD59]" />
+              <FaCarSide className="w-10 h-10 text-[#66BD59]" />
             </div>
             <h3 className="font-bold text-[#0F1415] text-lg mb-2">
               No {activeTab === 'ongoing' ? 'ongoing' : 'completed'} parking
@@ -288,4 +277,3 @@ export default function ParkingListPage() {
     </div>
   );
 }
-

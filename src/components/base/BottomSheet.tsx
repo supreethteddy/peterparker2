@@ -1,5 +1,5 @@
 import { ReactNode, useEffect } from 'react';
-import { X } from 'lucide-react';
+import { HiX } from 'react-icons/hi';
 
 interface BottomSheetProps {
   children: ReactNode;
@@ -57,7 +57,7 @@ export default function BottomSheet({
                 onClick={onClose}
                 className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-neutral-100 transition-colors"
               >
-                <X className="w-5 h-5 text-neutral-600" />
+                <HiX className="w-5 h-5 text-neutral-600" />
               </button>
             )}
           </div>
@@ -71,4 +71,3 @@ export default function BottomSheet({
     </>
   );
 }
-

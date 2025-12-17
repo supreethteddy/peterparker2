@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import Header from '../../components/feature/Header';
 import Button from '../../components/base/Button';
 import Card from '../../components/base/Card';
-import { MapPin, X } from 'lucide-react';
+import { HiLocationMarker, HiX } from 'react-icons/hi';
 
 export default function SearchingValetPage() {
   const navigate = useNavigate();
@@ -13,12 +12,10 @@ export default function SearchingValetPage() {
   const [foundValets, setFoundValets] = useState<any[]>([]);
 
   useEffect(() => {
-    // Simulate searching
     const timer = setInterval(() => {
       setSearchTime(prev => prev + 1);
     }, 1000);
 
-    // Simulate finding valets after 3 seconds
     setTimeout(() => {
       setFoundValets([
         {
@@ -75,7 +72,6 @@ export default function SearchingValetPage() {
 
   return (
     <div className="relative min-h-screen bg-neutral-100 safe-top safe-bottom">
-      {/* Map Background */}
       <div className="absolute inset-0 z-0">
         <img 
           src="https://readdy.ai/api/search-image?query=Bangalore%20city%20map%20view%20with%20location%20pins%2C%20modern%20urban%20area%2C%20streets%20and%20buildings%20visible%2C%20satellite%20view%20style%2C%20clean%20and%20detailed&width=800&height=1200&seq=map1&orientation=portrait"
@@ -83,7 +79,6 @@ export default function SearchingValetPage() {
           className="w-full h-full object-cover"
         />
         
-        {/* Pulsing Location Marker */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
           <div className="relative">
             <div className="absolute inset-0 w-8 h-8 bg-[#66BD59] rounded-full animate-ping opacity-75"></div>
@@ -93,28 +88,25 @@ export default function SearchingValetPage() {
         </div>
       </div>
 
-      {/* Top Bar */}
       <div className="absolute top-0 left-0 right-0 z-10 pt-safe-top">
         <div className="flex items-center justify-between px-4 py-3">
           <button
             onClick={handleCancel}
             className="w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-neutral-50 transition-colors"
           >
-            <X className="w-5 h-5 text-[#0F1415]" />
+            <HiX className="w-5 h-5 text-[#0F1415]" />
           </button>
         </div>
       </div>
 
-      {/* Bottom Card */}
       <div className="fixed bottom-0 left-0 right-0 z-20 safe-bottom">
         <div className="bg-white rounded-t-3xl shadow-[0_-8px_32px_rgba(0,0,0,0.2)] border-t border-neutral-100">
           <div className="px-6 pt-6 pb-6">
             {foundValets.length === 0 ? (
               <>
-                {/* Searching State */}
                 <div className="text-center py-8">
                   <div className="w-20 h-20 bg-gradient-to-r from-[#34C0CA] to-[#66BD59] rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
-                    <MapPin className="w-10 h-10 text-white" />
+                    <HiLocationMarker className="w-10 h-10 text-white" />
                   </div>
                   <h2 className="text-2xl font-bold text-[#0F1415] mb-2">
                     Finding a Peter Parker near you...
@@ -129,7 +121,7 @@ export default function SearchingValetPage() {
                   </div>
                   <Button
                     onClick={handleCancel}
-                    variant="outline"
+                    variant="secondary"
                     fullWidth
                   >
                     Cancel Request
@@ -138,7 +130,6 @@ export default function SearchingValetPage() {
               </>
             ) : (
               <>
-                {/* Valets Found */}
                 <div className="mb-4">
                   <h2 className="text-xl font-bold text-[#0F1415] mb-1">
                     {foundValets.length} Peter Parkers found
@@ -189,7 +180,7 @@ export default function SearchingValetPage() {
 
                 <Button
                   onClick={handleCancel}
-                  variant="outline"
+                  variant="secondary"
                   fullWidth
                 >
                   Cancel Request
@@ -202,4 +193,3 @@ export default function SearchingValetPage() {
     </div>
   );
 }
-

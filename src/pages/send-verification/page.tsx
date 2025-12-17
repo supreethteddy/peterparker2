@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Input from '../../components/base/Input';
 import Button from '../../components/base/Button';
 import logoDesign from '../../assets/Logo-design.svg';
-import { ArrowLeft } from 'lucide-react';
+import { FaArrowLeft } from 'react-icons/fa';
 
 export default function SendVerificationPage() {
   const navigate = useNavigate();
@@ -23,7 +23,7 @@ export default function SendVerificationPage() {
           onClick={() => navigate('/login')}
           className="text-base text-neutral-600 hover:text-[#0F1415] font-semibold flex items-center gap-2"
         >
-          <ArrowLeft className="w-5 h-5" />
+          <FaArrowLeft className="w-5 h-5" />
           Back
         </button>
         <img 

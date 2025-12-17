@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Card from '../../../components/base/Card';
 import Input from '../../../components/base/Input';
 import Button from '../../../components/base/Button';
-import { ArrowLeft, CreditCard } from 'lucide-react';
+import { HiArrowLeft, HiCreditCard } from 'react-icons/hi';
 
 interface PaymentMethod {
   id: string;
@@ -94,7 +93,7 @@ export default function AddAmountPage() {
           onClick={() => navigate(-1)}
           className="text-base text-neutral-600 hover:text-[#0F1415] font-semibold flex items-center gap-2"
         >
-          <ArrowLeft className="w-5 h-5" />
+          <HiArrowLeft className="w-5 h-5" />
           Back
         </button>
         <h1 className="text-xl font-bold text-[#0F1415] flex-1 text-center">Amount</h1>
@@ -139,7 +138,7 @@ export default function AddAmountPage() {
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    {method.type === 'card' && <CreditCard className="w-5 h-5 text-[#66BD59]" />}
+                    {method.type === 'card' && <HiCreditCard className="w-5 h-5 text-[#66BD59]" />}
                     {method.type === 'email' && (
                       <div className="w-8 h-8 rounded-full bg-[#66BD59]/10 flex items-center justify-center">
                         <span className="text-[#66BD59] font-bold text-sm">P</span>

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Input from '../../components/base/Input';
 import Button from '../../components/base/Button';
 import logoDesign from '../../assets/Logo-design.svg';
-import { Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import { HiArrowLeft, HiEye, HiEyeOff } from 'react-icons/hi';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -27,7 +27,7 @@ export default function LoginPage() {
           onClick={() => navigate('/welcome')}
           className="text-base text-neutral-600 hover:text-[#0F1415] font-semibold flex items-center gap-2"
         >
-          <ArrowLeft className="w-5 h-5" />
+          <HiArrowLeft className="w-5 h-5" />
           Back
         </button>
         <img 
@@ -62,7 +62,7 @@ export default function LoginPage() {
                     onClick={() => setShowPassword(!showPassword)}
                     className="text-neutral-500 hover:text-neutral-700"
                   >
-                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    {showPassword ? <HiEyeOff className="w-5 h-5" /> : <HiEye className="w-5 h-5" />}
                   </button>
                 }
               />
@@ -134,4 +134,3 @@ export default function LoginPage() {
     </div>
   );
 }
-

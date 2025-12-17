@@ -3,8 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../../components/feature/Header';
 import Button from '../../components/base/Button';
 import Card from '../../components/base/Card';
-import Input from '../../components/base/Input';
-import { Star } from 'lucide-react';
+import { HiStar } from 'react-icons/hi';
 
 export default function ReviewPage() {
   const navigate = useNavigate();
@@ -79,7 +78,6 @@ export default function ReviewPage() {
       />
 
       <div className="pt-20 px-4 pb-6">
-        {/* Valet Info */}
         <Card className="p-4 mb-6">
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#34C0CA] to-[#66BD59] flex items-center justify-center text-white text-xl font-bold">
@@ -92,7 +90,6 @@ export default function ReviewPage() {
           </div>
         </Card>
 
-        {/* Rating Section */}
         <Card className="p-6 mb-6">
           <h3 className="font-bold text-[#0F1415] mb-4 text-center">Rate Your Experience</h3>
           <div className="flex justify-center gap-2 mb-4">
@@ -104,7 +101,7 @@ export default function ReviewPage() {
                   star <= rating ? 'text-yellow-400' : 'text-neutral-300'
                 }`}
               >
-                <Star className={`w-full h-full ${star <= rating ? 'fill-current' : ''}`} />
+                <HiStar className={`w-full h-full ${star <= rating ? 'fill-current' : ''}`} />
               </button>
             ))}
           </div>
@@ -120,7 +117,6 @@ export default function ReviewPage() {
           )}
         </Card>
 
-        {/* Feedback Input */}
         <Card className="p-4 mb-6">
           <h3 className="font-semibold text-[#0F1415] mb-3">Write Your Feedback</h3>
           <textarea
@@ -132,7 +128,6 @@ export default function ReviewPage() {
           />
         </Card>
 
-        {/* Tip Section */}
         <Card className="p-4 mb-6">
           <h3 className="font-semibold text-[#0F1415] mb-4">
             Give some tips to {valet?.name || 'Valet'}
@@ -174,7 +169,6 @@ export default function ReviewPage() {
           </div>
         </Card>
 
-        {/* Submit Button */}
         <Button
           onClick={handleSubmit}
           disabled={rating === 0}
@@ -188,4 +182,3 @@ export default function ReviewPage() {
     </div>
   );
 }
-

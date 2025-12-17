@@ -4,7 +4,8 @@ import Card from '../../components/base/Card';
 import Input from '../../components/base/Input';
 import Button from '../../components/base/Button';
 import Header from '../../components/feature/Header';
-import { CreditCard, Wallet } from 'lucide-react';
+import { HiCreditCard } from 'react-icons/hi';
+import { IoWallet } from 'react-icons/io5';
 
 export default function PaymentSetupPage() {
   const navigate = useNavigate();
@@ -50,7 +51,6 @@ export default function PaymentSetupPage() {
       />
       
       <div className="pt-20 pb-8 px-6 max-w-md mx-auto">
-        {/* Payment Methods */}
         <div className="grid grid-cols-2 gap-3 mb-6">
           <button
             onClick={() => setSelectedMethod('card')}
@@ -60,8 +60,8 @@ export default function PaymentSetupPage() {
                 : 'border-neutral-200 hover:border-neutral-300'
             }`}
           >
-            <CreditCard className={`w-8 h-8 mb-2 mx-auto ${
-              selectedMethod === 'card' ? 'text-[#66BD59] bg-[#66BD59]/10' : 'text-neutral-400'
+            <HiCreditCard className={`w-8 h-8 mb-2 mx-auto ${
+              selectedMethod === 'card' ? 'text-[#66BD59]' : 'text-neutral-400'
             }`} />
             <p className={`text-base font-medium ${
               selectedMethod === 'card' ? 'text-[#66BD59]' : 'text-[#0F1415]'
@@ -76,7 +76,7 @@ export default function PaymentSetupPage() {
                 : 'border-neutral-200 hover:border-neutral-300'
             }`}
           >
-            <Wallet className={`w-8 h-8 mb-2 mx-auto ${
+            <IoWallet className={`w-8 h-8 mb-2 mx-auto ${
               selectedMethod === 'wallet' ? 'text-[#66BD59]' : 'text-neutral-400'
             }`} />
             <p className={`text-base font-medium ${
@@ -85,7 +85,6 @@ export default function PaymentSetupPage() {
           </button>
         </div>
 
-        {/* Card Form */}
         {selectedMethod === 'card' && (
           <Card className="p-6 bg-green-50/100 border-neutral-200 border-2 rounded-xl">
             <h2 className="text-xl font-bold mb-6 text-[#0F1415]">Add Card</h2>
@@ -134,7 +133,7 @@ export default function PaymentSetupPage() {
               <div className="flex gap-4 pt-4">
                 <Button
                   onClick={() => navigate(-1)}
-                  variant="outline"
+                  variant="secondary"
                   fullWidth
                   size="lg"
                 >
@@ -153,7 +152,6 @@ export default function PaymentSetupPage() {
           </Card>
         )}
 
-        {/* Wallet/UPI Option */}
         {selectedMethod === 'wallet' && (
           <Card className="p-6 bg-green-50/100 border-neutral-200 border-2 rounded-xl">
             <h2 className="text-xl font-bold mb-4 text-[#0F1415]">Wallet/UPI</h2>
@@ -163,7 +161,7 @@ export default function PaymentSetupPage() {
             <div className="flex gap-4">
               <Button
                 onClick={() => navigate(-1)}
-                variant="outline"
+                variant="secondary"
                 fullWidth
                 size="lg"
               >
@@ -183,4 +181,3 @@ export default function PaymentSetupPage() {
     </div>
   );
 }
-

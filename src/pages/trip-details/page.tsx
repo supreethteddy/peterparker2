@@ -3,7 +3,8 @@ import Header from '../../components/feature/Header';
 import Card from '../../components/base/Card';
 import Button from '../../components/base/Button';
 import Badge from '../../components/base/Badge';
-import { MapPin, Clock, CreditCard, Share2, Download, Star, Phone, MessageCircle, Shield } from 'lucide-react';
+import { HiLocationMarker, HiPhone, HiShieldCheck, HiStar, HiDownload, HiShare } from 'react-icons/hi';
+import { BiMessageDetail } from 'react-icons/bi';
 
 export default function TripDetailsPage() {
   const navigate = useNavigate();
@@ -39,7 +40,6 @@ export default function TripDetailsPage() {
       <Header title="Trip Details" onLeftClick={() => navigate(-1)} />
       
       <div className="pt-20 pb-8 px-6 max-w-md mx-auto">
-        {/* Status Badge */}
         <div className="mb-6">
           <Badge 
             variant={trip.status === 'completed' ? 'success' : trip.status === 'cancelled' ? 'error' : 'info'}
@@ -50,7 +50,6 @@ export default function TripDetailsPage() {
           </Badge>
         </div>
 
-        {/* Trip Summary Card */}
         <Card className="p-6 mb-6">
           <div className="flex items-center justify-between mb-6">
             <div>
@@ -62,15 +61,14 @@ export default function TripDetailsPage() {
                 onClick={handleShare}
                 className="w-10 h-10 rounded-full bg-primary-accent/10 flex items-center justify-center hover:bg-primary-accent/20 transition-colors"
               >
-                <Share2 className="w-5 h-5 text-primary-accent" />
+                <HiShare className="w-5 h-5 text-primary-accent" />
               </button>
               <button className="w-10 h-10 rounded-full bg-primary-accent/10 flex items-center justify-center hover:bg-primary-accent/20 transition-colors">
-                <Download className="w-5 h-5 text-primary-accent" />
+                <HiDownload className="w-5 h-5 text-primary-accent" />
               </button>
             </div>
           </div>
 
-          {/* Route */}
           <div className="space-y-4 mb-6">
             <div className="flex items-start gap-3">
               <div className="w-6 h-6 rounded-full bg-secondary-accent flex items-center justify-center flex-shrink-0 mt-1">
@@ -88,7 +86,7 @@ export default function TripDetailsPage() {
 
             <div className="flex items-start gap-3">
               <div className="w-6 h-6 rounded-full bg-status-error flex items-center justify-center flex-shrink-0 mt-1">
-                <MapPin className="w-3 h-3 text-white" />
+                <HiLocationMarker className="w-3 h-3 text-white" />
               </div>
               <div className="flex-1">
                 <p className="text-caption text-neutral-500 mb-1">Drop-off</p>
@@ -97,7 +95,6 @@ export default function TripDetailsPage() {
             </div>
           </div>
 
-          {/* Trip Info */}
           <div className="grid grid-cols-2 gap-4 pt-4 border-t border-neutral-200">
             <div>
               <p className="text-caption text-neutral-500 mb-1">Duration</p>
@@ -110,7 +107,6 @@ export default function TripDetailsPage() {
           </div>
         </Card>
 
-        {/* Valet Info */}
         <Card className="p-4 mb-6">
           <h3 className="text-h2 font-semibold text-primary-dark mb-4">Your Peter Parker</h3>
           <div className="flex items-center gap-4">
@@ -123,16 +119,16 @@ export default function TripDetailsPage() {
                 <Badge variant="success" size="sm">Verified</Badge>
               </div>
               <div className="flex items-center gap-2 mb-2">
-                <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                <HiStar className="w-4 h-4 text-yellow-500" />
                 <span className="text-body text-primary-dark">{trip.valet.rating}</span>
               </div>
               <div className="flex gap-2">
                 <button className="px-3 py-1.5 bg-primary-accent/10 text-primary-accent rounded-button text-sm font-medium flex items-center gap-2">
-                  <Phone className="w-4 h-4" />
+                  <HiPhone className="w-4 h-4" />
                   Call
                 </button>
                 <button className="px-3 py-1.5 bg-secondary-accent/10 text-secondary-accent rounded-button text-sm font-medium flex items-center gap-2">
-                  <MessageCircle className="w-4 h-4" />
+                  <BiMessageDetail className="w-4 h-4" />
                   Message
                 </button>
               </div>
@@ -140,7 +136,6 @@ export default function TripDetailsPage() {
           </div>
         </Card>
 
-        {/* Vehicle Info */}
         <Card className="p-4 mb-6">
           <h3 className="text-h2 font-semibold text-primary-dark mb-4">Vehicle Details</h3>
           <div className="space-y-3">
@@ -155,7 +150,6 @@ export default function TripDetailsPage() {
           </div>
         </Card>
 
-        {/* Payment Breakdown */}
         <Card className="p-6 mb-6">
           <h3 className="text-h2 font-semibold text-primary-dark mb-4">Payment Breakdown</h3>
           <div className="space-y-3">
@@ -180,10 +174,9 @@ export default function TripDetailsPage() {
           </div>
         </Card>
 
-        {/* Insurance Status */}
         <Card variant="outlined" className="p-4 mb-6 border-secondary-accent/20 bg-secondary-accent/5">
           <div className="flex items-center gap-3">
-            <Shield className="w-5 h-5 text-secondary-accent" />
+            <HiShieldCheck className="w-5 h-5 text-secondary-accent" />
             <div className="flex-1">
               <p className="text-body font-medium text-primary-dark">Trip Insurance</p>
               <p className="text-caption text-neutral-600">Active • Coverage included</p>
@@ -192,15 +185,14 @@ export default function TripDetailsPage() {
           </div>
         </Card>
 
-        {/* Actions */}
         <div className="space-y-3">
-          <Button variant="outline" fullWidth>
+          <Button variant="secondary" fullWidth>
             Download Invoice
           </Button>
-          <Button variant="outline" fullWidth>
+          <Button variant="secondary" fullWidth>
             Report an Issue
           </Button>
-          <Button variant="outline" fullWidth>
+          <Button variant="secondary" fullWidth>
             Start Insurance Claim
           </Button>
         </div>
@@ -208,4 +200,3 @@ export default function TripDetailsPage() {
     </div>
   );
 }
-

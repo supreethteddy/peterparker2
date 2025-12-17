@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Card from '../../../components/base/Card';
 import Button from '../../../components/base/Button';
-import { ArrowLeft, X, CheckCircle } from 'lucide-react';
+import { HiArrowLeft, HiX, HiCheckCircle } from 'react-icons/hi';
 
 export default function WalletSuccessPage() {
   const navigate = useNavigate();
@@ -47,7 +47,7 @@ export default function WalletSuccessPage() {
           onClick={() => navigate('/wallet')}
           className="text-base text-neutral-600 hover:text-[#0F1415] font-semibold flex items-center gap-2"
         >
-          <ArrowLeft className="w-5 h-5" />
+          <HiArrowLeft className="w-5 h-5" />
           Back
         </button>
         <h1 className="text-xl font-bold text-[#0F1415] flex-1 text-center">Amount</h1>
@@ -61,14 +61,14 @@ export default function WalletSuccessPage() {
           onClick={() => navigate('/wallet')}
           className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full hover:bg-neutral-100 transition-colors"
         >
-          <X className="w-5 h-5 text-neutral-600" />
+          <HiX className="w-5 h-5 text-neutral-600" />
         </button>
 
         {/* Success Content */}
         <div className="text-center">
           {/* Success Icon */}
           <div className="w-20 h-20 bg-[#66BD59]/10 rounded-full flex items-center justify-center mx-auto mb-6">
-            <CheckCircle className="w-12 h-12 text-[#66BD59]" />
+            <HiCheckCircle className="w-12 h-12 text-[#66BD59]" />
           </div>
 
           {/* Title */}
