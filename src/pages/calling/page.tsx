@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Phone, PhoneOff, Mic, MicOff, Volume2, Plus, Hash } from 'lucide-react';
+import { HiPhone, HiMicrophone, HiVolumeUp, HiPlus, HiHashtag } from 'react-icons/hi';
+import { MdCallEnd, MdMicOff } from 'react-icons/md';
 
 export default function CallingPage() {
   const navigate = useNavigate();
@@ -11,7 +12,6 @@ export default function CallingPage() {
   const [callDuration, setCallDuration] = useState(0);
   const [isCalling, setIsCalling] = useState(true);
 
-  // Simulate call duration
   useEffect(() => {
     if (!isCalling) {
       const timer = setInterval(() => {
@@ -33,7 +33,6 @@ export default function CallingPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0F1415] via-[#171717] to-[#0F1415] safe-top safe-bottom flex flex-col items-center justify-center px-6">
-      {/* Valet Info */}
       <div className="flex-1 flex flex-col items-center justify-center">
         <div className="w-32 h-32 rounded-full bg-gradient-to-br from-[#34C0CA] to-[#66BD59] flex items-center justify-center text-white text-4xl font-bold mb-6">
           {valet?.name?.charAt(0) || 'V'}
@@ -46,7 +45,6 @@ export default function CallingPage() {
         )}
       </div>
 
-      {/* Call Controls */}
       <div className="w-full pb-safe-bottom mb-8">
         <div className="grid grid-cols-3 gap-4 mb-6">
           <button
@@ -54,9 +52,9 @@ export default function CallingPage() {
             className="w-16 h-16 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-colors"
           >
             {isMuted ? (
-              <MicOff className="w-6 h-6 text-white" />
+              <MdMicOff className="w-6 h-6 text-white" />
             ) : (
-              <Mic className="w-6 h-6 text-white" />
+              <HiMicrophone className="w-6 h-6 text-white" />
             )}
           </button>
           <button
@@ -65,16 +63,16 @@ export default function CallingPage() {
               isSpeaker ? 'bg-[#34C0CA]' : 'bg-white/10 hover:bg-white/20'
             }`}
           >
-            <Volume2 className="w-6 h-6 text-white" />
+            <HiVolumeUp className="w-6 h-6 text-white" />
           </button>
           <button className="w-16 h-16 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-colors">
-            <Hash className="w-6 h-6 text-white" />
+            <HiHashtag className="w-6 h-6 text-white" />
           </button>
         </div>
 
         <div className="flex items-center justify-center gap-4 mb-6">
           <button className="w-16 h-16 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-colors">
-            <Plus className="w-6 h-6 text-white" />
+            <HiPlus className="w-6 h-6 text-white" />
           </button>
         </div>
 
@@ -82,10 +80,9 @@ export default function CallingPage() {
           onClick={handleEndCall}
           className="w-20 h-20 rounded-full bg-[#EF4444] flex items-center justify-center mx-auto hover:bg-[#DC2626] transition-colors shadow-xl"
         >
-          <PhoneOff className="w-8 h-8 text-white" />
+          <MdCallEnd className="w-8 h-8 text-white" />
         </button>
       </div>
     </div>
   );
 }
-

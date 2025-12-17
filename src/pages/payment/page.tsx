@@ -1,10 +1,9 @@
-
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../../components/feature/Header';
 import Button from '../../components/base/Button';
 import Card from '../../components/base/Card';
-import { CreditCard } from 'lucide-react';
+import { HiCreditCard } from 'react-icons/hi';
 
 export default function PaymentPage() {
   const navigate = useNavigate();
@@ -18,7 +17,7 @@ export default function PaymentPage() {
   const overtimeCharge = Math.ceil(overtimeMinutes / 10) * 10;
   const platformFee = Math.round((basePrice + overtimeCharge + distanceCharge) * 0.2);
   const subtotal = basePrice + overtimeCharge + distanceCharge;
-  const total = subtotal + platformFee; // Tip is added in review page
+  const total = subtotal + platformFee;
 
   const handlePayment = () => {
     setPaymentComplete(true);
@@ -42,7 +41,6 @@ export default function PaymentPage() {
       <div className="pt-20 px-4 pb-6">
         {!paymentComplete ? (
           <>
-            {/* Valet Info */}
             <Card className="p-4 mb-6">
               <div className="flex items-center gap-4">
                 <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#34C0CA] to-[#66BD59] flex items-center justify-center text-white text-xl font-bold">
@@ -55,7 +53,6 @@ export default function PaymentPage() {
               </div>
             </Card>
 
-            {/* Charge Breakdown */}
             <Card className="p-6 mb-6">
               <h3 className="font-bold text-[#0F1415] mb-4">Charge</h3>
               <div className="space-y-3">
@@ -91,14 +88,13 @@ export default function PaymentPage() {
             </Card>
 
 
-            {/* Payment Method */}
             <Card className="p-4 mb-6">
               <h3 className="font-semibold text-[#0F1415] mb-4">Select payment method</h3>
               <div className="space-y-3">
                 <button className="w-full p-4 border-2 border-[#66BD59] bg-gradient-to-r from-[#66BD59]/10 to-[#66BD59]/5 rounded-xl text-left">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <CreditCard className="w-5 h-5 text-[#66BD59]" />
+                      <HiCreditCard className="w-5 h-5 text-[#66BD59]" />
                       <div>
                         <p className="font-semibold text-[#0F1415]">VISA •••• 8970</p>
                         <p className="text-xs text-neutral-600">Expires 12/26</p>
@@ -111,7 +107,7 @@ export default function PaymentPage() {
                 </button>
                 <button className="w-full p-4 border-2 border-neutral-200 rounded-xl text-left hover:border-[#34C0CA] transition-colors">
                   <div className="flex items-center gap-3">
-                    <CreditCard className="w-5 h-5 text-neutral-500" />
+                    <HiCreditCard className="w-5 h-5 text-neutral-500" />
                     <div>
                       <p className="font-semibold text-[#0F1415]">VISA •••• 5678</p>
                       <p className="text-xs text-neutral-600">Expires 06/25</p>
@@ -120,7 +116,7 @@ export default function PaymentPage() {
                 </button>
                 <button className="w-full p-4 border-2 border-neutral-200 rounded-xl text-left hover:border-[#34C0CA] transition-colors">
                   <div className="flex items-center gap-3">
-                    <CreditCard className="w-5 h-5 text-neutral-500" />
+                    <HiCreditCard className="w-5 h-5 text-neutral-500" />
                     <div>
                       <p className="font-semibold text-[#0F1415]">Cash</p>
                     </div>
@@ -129,7 +125,6 @@ export default function PaymentPage() {
               </div>
             </Card>
 
-            {/* Action Buttons */}
             <div className="space-y-3">
               <Button 
                 onClick={handlePayment}
@@ -140,7 +135,7 @@ export default function PaymentPage() {
                 Confirm Ride
               </Button>
               <Button 
-                variant="outline" 
+                variant="secondary" 
                 onClick={() => setShowDispute(true)}
                 fullWidth
               >
@@ -149,7 +144,6 @@ export default function PaymentPage() {
             </div>
           </>
         ) : (
-          /* Payment Success */
           <div className="text-center py-12">
             <div className="w-24 h-24 bg-gradient-to-br from-[#66BD59] to-[#52A547] rounded-full flex items-center justify-center mx-auto mb-6">
               <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -191,7 +185,6 @@ export default function PaymentPage() {
           </div>
         )}
 
-        {/* Dispute Modal */}
         {showDispute && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-end z-50">
             <div className="bg-white w-full rounded-t-2xl p-6">
@@ -214,7 +207,7 @@ export default function PaymentPage() {
               </div>
               <div className="flex space-x-3">
                 <Button 
-                  variant="outline" 
+                  variant="secondary" 
                   onClick={() => setShowDispute(false)}
                   className="flex-1"
                 >

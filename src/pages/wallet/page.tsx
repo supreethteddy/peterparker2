@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Card from "../../components/base/Card";
 import Button from "../../components/base/Button";
 import BottomNav from "../../components/feature/BottomNav";
-import { Wallet, Plus, Circle } from "lucide-react";
+import { FaCircle } from "react-icons/fa";
 
 export default function WalletPage() {
   const navigate = useNavigate();
@@ -79,13 +79,14 @@ export default function WalletPage() {
         </div>
         {/* Add Money Button */}
         <div className="mb-6">
-          <Button
-            variant="outline"
-            fullWidth
-            onClick={() => navigate("/wallet/add-amount")}
-          >
-            Add Money
-          </Button>
+          <div className="rounded-xl p-[2px] bg-gradient-to-r from-[#34C0CA] to-[#66BD59]">
+            <button
+              onClick={() => navigate("/wallet/add-amount")}
+              className="w-full bg-white rounded-[10px] px-6 py-3 font-semibold text-[#0F1415] flex items-center justify-center hover:bg-neutral-50 transition-all min-h-[48px]"
+            >
+              Add Money
+            </button>
+          </div>
         </div>
 
         {/* Transactions Section */}
@@ -110,9 +111,9 @@ export default function WalletPage() {
                       }`}
                     >
                       {txn.icon === "pink" ? (
-                        <Circle className="w-5 h-5 text-pink-600" />
+                        <FaCircle className="w-5 h-5 text-pink-600" />
                       ) : (
-                        <Circle className="w-5 h-5 text-[#66BD59]" />
+                        <FaCircle className="w-5 h-5 text-[#66BD59]" />
                       )}
                     </div>
                     <div>

@@ -4,7 +4,7 @@ import Input from '../../components/base/Input';
 import Button from '../../components/base/Button';
 import Header from '../../components/feature/Header';
 import Badge from '../../components/base/Badge';
-import { Plus, X } from 'lucide-react';
+import { HiPlus, HiX } from 'react-icons/hi';
 
 interface Vehicle {
   id: string;
@@ -38,7 +38,6 @@ export default function VehicleSetupPage() {
         ...formData,
       };
       
-      // If this is default, unset others
       if (formData.isDefault) {
         setVehicles(vehicles.map(v => ({ ...v, isDefault: false })));
       }
@@ -78,7 +77,6 @@ export default function VehicleSetupPage() {
       />
       
       <div className="pt-20 pb-8 px-6 max-w-md mx-auto">
-        {/* Vehicle List */}
         {vehicles.length > 0 && (
           <div className="space-y-3 mb-6">
             {vehicles.map((vehicle) => (
@@ -112,7 +110,6 @@ export default function VehicleSetupPage() {
           </div>
         )}
 
-        {/* Add Vehicle Form */}
         {showAddForm ? (
           <div className="mb-6">
             <div className="flex items-center justify-between mb-6">
@@ -121,7 +118,7 @@ export default function VehicleSetupPage() {
                 onClick={() => setShowAddForm(false)}
                 className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-neutral-100 transition-colors"
               >
-                <X className="w-5 h-5 text-neutral-600" />
+                <HiX className="w-5 h-5 text-neutral-600" />
               </button>
             </div>
             
@@ -182,7 +179,7 @@ export default function VehicleSetupPage() {
               <div className="flex gap-4 pt-4">
                 <Button
                   onClick={() => setShowAddForm(false)}
-                  variant="outline"
+                  variant="secondary"
                   fullWidth
                   size="lg"
                 >
@@ -202,17 +199,16 @@ export default function VehicleSetupPage() {
         ) : (
           <Button
             onClick={() => setShowAddForm(true)}
-            variant="outline"
+            variant="secondary"
             fullWidth
             size="lg"
             className="mb-6"
           >
-            <Plus className="mr-2 w-5 h-5" />
+            <HiPlus className="mr-2 w-5 h-5" />
             Add Vehicle
           </Button>
         )}
 
-        {/* Continue Button */}
         {vehicles.length > 0 && !showAddForm && (
           <Button onClick={handleContinue} fullWidth size="lg">
             Continue
@@ -222,4 +218,3 @@ export default function VehicleSetupPage() {
     </div>
   );
 }
-

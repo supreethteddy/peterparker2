@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Input from '../../components/base/Input';
 import Button from '../../components/base/Button';
 import Header from '../../components/feature/Header';
-import { Camera, ChevronDown } from 'lucide-react';
+import { HiCamera, HiChevronDown } from 'react-icons/hi';
 
 export default function ProfileSetupPage() {
   const navigate = useNavigate();
@@ -88,7 +88,7 @@ export default function ProfileSetupPage() {
                 onClick={handlePhotoUpload}
                 className="absolute bottom-0 right-0 w-10 h-10 bg-gradient-to-r from-[#34C0CA] to-[#66BD59] rounded-full flex items-center justify-center shadow-md hover:from-[#2BA8B2] hover:to-[#52A547] transition-colors"
               >
-                <Camera className="w-5 h-5 text-white" />
+                <HiCamera className="w-5 h-5 text-white" />
               </button>
             </div>
           </div>
@@ -114,7 +114,7 @@ export default function ProfileSetupPage() {
                   <option value="+1">+1</option>
                   <option value="+44">+44</option>
                 </select>
-                <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-[#66BD59] pointer-events-none" />
+                <HiChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-[#66BD59] pointer-events-none" />
               </div>
               <Input
                 type="tel"
@@ -151,7 +151,7 @@ export default function ProfileSetupPage() {
                 <option value="sylhet">Sylhet</option>
                 <option value="rajshahi">Rajshahi</option>
               </select>
-              <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500 pointer-events-none" />
+              <HiChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500 pointer-events-none" />
             </div>
 
             {/* District Dropdown */}
@@ -167,7 +167,7 @@ export default function ProfileSetupPage() {
                 <option value="narayanganj">Narayanganj</option>
                 <option value="savar">Savar</option>
               </select>
-              <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500 pointer-events-none" />
+              <HiChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500 pointer-events-none" />
             </div>
           </div>
 
@@ -175,7 +175,7 @@ export default function ProfileSetupPage() {
           <div className="flex gap-4 pt-4">
             <Button
               onClick={handleCancel}
-              variant="outline"
+              variant="secondary"
               fullWidth
               size="lg"
             >
@@ -195,4 +195,3 @@ export default function ProfileSetupPage() {
     </div>
   );
 }
-

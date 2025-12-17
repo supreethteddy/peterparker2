@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../../components/feature/Header';
 import Button from '../../components/base/Button';
 import Card from '../../components/base/Card';
-import { MapPin, Camera } from 'lucide-react';
+import { FaMapMarkerAlt, FaCamera } from 'react-icons/fa';
 
 export default function ConfirmPickupPage() {
   const navigate = useNavigate();
@@ -75,7 +75,7 @@ export default function ConfirmPickupPage() {
           <div className="px-6 pt-6 pb-6">
             <Card className="p-4 mb-4">
               <div className="flex items-center gap-3 mb-4">
-                <MapPin className="w-5 h-5 text-[#66BD59] flex-shrink-0" />
+                <FaMapMarkerAlt className="w-5 h-5 text-[#66BD59] flex-shrink-0" />
                 <div className="flex-1">
                   <p className="font-semibold text-[#0F1415]">{pickupLocation}</p>
                   <p className="text-sm text-neutral-600">Drag pin to adjust location</p>
@@ -94,7 +94,7 @@ export default function ConfirmPickupPage() {
                   onClick={handlePhotoUpload}
                   className="w-full flex items-center justify-center gap-2 p-3 border-2 border-dashed border-neutral-300 rounded-xl hover:border-[#66BD59] transition-colors"
                 >
-                  <Camera className="w-5 h-5 text-neutral-500" />
+                  <FaCamera className="w-5 h-5 text-neutral-500" />
                   <span className="text-sm font-semibold text-neutral-600">
                     {pickupPhoto ? 'Change Photo' : 'Upload Pickup Location Photo (Optional)'}
                   </span>

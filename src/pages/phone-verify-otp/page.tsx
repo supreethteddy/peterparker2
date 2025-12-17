@@ -2,7 +2,7 @@ import { useState, useRef, KeyboardEvent, ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../../components/base/Button';
 import logoDesign from '../../assets/Logo-design.svg';
-import { ArrowLeft, Delete } from 'lucide-react';
+import { FaArrowLeft, FaBackspace } from 'react-icons/fa';
 
 export default function PhoneVerifyOTPPage() {
   const navigate = useNavigate();
@@ -81,7 +81,7 @@ export default function PhoneVerifyOTPPage() {
           onClick={() => navigate('/send-verification')}
           className="text-base text-neutral-600 hover:text-[#0F1415] font-semibold flex items-center gap-2"
         >
-          <ArrowLeft className="w-5 h-5" />
+          <FaArrowLeft className="w-5 h-5" />
           Back
         </button>
         <img 
@@ -167,7 +167,7 @@ export default function PhoneVerifyOTPPage() {
               onClick={handleBackspace}
               className="h-14 bg-white border-2 border-neutral-200 rounded-xl text-[#0F1415] hover:bg-neutral-50 active:bg-neutral-100 transition-all duration-200 flex items-center justify-center"
             >
-              <Delete className="w-6 h-6" />
+              <FaBackspace className="w-6 h-6" />
             </button>
           </div>
         </div>

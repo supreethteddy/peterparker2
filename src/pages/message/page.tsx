@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../../components/feature/Header';
-import { Send, Smile, Paperclip } from 'lucide-react';
+import { IoSend } from 'react-icons/io5';
+import { HiEmojiHappy, HiPaperClip } from 'react-icons/hi';
 
 export default function MessagePage() {
   const navigate = useNavigate();
@@ -16,7 +17,6 @@ export default function MessagePage() {
 
   const handleSend = () => {
     if (message.trim()) {
-      // Handle send message
       setMessage('');
     }
   };
@@ -28,7 +28,6 @@ export default function MessagePage() {
         onLeftClick={() => navigate(-1)}
       />
 
-      {/* Messages */}
       <div className="flex-1 overflow-y-auto px-4 pt-20 pb-24">
         <div className="space-y-4">
           {messages.map((msg) => (
@@ -51,11 +50,10 @@ export default function MessagePage() {
         </div>
       </div>
 
-      {/* Input Bar */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-neutral-200 safe-bottom">
         <div className="px-4 py-3 flex items-center gap-3">
           <button className="w-10 h-10 flex items-center justify-center text-neutral-500 hover:text-[#34C0CA] transition-colors">
-            <Paperclip className="w-5 h-5" />
+            <HiPaperClip className="w-5 h-5" />
           </button>
           <input
             type="text"
@@ -66,18 +64,17 @@ export default function MessagePage() {
             className="flex-1 px-4 py-2 border-2 border-neutral-200 rounded-xl focus:outline-none focus:border-[#34C0CA] text-base"
           />
           <button className="w-10 h-10 flex items-center justify-center text-neutral-500 hover:text-[#34C0CA] transition-colors">
-            <Smile className="w-5 h-5" />
+            <HiEmojiHappy className="w-5 h-5" />
           </button>
           <button
             onClick={handleSend}
             disabled={!message.trim()}
             className="w-10 h-10 bg-gradient-to-r from-[#34C0CA] to-[#66BD59] rounded-xl flex items-center justify-center text-white disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <Send className="w-5 h-5" />
+            <IoSend className="w-5 h-5" />
           </button>
         </div>
       </div>
     </div>
   );
 }
-

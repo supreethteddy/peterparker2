@@ -3,14 +3,16 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../../components/feature/Header';
 import Button from '../../components/base/Button';
 import Card from '../../components/base/Card';
-import { MapPin, Phone, MessageCircle, Car } from 'lucide-react';
+import { HiLocationMarker, HiPhone } from 'react-icons/hi';
+import { FaCarSide } from 'react-icons/fa';
+import { BiMessageDetail } from 'react-icons/bi';
 
 export default function ValetEnroutePage() {
   const navigate = useNavigate();
   const location = useLocation();
   const valet = location.state?.valet;
-  const [eta, setEta] = useState(10); // 10 seconds for testing
-  const [distance, setDistance] = useState(800); // meters
+  const [eta, setEta] = useState(10);
+  const [distance, setDistance] = useState(800);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -55,7 +57,6 @@ export default function ValetEnroutePage() {
 
   return (
     <div className="relative min-h-screen bg-neutral-100 safe-top safe-bottom">
-      {/* Map Background */}
       <div className="absolute inset-0 z-0">
         <img 
           src="https://readdy.ai/api/search-image?query=Bangalore%20city%20map%20view%20with%20location%20pins%2C%20modern%20urban%20area%2C%20streets%20and%20buildings%20visible%2C%20satellite%20view%20style%2C%20clean%20and%20detailed&width=800&height=1200&seq=map1&orientation=portrait"
@@ -63,7 +64,6 @@ export default function ValetEnroutePage() {
           className="w-full h-full object-cover"
         />
         
-        {/* User Location Marker */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
           <div className="relative">
             <div className="absolute inset-0 w-8 h-8 bg-[#66BD59] rounded-full animate-ping opacity-75"></div>
@@ -72,15 +72,13 @@ export default function ValetEnroutePage() {
           </div>
         </div>
 
-        {/* Valet Location Marker */}
         <div className="absolute top-[45%] left-[60%] z-10">
           <div className="relative">
-            <Car className="w-8 h-8 text-[#66BD59]" />
+            <FaCarSide className="w-8 h-8 text-[#66BD59]" />
           </div>
         </div>
       </div>
 
-      {/* Top Bar */}
       <div className="absolute top-0 left-0 right-0 z-10 pt-safe-top">
         <Header 
           title="Your Peter Parker is coming"
@@ -88,7 +86,6 @@ export default function ValetEnroutePage() {
         />
       </div>
 
-      {/* ETA Banner */}
       <div className="absolute top-20 left-0 right-0 z-10 px-4">
         <Card className="p-4 bg-white/95 backdrop-blur-sm">
           <div className="text-center">
@@ -101,11 +98,9 @@ export default function ValetEnroutePage() {
         </Card>
       </div>
 
-      {/* Bottom Card */}
       <div className="fixed bottom-0 left-0 right-0 z-20 safe-bottom">
         <div className="bg-white rounded-t-3xl shadow-[0_-8px_32px_rgba(0,0,0,0.2)] border-t border-neutral-100">
           <div className="px-6 pt-6 pb-6">
-            {/* Valet Info */}
             <Card className="p-4 mb-4">
               <div className="flex items-center gap-4">
                 <div className="w-16 h-16 rounded-full bg-gradient-to-r from-[#34C0CA] to-[#66BD59] flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
@@ -118,15 +113,14 @@ export default function ValetEnroutePage() {
                   </div>
                 </div>
                 <div className="w-12 h-12 rounded-lg bg-neutral-100 flex items-center justify-center">
-                  <Car className="w-6 h-6 text-[#66BD59]" />
+                  <FaCarSide className="w-6 h-6 text-[#66BD59]" />
                 </div>
               </div>
             </Card>
 
-            {/* Pickup Location */}
             <Card className="p-4 mb-4">
               <div className="flex items-center gap-3">
-                <MapPin className="w-5 h-5 text-[#66BD59] flex-shrink-0" />
+                <HiLocationMarker className="w-5 h-5 text-[#66BD59] flex-shrink-0" />
                 <div className="flex-1">
                   <p className="text-sm text-neutral-600 mb-1">Pickup location</p>
                   <p className="font-semibold text-[#0F1415]">{location.state?.pickupLocation || 'Current Location'}</p>
@@ -140,29 +134,27 @@ export default function ValetEnroutePage() {
               </div>
             </Card>
 
-            {/* Action Buttons */}
             <div className="flex gap-3 mb-4">
               <Button
                 onClick={handleCall}
-                variant="outline"
+                variant="secondary"
                 className="flex-1"
               >
-                <Phone className="w-5 h-5 mr-2" />
+                <HiPhone className="w-5 h-5 mr-2" />
                 Call
               </Button>
               <Button
                 onClick={handleMessage}
                 className="flex-1"
               >
-                <MessageCircle className="w-5 h-5 mr-2" />
+                <BiMessageDetail className="w-5 h-5 mr-2" />
                 Message
               </Button>
             </div>
 
-            {/* Cancel Button */}
             <Button
               onClick={handleCancel}
-              variant="outline"
+              variant="secondary"
               fullWidth
               className="text-[#EF4444] border-[#EF4444] hover:bg-[#EF4444]/10"
             >
@@ -174,4 +166,3 @@ export default function ValetEnroutePage() {
     </div>
   );
 }
-

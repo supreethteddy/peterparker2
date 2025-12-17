@@ -1,10 +1,11 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Button from '../../components/base/Button';
 import Card from '../../components/base/Card';
 import logoDesign from '../../assets/Logo-design.svg';
-import { MapPin, Clock, Shield, Car, ArrowLeft } from 'lucide-react';
+import { HiLocationMarker, HiClock, HiShieldCheck } from 'react-icons/hi';
+import { FaCarSide } from 'react-icons/fa';
+import { HiArrowLeft } from 'react-icons/hi';
 
 export default function ParkingPage() {
   const navigate = useNavigate();
@@ -13,18 +14,16 @@ export default function ParkingPage() {
   const parkingLocationFromState = location.state?.parkingLocation;
   const timeLeftFromState = location.state?.timeLeft;
   
-  const [timeLeft, setTimeLeft] = useState(timeLeftFromState || 30 * 60); // 30 minutes in seconds
+  const [timeLeft, setTimeLeft] = useState(timeLeftFromState || 30 * 60);
   const [showExtendOptions, setShowExtendOptions] = useState(false);
   const [parkingLocation, setParkingLocation] = useState(parkingLocationFromState || '');
 
   useEffect(() => {
-    // If parking location is not provided, simulate parking completion
     if (!parkingLocationFromState) {
       setTimeout(() => {
         const parkingLoc = 'Phoenix MarketCity - Level 2, Zone B, Slot 45';
         setParkingLocation(parkingLoc);
         
-        // Create parking session in localStorage if coming from handover
         if (valet) {
           const savedParking = localStorage.getItem('parkingSessions');
           const sessions = savedParking ? JSON.parse(savedParking) : [];
@@ -49,7 +48,6 @@ export default function ParkingPage() {
         }
       }, 3000);
     } else {
-      // Update existing session if parking location is already set
       const savedParking = localStorage.getItem('parkingSessions');
       if (savedParking && valet) {
         const sessions = JSON.parse(savedParking);
@@ -67,12 +65,10 @@ export default function ParkingPage() {
       }
     }
 
-    // Timer countdown
     const timer = setInterval(() => {
       setTimeLeft((prev: number) => {
         const newTime = prev <= 0 ? 0 : prev - 1;
         
-        // Update localStorage timer
         const savedParking = localStorage.getItem('parkingSessions');
         if (savedParking && valet) {
           const sessions = JSON.parse(savedParking);
@@ -108,7 +104,6 @@ export default function ParkingPage() {
     setTimeLeft((prev: number) => prev + (minutes * 60));
     setShowExtendOptions(false);
     
-    // Update localStorage parking sessions
     const savedParking = localStorage.getItem('parkingSessions');
     if (savedParking) {
       const sessions = JSON.parse(savedParking);
@@ -129,7 +124,6 @@ export default function ParkingPage() {
     navigate('/return', { state: { valet, parkingLocation } });
   };
 
-  // Load valet from localStorage if not in state
   useEffect(() => {
     if (!valet) {
       const savedParking = localStorage.getItem('parkingSessions');
@@ -152,7 +146,7 @@ export default function ParkingPage() {
           onClick={() => navigate('/parking-list')}
           className="text-base text-neutral-600 hover:text-[#0F1415] font-semibold flex items-center gap-2"
         >
-          <ArrowLeft className="w-5 h-5" />
+          <HiArrowLeft className="w-5 h-5" />
           Back
         </button>
         <img 
@@ -164,10 +158,9 @@ export default function ParkingPage() {
 
       <div className="px-6 pb-6">
         {!parkingLocation ? (
-          /* Parking in Progress */
           <div className="text-center py-12">
             <div className="w-24 h-24 bg-gradient-to-r from-[#34C0CA] to-[#66BD59] rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
-              <Car className="w-12 h-12 text-white" />
+              <FaCarSide className="w-12 h-12 text-white" />
             </div>
             <h2 className="text-2xl font-bold text-[#0F1415] mb-2">Parking in progress...</h2>
             <p className="text-neutral-600 mb-6">{valet?.name || 'Valet'} is finding a secure parking spot</p>
@@ -181,9 +174,7 @@ export default function ParkingPage() {
             </Card>
           </div>
         ) : (
-          /* Parked Successfully */
           <>
-            {/* Timer */}
             <Card className="p-6 mb-6 text-center">
               <h2 className="text-4xl font-bold text-[#66BD59] mb-2">
                 {formatTime(timeLeft)}
@@ -194,19 +185,18 @@ export default function ParkingPage() {
               )}
             </Card>
 
-            {/* Parking Details */}
             <Card className="p-4 mb-6 bg-white border border-neutral-200">
               <h3 className="font-bold text-[#0F1415] mb-4">Vehicle Parked</h3>
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
-                  <MapPin className="w-5 h-5 text-[#66BD59] flex-shrink-0 mt-0.5" />
+                  <HiLocationMarker className="w-5 h-5 text-[#66BD59] flex-shrink-0 mt-0.5" />
                   <div className="flex-1">
                     <p className="font-semibold text-[#0F1415] mb-1">Parking Location</p>
                     <p className="text-sm text-neutral-600">{parkingLocation}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <Shield className="w-5 h-5 text-[#66BD59] flex-shrink-0" />
+                  <HiShieldCheck className="w-5 h-5 text-[#66BD59] flex-shrink-0" />
                   <div className="flex-1">
                     <p className="font-semibold text-[#0F1415] mb-1">Parking Receipt</p>
                     <button className="text-[#66BD59] text-sm font-semibold hover:underline">
@@ -217,7 +207,6 @@ export default function ParkingPage() {
               </div>
             </Card>
 
-            {/* Map View */}
             <Card className="p-4 mb-6 bg-white border border-neutral-200">
               <h3 className="font-semibold mb-3 text-[#0F1415]">Live Location</h3>
               <div className="h-32 bg-gray-200 rounded-lg relative overflow-hidden">
@@ -234,38 +223,37 @@ export default function ParkingPage() {
               </div>
             </Card>
 
-            {/* Quick Actions */}
             <div className="grid grid-cols-2 gap-3 mb-6">
-              <Button 
-                variant="outline" 
-                onClick={() => setShowExtendOptions(true)}
-                fullWidth
-              >
-                <Clock className="w-5 h-5 mr-2" />
-                Extend Stay
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={() => navigate('/select-location')}
-                fullWidth
-              >
-                <MapPin className="w-5 h-5 mr-2" />
-                Change Location
-              </Button>
+              <div className="rounded-xl p-[2px] bg-gradient-to-r from-[#34C0CA] to-[#66BD59]">
+                <button 
+                  onClick={() => setShowExtendOptions(true)}
+                  className="w-full h-full bg-white rounded-[10px] px-4 py-3 font-semibold text-[#0F1415] flex items-center justify-center hover:bg-neutral-50 transition-all min-h-[48px]"
+                >
+                  <HiClock className="w-5 h-5 mr-2" />
+                  Extend Stay
+                </button>
+              </div>
+              <div className="rounded-xl p-[2px] bg-gradient-to-r from-[#34C0CA] to-[#66BD59]">
+                <button 
+                  onClick={() => navigate('/select-location')}
+                  className="w-full h-full bg-white rounded-[10px] px-4 py-3 font-semibold text-[#0F1415] flex items-center justify-center hover:bg-neutral-50 transition-all min-h-[48px]"
+                >
+                  <HiLocationMarker className="w-5 h-5 mr-2" />
+                  Change Location
+                </button>
+              </div>
             </div>
 
-            {/* Return Car Button */}
             <Button 
               onClick={handleReturnRequest} 
               fullWidth
               size="lg"
               className="text-lg font-bold mb-6"
             >
-              <Car className="w-5 h-5 mr-2" />
+              <FaCarSide className="w-5 h-5 mr-2" />
               Return My Car
             </Button>
 
-            {/* Extend Stay Options */}
             {showExtendOptions && (
               <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-end z-50 safe-bottom">
                 <div className="bg-white w-full rounded-t-3xl p-6 shadow-[0_-8px_32px_rgba(0,0,0,0.2)]">
@@ -291,7 +279,7 @@ export default function ParkingPage() {
                     ))}
                   </div>
                   <Button 
-                    variant="outline" 
+                    variant="secondary" 
                     onClick={() => setShowExtendOptions(false)}
                     fullWidth
                   >
@@ -301,11 +289,10 @@ export default function ParkingPage() {
               </div>
             )}
 
-            {/* Overtime Warning */}
             {timeLeft === 0 && (
               <Card className="p-4 bg-gradient-to-r from-[#EF4444]/10 to-[#EF4444]/5 border-2 border-[#EF4444]/20">
                 <div className="flex items-center gap-3">
-                  <Shield className="w-5 h-5 text-[#EF4444]" />
+                  <HiShieldCheck className="w-5 h-5 text-[#EF4444]" />
                   <div>
                     <h3 className="font-semibold text-[#EF4444]">Overtime Charges Apply</h3>
                     <p className="text-sm text-[#EF4444]">₹10 per 10 minutes after free time</p>

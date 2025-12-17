@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Input from '../../components/base/Input';
 import Button from '../../components/base/Button';
 import logoDesign from '../../assets/Logo-design.svg';
-import { ArrowLeft, Eye, EyeOff } from 'lucide-react';
+import { FaArrowLeft, FaEye, FaEyeSlash } from 'react-icons/fa';
 
 export default function SetNewPasswordPage() {
   const navigate = useNavigate();
@@ -26,7 +26,7 @@ export default function SetNewPasswordPage() {
           onClick={() => navigate('/phone-verify-otp')}
           className="text-base text-neutral-600 hover:text-[#0F1415] font-semibold flex items-center gap-2"
         >
-          <ArrowLeft className="w-5 h-5" />
+          <FaArrowLeft className="w-5 h-5" />
           Back
         </button>
         <img 
@@ -58,7 +58,7 @@ export default function SetNewPasswordPage() {
                     onClick={() => setShowPassword(!showPassword)}
                     className="text-neutral-500 hover:text-neutral-700"
                   >
-                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    {showPassword ? <FaEyeSlash className="w-5 h-5" /> : <FaEye className="w-5 h-5" />}
                   </button>
                 }
               />
@@ -74,7 +74,7 @@ export default function SetNewPasswordPage() {
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     className="text-neutral-500 hover:text-neutral-700"
                   >
-                    {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    {showConfirmPassword ? <FaEyeSlash className="w-5 h-5" /> : <FaEye className="w-5 h-5" />}
                   </button>
                 }
               />

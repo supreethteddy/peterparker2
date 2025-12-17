@@ -3,7 +3,7 @@ import Card from '../../components/base/Card';
 import Button from '../../components/base/Button';
 import Badge from '../../components/base/Badge';
 import BottomNav from '../../components/feature/BottomNav';
-import { Gift, Tag, Clock, ArrowRight, Sparkles } from 'lucide-react';
+import { HiGift, HiClock, HiSparkles } from 'react-icons/hi';
 
 export default function PromotionsPage() {
   const promotions = [
@@ -63,7 +63,7 @@ export default function PromotionsPage() {
         <Card className="p-6 mb-6 bg-white border-2 border-[#66BD59]">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-12 h-12 rounded-full bg-[#66BD59]/10 flex items-center justify-center">
-              <Sparkles className="w-6 h-6 text-[#66BD59]" />
+              <HiSparkles className="w-6 h-6 text-[#66BD59]" />
             </div>
             <div className="flex-1">
               <h2 className="text-xl font-semibold mb-1 text-[#0F1415]">Special Offers</h2>
@@ -83,13 +83,13 @@ export default function PromotionsPage() {
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
-                      <Gift className="w-5 h-5" />
+                      <HiGift className="w-5 h-5" />
                       <h3 className="text-xl font-semibold">{promo.title}</h3>
                     </div>
                     <p className="text-base opacity-90 mb-3">{promo.description}</p>
                     <div className="flex items-center gap-4 text-sm opacity-80">
                       <div className="flex items-center gap-1">
-                        <Clock className="w-4 h-4" />
+                        <HiClock className="w-4 h-4" />
                         <span>Valid until {promo.validUntil}</span>
                       </div>
                     </div>
@@ -110,7 +110,7 @@ export default function PromotionsPage() {
                     <p className="text-base font-mono font-semibold text-[#0F1415]">{promo.code}</p>
                   </div>
                   <Button
-                    variant="outline"
+                    variant="secondary"
                     size="sm"
                     onClick={() => handleCopyCode(promo.code)}
                   >
@@ -158,4 +158,3 @@ export default function PromotionsPage() {
     </div>
   );
 }
-

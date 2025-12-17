@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Input from '../../components/base/Input';
 import Button from '../../components/base/Button';
 import logoDesign from '../../assets/Logo-design.svg';
-import { ArrowLeft, ChevronDown } from 'lucide-react';
+import { HiArrowLeft, HiChevronDown } from 'react-icons/hi';
 
 export default function SignUpPage() {
   const navigate = useNavigate();
@@ -37,7 +37,7 @@ export default function SignUpPage() {
           onClick={() => navigate('/welcome')}
           className="text-base text-neutral-600 hover:text-[#0F1415] font-semibold flex items-center gap-2"
         >
-          <ArrowLeft className="w-5 h-5" />
+          <HiArrowLeft className="w-5 h-5" />
           Back
         </button>
         <img 
@@ -79,7 +79,7 @@ export default function SignUpPage() {
                   <option value="+1">+1</option>
                   <option value="+44">+44</option>
                 </select>
-                <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-[#34C0CA] pointer-events-none" />
+                <HiChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-[#34C0CA] pointer-events-none" />
               </div>
               <Input
                 type="tel"
@@ -100,7 +100,7 @@ export default function SignUpPage() {
                 <option value="female">Female</option>
                 <option value="other">Other</option>
               </select>
-              <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#34C0CA] pointer-events-none" />
+              <HiChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#34C0CA] pointer-events-none" />
             </div>
           </div>
 
@@ -181,4 +181,3 @@ export default function SignUpPage() {
     </div>
   );
 }
-

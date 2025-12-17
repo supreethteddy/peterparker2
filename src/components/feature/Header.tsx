@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { ArrowLeft } from 'lucide-react';
+import { HiArrowLeft } from 'react-icons/hi';
 
 interface HeaderProps {
   title: string;
@@ -19,7 +19,7 @@ export default function Header({ title, leftIcon, rightIcon, onLeftClick, onRigh
               onClick={onLeftClick} 
               className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-[#34C0CA]/10 transition-all duration-200"
             >
-              {leftIcon || <ArrowLeft className="w-5 h-5 text-[#0F1415]" />}
+              {leftIcon || <HiArrowLeft className="w-5 h-5 text-[#0F1415]" />}
             </button>
           )}
         </div>

@@ -3,7 +3,7 @@ import Header from '../../components/feature/Header';
 import Card from '../../components/base/Card';
 import Button from '../../components/base/Button';
 import BottomNav from '../../components/feature/BottomNav';
-import { Phone, Shield, AlertTriangle, Plus, Edit2, Trash2, Star } from 'lucide-react';
+import { HiPhone, HiShieldCheck, HiExclamation, HiPlus, HiPencil, HiStar } from 'react-icons/hi';
 
 interface EmergencyContact {
   id: string;
@@ -32,9 +32,9 @@ export default function EmergencyPage() {
   ]);
 
   const emergencyNumbers = [
-    { name: 'Police', number: '100', icon: Shield },
-    { name: 'Ambulance', number: '102', icon: AlertTriangle },
-    { name: 'Fire', number: '101', icon: AlertTriangle },
+    { name: 'Police', number: '100', icon: HiShieldCheck },
+    { name: 'Ambulance', number: '102', icon: HiExclamation },
+    { name: 'Fire', number: '101', icon: HiExclamation },
   ];
 
   const handleCall = (phone: string) => {
@@ -50,7 +50,6 @@ export default function EmergencyPage() {
       <Header title="Emergency Contacts" />
       
       <div className="pt-20 pb-24 px-6 max-w-md mx-auto">
-        {/* Emergency Numbers */}
         <div className="mb-6">
           <h3 className="text-body font-semibold text-neutral-600 mb-3 px-2">
             Emergency Services
@@ -75,12 +74,11 @@ export default function EmergencyPage() {
           </div>
         </div>
 
-        {/* Personal Contacts */}
         <div className="mb-6">
           <div className="flex items-center justify-between mb-3 px-2">
             <h3 className="text-body font-semibold text-neutral-600">Personal Contacts</h3>
             <Button variant="ghost" size="sm">
-              <Plus className="w-4 h-4 mr-1" />
+              <HiPlus className="w-4 h-4 mr-1" />
               Add
             </Button>
           </div>
@@ -96,7 +94,7 @@ export default function EmergencyPage() {
                       <div className="flex items-center gap-2 mb-1">
                         <h4 className="text-body font-semibold text-primary-dark">{contact.name}</h4>
                         {contact.isPrimary && (
-                          <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                          <HiStar className="w-4 h-4 text-yellow-500" />
                         )}
                       </div>
                       <p className="text-caption text-neutral-600 mb-1">{contact.relationship}</p>
@@ -108,10 +106,10 @@ export default function EmergencyPage() {
                       onClick={() => handleCall(contact.phone)}
                       className="w-10 h-10 rounded-full bg-primary-accent text-white flex items-center justify-center hover:bg-primary-accentHover transition-colors"
                     >
-                      <Phone className="w-5 h-5" />
+                      <HiPhone className="w-5 h-5" />
                     </button>
                     <button className="w-10 h-10 rounded-full hover:bg-neutral-100 flex items-center justify-center transition-colors">
-                      <Edit2 className="w-4 h-4 text-neutral-600" />
+                      <HiPencil className="w-4 h-4 text-neutral-600" />
                     </button>
                   </div>
                 </div>
@@ -120,10 +118,9 @@ export default function EmergencyPage() {
           </div>
         </div>
 
-        {/* Quick Actions */}
         <Card className="p-6 bg-gradient-to-br from-status-error/10 to-status-error/5 border-status-error/20">
           <div className="flex items-start gap-4">
-            <AlertTriangle className="w-6 h-6 text-status-error flex-shrink-0 mt-1" />
+            <HiExclamation className="w-6 h-6 text-status-error flex-shrink-0 mt-1" />
             <div className="flex-1">
               <h3 className="text-body font-semibold text-primary-dark mb-2">
                 In Case of Emergency
@@ -132,25 +129,24 @@ export default function EmergencyPage() {
                 Your emergency contacts will be notified automatically if you trigger the SOS feature during a trip.
               </p>
               <Button variant="danger" fullWidth size="sm">
-                <AlertTriangle className="w-4 h-4 mr-2" />
+                <HiExclamation className="w-4 h-4 mr-2" />
                 Test SOS Feature
               </Button>
             </div>
           </div>
         </Card>
 
-        {/* Empty State */}
         {contacts.length === 0 && (
           <Card className="p-6 text-center">
             <div className="w-16 h-16 rounded-full bg-neutral-100 flex items-center justify-center mx-auto mb-4">
-              <Phone className="w-8 h-8 text-neutral-400" />
+              <HiPhone className="w-8 h-8 text-neutral-400" />
             </div>
             <h3 className="text-h2 font-semibold text-primary-dark mb-2">No emergency contacts</h3>
             <p className="text-body text-neutral-600 mb-6">
               Add trusted contacts for emergency situations
             </p>
             <Button variant="primary">
-              <Plus className="mr-2 w-5 h-5" />
+              <HiPlus className="mr-2 w-5 h-5" />
               Add Contact
             </Button>
           </Card>
@@ -161,4 +157,3 @@ export default function EmergencyPage() {
     </div>
   );
 }
-

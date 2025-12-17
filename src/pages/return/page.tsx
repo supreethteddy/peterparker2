@@ -1,10 +1,11 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../../components/feature/Header';
 import Button from '../../components/base/Button';
 import Card from '../../components/base/Card';
-import { MapPin, Phone, MessageCircle, Car, Navigation } from 'lucide-react';
+import { HiLocationMarker, HiPhone } from 'react-icons/hi';
+import { FaCarSide } from 'react-icons/fa';
+import { BiMessageDetail } from 'react-icons/bi';
 
 export default function ReturnPage() {
   const navigate = useNavigate();
@@ -16,7 +17,6 @@ export default function ReturnPage() {
   const [distanceCharge, setDistanceCharge] = useState(0);
 
   useEffect(() => {
-    // Simulate ETA updates
     const timer = setInterval(() => {
       setEta(prev => {
         const current = parseInt(prev);
@@ -35,7 +35,7 @@ export default function ReturnPage() {
   };
 
   const handleConfirmLocationChange = () => {
-    setDistanceCharge(30); // Additional charge for distance
+    setDistanceCharge(30);
     setShowLocationChange(false);
   };
 
@@ -45,7 +45,7 @@ export default function ReturnPage() {
         valet, 
         parkingLocation, 
         distanceCharge,
-        totalTime: 45 // minutes
+        totalTime: 45
       } 
     });
   };
@@ -57,7 +57,6 @@ export default function ReturnPage() {
 
   return (
     <div className="relative min-h-screen bg-neutral-100 safe-top safe-bottom">
-      {/* Map Background */}
       <div className="absolute inset-0 z-0">
         <img 
           src="https://readdy.ai/api/search-image?query=Bangalore%20city%20map%20view%20with%20location%20pins%2C%20modern%20urban%20area%2C%20streets%20and%20buildings%20visible%2C%20satellite%20view%20style%2C%20clean%20and%20detailed&width=800&height=1200&seq=map1&orientation=portrait"
@@ -65,7 +64,6 @@ export default function ReturnPage() {
           className="w-full h-full object-cover"
         />
         
-        {/* User Location Marker */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
           <div className="relative">
             <div className="absolute inset-0 w-8 h-8 bg-[#66BD59] rounded-full animate-ping opacity-75"></div>
@@ -74,15 +72,13 @@ export default function ReturnPage() {
           </div>
         </div>
 
-        {/* Valet/Car Location Marker */}
         <div className="absolute top-[45%] left-[60%] z-10">
           <div className="relative">
-            <Car className="w-8 h-8 text-[#34C0CA]" />
+            <FaCarSide className="w-8 h-8 text-[#34C0CA]" />
           </div>
         </div>
       </div>
 
-      {/* Top Bar */}
       <div className="absolute top-0 left-0 right-0 z-10 pt-safe-top">
         <Header 
           title="Car Return"
@@ -90,7 +86,6 @@ export default function ReturnPage() {
         />
       </div>
 
-      {/* ETA Banner */}
       <div className="absolute top-20 left-0 right-0 z-10 px-4">
         <Card className="p-4 bg-white/95 backdrop-blur-sm">
           <div className="text-center">
@@ -102,11 +97,9 @@ export default function ReturnPage() {
         </Card>
       </div>
 
-      {/* Bottom Card */}
       <div className="fixed bottom-0 left-0 right-0 z-20 safe-bottom">
         <div className="bg-white rounded-t-3xl shadow-[0_-8px_32px_rgba(0,0,0,0.2)] border-t border-neutral-100">
           <div className="px-6 pt-6 pb-6">
-            {/* Valet Info */}
             <Card className="p-4 mb-4">
               <div className="flex items-center gap-4">
                 <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#34C0CA] to-[#66BD59] flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
@@ -123,11 +116,10 @@ export default function ReturnPage() {
               </div>
             </Card>
 
-            {/* Pickup Location */}
             <Card className="p-4 mb-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <MapPin className="w-5 h-5 text-[#66BD59] flex-shrink-0" />
+                  <HiLocationMarker className="w-5 h-5 text-[#66BD59] flex-shrink-0" />
                   <div>
                     <p className="text-sm text-neutral-600 mb-1">Pickup location</p>
                     <p className="font-semibold text-[#0F1415]">
@@ -151,26 +143,24 @@ export default function ReturnPage() {
               )}
             </Card>
 
-            {/* Action Buttons */}
             <div className="flex gap-3 mb-4">
               <Button
                 onClick={() => navigate('/calling', { state: { valet } })}
-                variant="outline"
+                variant="secondary"
                 className="flex-1"
               >
-                <Phone className="w-5 h-5 mr-2" />
+                <HiPhone className="w-5 h-5 mr-2" />
                 Call
               </Button>
               <Button
                 onClick={() => navigate('/message', { state: { valet } })}
                 className="flex-1"
               >
-                <MessageCircle className="w-5 h-5 mr-2" />
+                <BiMessageDetail className="w-5 h-5 mr-2" />
                 Message
               </Button>
             </div>
 
-            {/* Complete Return Button */}
             <Button
               onClick={handleCarArrived}
               fullWidth
@@ -183,7 +173,6 @@ export default function ReturnPage() {
         </div>
       </div>
 
-      {/* Location Change Modal */}
       {showLocationChange && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-end z-50 safe-bottom">
           <div className="bg-white w-full rounded-t-3xl p-6 shadow-[0_-8px_32px_rgba(0,0,0,0.2)]">
@@ -204,7 +193,7 @@ export default function ReturnPage() {
             </div>
             <div className="flex gap-3">
               <Button 
-                variant="outline" 
+                variant="secondary" 
                 onClick={() => setShowLocationChange(false)}
                 className="flex-1"
               >

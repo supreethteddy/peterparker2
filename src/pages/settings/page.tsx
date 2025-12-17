@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Header from '../../components/feature/Header';
 import Card from '../../components/base/Card';
 import BottomNav from '../../components/feature/BottomNav';
-import { Bell, Globe, Moon, Shield, Lock, HelpCircle, FileText, Info, ChevronRight } from 'lucide-react';
+import { HiBell, HiGlobe, HiMoon, HiShieldCheck, HiLockClosed, HiQuestionMarkCircle, HiDocumentText, HiInformationCircle, HiChevronRight } from 'react-icons/hi';
 
 export default function SettingsPage() {
   const [settings, setSettings] = useState({
@@ -23,19 +23,19 @@ export default function SettingsPage() {
       title: 'Notifications',
       items: [
         {
-          icon: Bell,
+          icon: HiBell,
           label: 'Push Notifications',
           value: settings.pushNotifications,
           onToggle: () => toggleSetting('pushNotifications'),
         },
         {
-          icon: Bell,
+          icon: HiBell,
           label: 'Email Notifications',
           value: settings.emailNotifications,
           onToggle: () => toggleSetting('emailNotifications'),
         },
         {
-          icon: Bell,
+          icon: HiBell,
           label: 'SMS Notifications',
           value: settings.smsNotifications,
           onToggle: () => toggleSetting('smsNotifications'),
@@ -46,18 +46,18 @@ export default function SettingsPage() {
       title: 'Privacy & Security',
       items: [
         {
-          icon: Shield,
+          icon: HiShieldCheck,
           label: 'Privacy Settings',
           action: () => {},
         },
         {
-          icon: Lock,
+          icon: HiLockClosed,
           label: 'Biometric Authentication',
           value: settings.biometricAuth,
           onToggle: () => toggleSetting('biometricAuth'),
         },
         {
-          icon: Lock,
+          icon: HiLockClosed,
           label: 'Change Password',
           action: () => {},
         },
@@ -67,19 +67,19 @@ export default function SettingsPage() {
       title: 'Preferences',
       items: [
         {
-          icon: Globe,
+          icon: HiGlobe,
           label: 'Language',
           value: 'English',
           action: () => {},
         },
         {
-          icon: Moon,
+          icon: HiMoon,
           label: 'Dark Mode',
           value: settings.darkMode,
           onToggle: () => toggleSetting('darkMode'),
         },
         {
-          icon: Bell,
+          icon: HiBell,
           label: 'Location Services',
           value: settings.locationServices,
           onToggle: () => toggleSetting('locationServices'),
@@ -90,22 +90,22 @@ export default function SettingsPage() {
       title: 'Support',
       items: [
         {
-          icon: HelpCircle,
+          icon: HiQuestionMarkCircle,
           label: 'Help Center',
           action: () => {},
         },
         {
-          icon: FileText,
+          icon: HiDocumentText,
           label: 'Terms & Conditions',
           action: () => {},
         },
         {
-          icon: Shield,
+          icon: HiShieldCheck,
           label: 'Privacy Policy',
           action: () => {},
         },
         {
-          icon: Info,
+          icon: HiInformationCircle,
           label: 'About',
           action: () => {},
         },
@@ -164,7 +164,7 @@ export default function SettingsPage() {
                         </div>
                       </div>
                     ) : (
-                      <ChevronRight className="w-5 h-5 text-neutral-400" />
+                      <HiChevronRight className="w-5 h-5 text-neutral-400" />
                     )}
                   </div>
                 );
@@ -184,4 +184,3 @@ export default function SettingsPage() {
     </div>
   );
 }
-

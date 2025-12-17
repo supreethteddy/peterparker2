@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Input from '../../components/base/Input';
 import Button from '../../components/base/Button';
 import Card from '../../components/base/Card';
-import { MapPin, X, Navigation } from 'lucide-react';
+import { HiLocationMarker, HiX } from 'react-icons/hi';
 
 interface RecentPlace {
   name: string;
@@ -51,7 +50,7 @@ export default function SelectLocationPage() {
             onClick={() => navigate('/home')}
             className="w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-neutral-50 transition-colors"
           >
-            <X className="w-5 h-5 text-[#0F1415]" />
+            <HiX className="w-5 h-5 text-[#0F1415]" />
           </button>
         </div>
       </div>
@@ -66,7 +65,7 @@ export default function SelectLocationPage() {
               onClick={() => navigate('/home')}
               className="w-8 h-8 flex items-center justify-center text-neutral-500 hover:text-[#0F1415]"
             >
-              <X className="w-5 h-5" />
+              <HiX className="w-5 h-5" />
             </button>
           </div>
 
@@ -74,7 +73,7 @@ export default function SelectLocationPage() {
             {/* From Input */}
             <div className="relative">
               <div className="absolute left-4 top-1/2 -translate-y-1/2 z-10">
-                <MapPin className="w-5 h-5 text-[#66BD59]" />
+                <HiLocationMarker className="w-5 h-5 text-[#66BD59]" />
               </div>
               <input
                 type="text"
@@ -94,72 +93,13 @@ export default function SelectLocationPage() {
                     className="w-full flex items-center gap-3 p-3 hover:bg-neutral-50 rounded-lg transition-colors"
                   >
                     <div className="relative">
-                      <MapPin className="w-5 h-5 text-[#66BD59]" />
+                      <HiLocationMarker className="w-5 h-5 text-[#66BD59]" />
                       <div className="absolute -top-1 -right-1 w-3 h-3 bg-[#EF4444] rounded-full border-2 border-white"></div>
                     </div>
                     <div className="flex-1 text-left">
                       <p className="font-semibold text-[#0F1415]">Current location</p>
                     </div>
                   </button>
-                </Card>
-              )}
-            </div>
-
-            {/* To Input */}
-            <div className="relative">
-              <div className="absolute left-4 top-1/2 -translate-y-1/2 z-10">
-                      <MapPin className="w-5 h-5 text-[#66BD59]" />
-              </div>
-              <input
-                type="text"
-                placeholder="To"
-                value={to}
-                onChange={(e) => setTo(e.target.value)}
-                onFocus={() => setShowToOptions(true)}
-                className="w-full pl-12 pr-4 py-3.5 border-2 border-[#66BD59] rounded-xl focus:outline-none focus:ring-4 focus:ring-[#66BD59]/10 focus:border-[#66BD59] text-base bg-white"
-              />
-              {showToOptions && (
-                <Card className="absolute top-full left-0 right-0 mt-2 p-4 z-20 shadow-xl max-h-96 overflow-y-auto">
-                  {/* Current Location Option */}
-                  <button
-                    onClick={() => {
-                      setTo('Current Location');
-                      setShowToOptions(false);
-                    }}
-                    className="w-full flex items-center gap-3 p-3 hover:bg-neutral-50 rounded-lg transition-colors mb-2"
-                  >
-                    <div className="relative">
-                      <MapPin className="w-5 h-5 text-[#66BD59]" />
-                      <div className="absolute -top-1 -right-1 w-3 h-3 bg-[#EF4444] rounded-full border-2 border-white"></div>
-                    </div>
-                    <div className="flex-1 text-left">
-                      <p className="font-semibold text-[#0F1415]">Current location</p>
-                    </div>
-                  </button>
-
-                  {/* Recent Places */}
-                  <div className="mt-4">
-                    <p className="text-sm font-semibold text-neutral-600 mb-2">Recent places</p>
-                    <div className="space-y-2">
-                      {recentPlaces.map((place, index) => (
-                        <button
-                          key={index}
-                          onClick={() => {
-                            setTo(`${place.name} - ${place.address}`);
-                            setShowToOptions(false);
-                          }}
-                          className="w-full flex items-center gap-3 p-3 hover:bg-neutral-50 rounded-lg transition-colors text-left"
-                        >
-                          <MapPin className="w-5 h-5 text-[#66BD59] flex-shrink-0" />
-                          <div className="flex-1 min-w-0">
-                            <p className="font-semibold text-[#0F1415]">{place.name}</p>
-                            <p className="text-sm text-neutral-600 truncate">{place.address}</p>
-                          </div>
-                          <span className="text-sm text-neutral-500 whitespace-nowrap">{place.distance}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
                 </Card>
               )}
             </div>
@@ -175,7 +115,7 @@ export default function SelectLocationPage() {
                       onClick={() => setTo(`${place.name} - ${place.address}`)}
                       className="w-full flex items-center gap-3 p-3 bg-neutral-50 hover:bg-neutral-100 rounded-lg transition-colors text-left"
                     >
-                      <MapPin className="w-5 h-5 text-[#66BD59] flex-shrink-0" />
+                      <HiLocationMarker className="w-5 h-5 text-[#66BD59] flex-shrink-0" />
                       <div className="flex-1 min-w-0">
                         <p className="font-semibold text-[#0F1415]">{place.name}</p>
                         <p className="text-sm text-neutral-600 truncate">{place.address}</p>
@@ -203,4 +143,3 @@ export default function SelectLocationPage() {
     </div>
   );
 }
-

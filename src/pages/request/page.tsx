@@ -1,10 +1,9 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../../components/feature/Header';
 import Button from '../../components/base/Button';
 import Card from '../../components/base/Card';
-import { MapPin } from 'lucide-react';
+import { HiLocationMarker } from 'react-icons/hi';
 
 export default function RequestPage() {
   const navigate = useNavigate();
@@ -17,7 +16,6 @@ export default function RequestPage() {
   const [showConfirm, setShowConfirm] = useState(false);
 
   const handleConfirmRequest = () => {
-    // Navigate to searching for valet
     navigate('/searching-valet', { 
       state: { 
         from: pickupPoint,
@@ -27,7 +25,6 @@ export default function RequestPage() {
     });
   };
 
-  // Load location data from localStorage if not in state
   useEffect(() => {
     if (!locationData?.from || !locationData?.to) {
       const savedLocation = localStorage.getItem('bookingLocation');
@@ -53,7 +50,6 @@ export default function RequestPage() {
       <div className="pt-20 px-4 pb-6">
         {!showConfirm ? (
           <>
-            {/* Selected Valet - Only show if valet exists */}
             {valet && (
               <Card className="p-4 mb-6">
                 <div className="flex items-center space-x-3">
@@ -79,11 +75,10 @@ export default function RequestPage() {
               </Card>
             )}
 
-            {/* Pickup Point */}
             <Card className="p-4 mb-4">
               <h3 className="font-semibold text-[#0F1415] mb-3">Pickup Point</h3>
               <div className="flex items-center gap-3">
-                <MapPin className="w-5 h-5 text-[#66BD59] flex-shrink-0" />
+                <HiLocationMarker className="w-5 h-5 text-[#66BD59] flex-shrink-0" />
                 <div className="flex-1">
                   <p className="font-medium text-[#0F1415]">{pickupPoint}</p>
                   <p className="text-sm text-neutral-600">Current location</p>
@@ -97,11 +92,10 @@ export default function RequestPage() {
               </div>
             </Card>
 
-            {/* Drop Point */}
             <Card className="p-4 mb-4">
               <h3 className="font-semibold text-[#0F1415] mb-3">Drop Point</h3>
               <div className="flex items-center gap-3">
-                <MapPin className="w-5 h-5 text-[#66BD59] flex-shrink-0" />
+                <HiLocationMarker className="w-5 h-5 text-[#66BD59] flex-shrink-0" />
                 <div className="flex-1">
                   {dropPoint ? (
                     <>
@@ -121,7 +115,6 @@ export default function RequestPage() {
               </div>
             </Card>
 
-            {/* Insurance Add-on */}
             <Card className="p-4 mb-6">
               <div 
                 onClick={() => setInsurance(!insurance)}
@@ -139,7 +132,6 @@ export default function RequestPage() {
               </div>
             </Card>
 
-            {/* Price Breakdown */}
             <Card className="p-4 mb-6">
               <h3 className="font-semibold text-[#0F1415] mb-3">Price Breakdown</h3>
               <div className="space-y-2">
@@ -179,7 +171,6 @@ export default function RequestPage() {
             </Button>
           </>
         ) : (
-          /* Confirmation Screen */
           <div className="text-center py-12">
             <div className="w-20 h-20 bg-gradient-to-br from-[#66BD59] to-[#52A547] rounded-full flex items-center justify-center mx-auto mb-6">
               <span className="text-white text-3xl">✓</span>

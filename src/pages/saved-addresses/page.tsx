@@ -3,7 +3,7 @@ import Header from '../../components/feature/Header';
 import Card from '../../components/base/Card';
 import Button from '../../components/base/Button';
 import BottomNav from '../../components/feature/BottomNav';
-import { MapPin, Home, Briefcase, Heart, Plus, Edit2, Trash2, Star } from 'lucide-react';
+import { FaMapMarkerAlt, FaHome, FaBriefcase, FaHeart, FaPlus, FaEdit, FaTrashAlt } from 'react-icons/fa';
 
 interface Address {
   id: string;
@@ -48,13 +48,13 @@ export default function SavedAddressesPage() {
   const getIcon = (type: string) => {
     switch (type) {
       case 'home':
-        return <Home className="w-5 h-5" />;
+        return <FaHome className="w-5 h-5" />;
       case 'work':
-        return <Briefcase className="w-5 h-5" />;
+        return <FaBriefcase className="w-5 h-5" />;
       case 'favorite':
-        return <Heart className="w-5 h-5" />;
+        return <FaHeart className="w-5 h-5" />;
       default:
-        return <MapPin className="w-5 h-5" />;
+        return <FaMapMarkerAlt className="w-5 h-5" />;
     }
   };
 
@@ -108,10 +108,10 @@ export default function SavedAddressesPage() {
                 </div>
                 <div className="flex flex-col gap-2">
                   <button className="w-8 h-8 rounded-full hover:bg-neutral-100 flex items-center justify-center transition-colors">
-                    <Edit2 className="w-4 h-4 text-neutral-600" />
+                    <FaEdit className="w-4 h-4 text-neutral-600" />
                   </button>
                   <button className="w-8 h-8 rounded-full hover:bg-status-error/10 flex items-center justify-center transition-colors">
-                    <Trash2 className="w-4 h-4 text-status-error" />
+                    <FaTrashAlt className="w-4 h-4 text-status-error" />
                   </button>
                 </div>
               </div>
@@ -123,14 +123,14 @@ export default function SavedAddressesPage() {
         {addresses.length === 0 && (
           <div className="text-center py-12">
             <div className="w-20 h-20 rounded-full bg-neutral-100 flex items-center justify-center mx-auto mb-4">
-              <MapPin className="w-10 h-10 text-neutral-400" />
+              <FaMapMarkerAlt className="w-10 h-10 text-neutral-400" />
             </div>
             <h3 className="text-h2 font-semibold text-primary-dark mb-2">No saved addresses</h3>
             <p className="text-body text-neutral-600 mb-6">
               Add your frequently visited places for faster booking
             </p>
             <Button variant="primary">
-              <Plus className="mr-2 w-5 h-5" />
+              <FaPlus className="mr-2 w-5 h-5" />
               Add Address
             </Button>
           </div>
