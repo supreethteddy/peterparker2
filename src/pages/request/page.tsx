@@ -165,7 +165,7 @@ export default function RequestPage() {
               disabled={!dropPoint}
               fullWidth
               size="lg"
-              className="text-lg font-bold"
+              icon="arrow-right"
             >
               Request Valet Service
             </Button>

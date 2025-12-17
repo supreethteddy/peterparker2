@@ -174,9 +174,9 @@ export default function ReviewPage() {
           disabled={rating === 0}
           fullWidth
           size="lg"
-          className="text-lg font-bold"
+          icon="check"
         >
-          Submit
+          Submit Review
         </Button>
       </div>
     </div>

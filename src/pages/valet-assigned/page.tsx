@@ -131,7 +131,7 @@ export default function ValetAssignedPage() {
               onClick={handleConfirmPickup}
               fullWidth
               size="lg"
-              className="text-lg font-bold"
+              icon="arrow-right"
             >
               Confirm Pickup Point
             </Button>

@@ -197,9 +197,10 @@ export default function HomePage() {
               <Button
                 onClick={() => navigate('/select-location')}
                 fullWidth
-                className="bg-gradient-to-r from-[#34C0CA] to-[#66BD59] text-white rounded-xl shadow-lg"
+                size="lg"
+                icon="arrow-right"
               >
-                Book Valet
+                Book Valet Now
               </Button>
             </div>
           </Card>
@@ -223,7 +224,7 @@ export default function HomePage() {
                   }}
                   disabled={action.disabled}
                   type="button"
-                  className={`p-4 rounded-xl flex flex-col items-center text-center 
+                  className={`p-4 rounded-xl flex flex-col items-center text-center group
                     transition-all duration-200 active:scale-95 ${action.disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} ${
                     action.isPrimary 
                       ? 'bg-white border border-[#E8F3EF] shadow-md' 

@@ -165,7 +165,7 @@ export default function ReturnPage() {
               onClick={handleCarArrived}
               fullWidth
               size="lg"
-              className="text-lg font-bold"
+              icon="check"
             >
               Car Arrived - Complete Return
             </Button>
