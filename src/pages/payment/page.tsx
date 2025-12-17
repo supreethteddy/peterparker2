@@ -130,9 +130,9 @@ export default function PaymentPage() {
                 onClick={handlePayment}
                 fullWidth
                 size="lg"
-                className="text-lg font-bold"
+                icon="check"
               >
-                Confirm Ride
+                Confirm Payment
               </Button>
               <Button 
                 variant="secondary" 

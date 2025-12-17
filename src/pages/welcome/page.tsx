@@ -41,16 +41,16 @@ export default function WelcomePage() {
             onClick={() => navigate('/signup')} 
             fullWidth 
             size="lg"
-            className="text-lg font-bold"
+            icon="arrow-right"
           >
             Create an account
           </Button>
           <Button 
             onClick={() => navigate('/login')} 
-            variant="outline"
+            variant="secondary"
             fullWidth 
             size="lg"
-            className="text-lg font-bold border-2"
+            icon="none"
           >
             Log In
           </Button>

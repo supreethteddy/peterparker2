@@ -10,6 +10,7 @@ interface ButtonProps {
   className?: string;
   type?: 'button' | 'submit';
   fullWidth?: boolean;
+  icon?: 'arrow' | 'arrow-right' | 'arrow-left' | 'arrow-curve' | 'check' | 'none';
 }
 
 export default function Button({
@@ -21,9 +22,10 @@ export default function Button({
   loading = false,
   className = '',
   type = 'button',
-  fullWidth = false
+  fullWidth = false,
+  icon
 }: ButtonProps) {
-  const baseClasses = 'font-semibold rounded-xl transition-all duration-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:transform-none min-h-[48px] font-medium tracking-wide';
+  const baseClasses = 'font-semibold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:transform-none min-h-[48px] font-medium tracking-wide group';
   
   const variantClasses = {
     primary: 'bg-gradient-to-r from-[#34C0CA] to-[#66BD59] text-white hover:from-[#2BA8B2] hover:to-[#52A547] active:from-[#25909A] active:to-[#3D8A35] shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]',
@@ -38,6 +40,45 @@ export default function Button({
     md: 'px-6 py-3 text-base min-h-[48px]',
     lg: 'px-8 py-4 text-lg min-h-[56px]'
   };
+
+  // Auto-detect icon based on button text if not specified
+  const shouldShowIcon = icon !== 'none';
+  const detectedIcon = icon || (variant === 'primary' ? 'arrow-right' : undefined);
+
+  const renderIcon = () => {
+    if (!shouldShowIcon || disabled) return null;
+
+    const iconClass = "w-5 h-5 transition-transform duration-300";
+    
+    switch (detectedIcon) {
+      case 'arrow-right':
+        return (
+          <svg className={`${iconClass} group-hover:translate-x-1`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+          </svg>
+        );
+      case 'arrow-left':
+        return (
+          <svg className={`${iconClass} group-hover:-translate-x-1`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M11 17l-5-5m0 0l5-5m-5 5h12" />
+          </svg>
+        );
+      case 'arrow-curve':
+        return (
+          <svg className={`${iconClass} group-hover:rotate-12`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+          </svg>
+        );
+      case 'check':
+        return (
+          <svg className={`${iconClass} group-hover:scale-110`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+          </svg>
+        );
+      default:
+        return null;
+    }
+  };
   
   return (
     <button
@@ -48,14 +89,17 @@ export default function Button({
     >
       {loading ? (
         <>
-          <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <svg className="animate-spin h-5 w-5 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
           </svg>
-          Loading...
+          <span>Loading...</span>
         </>
       ) : (
-        children
+        <>
+          {children}
+          {renderIcon()}
+        </>
       )}
     </button>
   );

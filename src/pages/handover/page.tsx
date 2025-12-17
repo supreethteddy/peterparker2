@@ -217,7 +217,7 @@ export default function HandoverPage() {
               disabled={!allChecked || !confirmHandover}
               fullWidth
               size="lg"
-              className="text-lg font-bold"
+              icon="check"
             >
               Complete Handover & Start Timer
             </Button>

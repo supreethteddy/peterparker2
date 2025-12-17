@@ -115,7 +115,7 @@ export default function ConfirmPickupPage() {
               onClick={handleConfirm}
               fullWidth
               size="lg"
-              className="text-lg font-bold"
+              icon="check"
             >
               Confirm Pickup Location
             </Button>

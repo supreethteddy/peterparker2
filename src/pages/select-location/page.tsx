@@ -133,7 +133,8 @@ export default function SelectLocationPage() {
               disabled={!from || !to}
               fullWidth
               size="lg"
-              className="text-lg font-bold mt-6"
+              className="mt-6"
+              icon="check"
             >
               Confirm Location
             </Button>
