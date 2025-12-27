@@ -21,7 +21,7 @@ export default function Card({
   
   return (
     <div 
-      className={`${variantClasses[variant]} ${onClick ? 'cursor-pointer hover:shadow-[0_12px_32px_rgba(0,0,0,0.15)] hover:-translate-y-1 transition-all duration-300 ease-out active:translate-y-0' : 'transition-shadow duration-200'} ${className}`}
+      className={`${variantClasses[variant]} ${onClick ? 'cursor-pointer hover:shadow-[0_12px_32px_rgba(0,0,0,0.15)] hover:-translate-y-1 hover:scale-[1.01] transition-all duration-300 ease-out active:translate-y-0 active:scale-[0.99]' : 'transition-all duration-200'} ${className}`}
       onClick={onClick}
     >
       {children}
