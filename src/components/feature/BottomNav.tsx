@@ -27,7 +27,7 @@ export default function BottomNav() {
             <button
               key={item.path}
               onClick={() => navigate(item.path)}
-              className={`flex flex-col items-center justify-center space-y-1.5 transition-all duration-300 ${
+              className={`flex flex-col items-center justify-center space-y-1.5 transition-all duration-300 active:scale-95 ${
                 isActive ? 'text-[#66BD59]' : 'text-neutral-400 hover:text-neutral-600'
               }`}
             >

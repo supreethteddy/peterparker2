@@ -85,7 +85,7 @@ export default function ProfilePage() {
 
       <div className="pt-20 px-4 pb-24">
         {/* Profile Header */}
-        <Card className="p-6 mb-6">
+        <Card className="p-6 mb-6 animate-in" style={{ animationDelay: '0.1s' }}>
             <div className="flex items-center gap-4 mb-6">
             <div className="w-20 h-20 rounded-full bg-gradient-to-r from-[#34C0CA] to-[#66BD59] flex items-center justify-center text-white">
               <span className="text-2xl font-bold">
@@ -116,7 +116,7 @@ export default function ProfilePage() {
         </Card>
 
         {/* Vehicle Info */}
-        <Card className="p-4 mb-6">
+        <Card className="p-4 mb-6 animate-in" style={{ animationDelay: '0.2s' }}>
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-[#66BD59]/10 flex items-center justify-center">
               <i className="ri-car-line text-[#66BD59] text-xl"></i>
@@ -132,21 +132,26 @@ export default function ProfilePage() {
         {/* Menu Items */}
         <div className="space-y-2">
           {menuItems.map((item, index) => (
-            <Card key={index} className="p-4 cursor-pointer hover:shadow-lg transition-all" onClick={item.action}>
+            <Card 
+              key={index} 
+              className="p-4 cursor-pointer hover:shadow-lg transition-all animate-in" 
+              onClick={item.action}
+              style={{ animationDelay: `${0.3 + index * 0.05}s` }}
+            >
               <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-transform hover:scale-110 ${
                   item.danger ? 'bg-[#EF4444]/10' : 'bg-[#66BD59]/10'
                 }`}>
-                  <i className={`${item.icon} text-xl ${
+                  <i className={`${item.icon} text-xl transition-transform group-hover:scale-110 ${
                     item.danger ? 'text-[#EF4444]' : 'text-[#66BD59]'
                   }`}></i>
                 </div>
                 <div className="flex-1">
-                  <h3 className={`text-base font-medium ${item.danger ? 'text-[#EF4444]' : 'text-[#0F1415]'}`}>
+                  <h3 className={`text-base font-medium transition-colors ${item.danger ? 'text-[#EF4444]' : 'text-[#0F1415]'}`}>
                     {item.title}
                   </h3>
                 </div>
-                <i className="ri-arrow-right-s-line text-neutral-400"></i>
+                <i className="ri-arrow-right-s-line text-neutral-400 transition-transform group-hover:translate-x-1"></i>
               </div>
             </Card>
           ))}

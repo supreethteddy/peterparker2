@@ -42,6 +42,10 @@ import SettingsPage from '../pages/settings/page';
 import EmergencyPage from '../pages/emergency/page';
 import ErrorPage from '../pages/error/page';
 import VerificationPage from '../pages/verification/page';
+import EditProfilePage from '../pages/edit-profile/page';
+import VehicleDetailsPage from '../pages/vehicle-details/page';
+import PaymentMethodsPage from '../pages/payment-methods/page';
+import InsuranceSettingsPage from '../pages/insurance-settings/page';
 import NotFound from '../pages/NotFound';
 
 const routes: RouteObject[] = [
@@ -216,6 +220,22 @@ const routes: RouteObject[] = [
   {
     path: '/emergency',
     Component: EmergencyPage
+  },
+  {
+    path: '/edit-profile',
+    Component: EditProfilePage
+  },
+  {
+    path: '/vehicle-details',
+    Component: VehicleDetailsPage
+  },
+  {
+    path: '/payment-methods',
+    Component: PaymentMethodsPage
+  },
+  {
+    path: '/insurance-settings',
+    Component: InsuranceSettingsPage
   },
   {
     path: '/error/no-valets',

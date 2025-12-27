@@ -17,9 +17,9 @@ export default function Header({ title, leftIcon, rightIcon, onLeftClick, onRigh
           {onLeftClick && (
             <button 
               onClick={onLeftClick} 
-              className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-[#34C0CA]/10 transition-all duration-200"
+              className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-[#34C0CA]/10 transition-all duration-200 active:scale-95 hover:scale-105"
             >
-              {leftIcon || <HiArrowLeft className="w-5 h-5 text-[#0F1415]" />}
+              {leftIcon || <HiArrowLeft className="w-5 h-5 text-[#0F1415] transition-transform group-hover:-translate-x-1" />}
             </button>
           )}
         </div>
@@ -28,7 +28,7 @@ export default function Header({ title, leftIcon, rightIcon, onLeftClick, onRigh
           {rightIcon && onRightClick && (
             <button 
               onClick={onRightClick} 
-              className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-neutral-100 transition-colors"
+              className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-neutral-100 transition-all duration-200 active:scale-95 hover:scale-105"
             >
               {rightIcon}
             </button>
