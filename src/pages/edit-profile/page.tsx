@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../../lib/supabase';
 import Header from '../../components/feature/Header';
 import Card from '../../components/base/Card';
 import Button from '../../components/base/Button';
@@ -10,9 +11,9 @@ export default function EditProfilePage() {
   const navigate = useNavigate();
   const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState({
-    name: 'Arjun Sharma',
-    email: 'arjun.sharma@email.com',
-    phone: '+91 98765 43210',
+    name: '',
+    email: '',
+    phone: '',
     dateOfBirth: '',
     gender: '',
     address: '',
@@ -20,40 +21,73 @@ export default function EditProfilePage() {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData?.user) return;
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userData.user.id)
+        .single();
+
+      if (profile) {
+        setFormData({
+          name: profile.full_name || '',
+          email: profile.email || '',
+          phone: profile.phone || '',
+          dateOfBirth: '', // Add to DB if needed
+          gender: profile.gender || '',
+          address: '', // Add to DB if needed
+        });
+      }
+    };
+    fetchProfile();
+  }, []);
+
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    
+
     if (!formData.name.trim()) {
       newErrors.name = 'Name is required';
     }
-    
+
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = 'Invalid email format';
     }
-    
+
     if (!formData.phone.trim()) {
       newErrors.phone = 'Phone is required';
     } else if (!/^\+?[\d\s-()]+$/.test(formData.phone)) {
       newErrors.phone = 'Invalid phone format';
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSave = async () => {
     if (!validateForm()) return;
-    
+
     setIsSaving(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    // Save to localStorage
-    localStorage.setItem('userProfile', JSON.stringify(formData));
-    
+
+    const { data: userData } = await supabase.auth.getUser();
+    if (userData?.user) {
+      await supabase
+        .from('profiles')
+        .update({
+          full_name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          gender: formData.gender,
+        })
+        .eq('id', userData.user.id);
+    }
+
     setIsSaving(false);
     navigate('/profile');
   };
@@ -67,8 +101,8 @@ export default function EditProfilePage() {
 
   return (
     <div className="min-h-screen bg-neutral-50 safe-top safe-bottom animate-in">
-      <Header 
-        title="Edit Profile" 
+      <Header
+        title="Edit Profile"
         onLeftClick={() => navigate(-1)}
       />
 
@@ -145,11 +179,10 @@ export default function EditProfilePage() {
                     <button
                       key={gender}
                       onClick={() => handleChange('gender', gender)}
-                      className={`px-4 py-3 rounded-xl border-2 transition-all transform hover:scale-105 active:scale-95 ${
-                        formData.gender === gender
+                      className={`px-4 py-3 rounded-xl border-2 transition-all transform hover:scale-105 active:scale-95 ${formData.gender === gender
                           ? 'border-[#66BD59] bg-[#66BD59]/10 text-[#66BD59] font-semibold shadow-md'
                           : 'border-neutral-200 bg-white text-neutral-700 hover:border-[#34C0CA]/50'
-                      }`}
+                        }`}
                     >
                       {gender}
                     </button>

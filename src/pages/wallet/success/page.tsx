@@ -1,43 +1,18 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Card from '../../../components/base/Card';
 import Button from '../../../components/base/Button';
 import { HiArrowLeft, HiX, HiCheckCircle } from 'react-icons/hi';
 
 export default function WalletSuccessPage() {
   const navigate = useNavigate();
-  const [amount, setAmount] = useState(0);
+  const location = useLocation();
 
   useEffect(() => {
-    // Load transaction data
-    const transactionData = localStorage.getItem('pendingWalletTransaction');
-    if (transactionData) {
-      const data = JSON.parse(transactionData);
-      setAmount(data.amount);
-
-      // Update wallet balance
-      const walletData = localStorage.getItem('walletData');
-      const currentData = walletData ? JSON.parse(walletData) : { balance: 500, totalExpend: 200 };
-      currentData.balance = (currentData.balance || 500) + data.amount;
-      localStorage.setItem('walletData', JSON.stringify(currentData));
-
-      // Add transaction to history
-      const transactions = JSON.parse(localStorage.getItem('walletTransactions') || '[]');
-      transactions.unshift({
-        id: Date.now(),
-        type: 'credit',
-        amount: data.amount,
-        description: 'Top-up',
-        date: 'Today',
-        time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }).toLowerCase(),
-        icon: 'green',
-      });
-      localStorage.setItem('walletTransactions', JSON.stringify(transactions));
-
-      // Clear pending transaction
-      localStorage.removeItem('pendingWalletTransaction');
+    if (location.state?.amount) {
+      setAmount(location.state.amount);
     }
-  }, []);
+  }, [location.state]);
 
   return (
     <div className="min-h-screen bg-white safe-top safe-bottom flex items-center justify-center">

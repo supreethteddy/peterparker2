@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../../lib/supabase';
 import Card from '../../components/base/Card';
 import Input from '../../components/base/Input';
 import Button from '../../components/base/Button';
@@ -18,13 +19,31 @@ export default function PaymentSetupPage() {
   });
   const [isDefault, setIsDefault] = useState(true);
 
-  const handleSaveCard = () => {
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const handleSaveCard = async () => {
     if (cardData.number && cardData.name && cardData.expiry && cardData.cvv) {
-      localStorage.setItem('paymentMethod', JSON.stringify({
+      setIsProcessing(true);
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData?.user) {
+        setIsProcessing(false);
+        return;
+      }
+
+      await supabase.from('payment_methods').insert({
+        user_id: userData.user.id,
         type: 'card',
-        ...cardData,
-        isDefault,
-      }));
+        provider: 'Credit Card',
+        details: {
+          name: cardData.name,
+          number: cardData.number,
+          expiry: cardData.expiry,
+          cvv: cardData.cvv
+        },
+        is_default: isDefault
+      });
+
+      setIsProcessing(false);
       navigate('/insurance-setup');
     }
   };
@@ -45,50 +64,44 @@ export default function PaymentSetupPage() {
 
   return (
     <div className="min-h-screen bg-white safe-top safe-bottom">
-      <Header 
-        title="Set Up Payment" 
+      <Header
+        title="Set Up Payment"
         onLeftClick={() => navigate(-1)}
       />
-      
+
       <div className="pt-20 pb-8 px-6 max-w-md mx-auto">
         <div className="grid grid-cols-2 gap-3 mb-6">
           <button
             onClick={() => setSelectedMethod('card')}
-            className={`p-4 bg-white border-2 rounded-xl transition-all text-center ${
-              selectedMethod === 'card' 
-                ? 'border-[#66BD59] shadow-md bg-[#66BD59]/10' 
+            className={`p-4 bg-white border-2 rounded-xl transition-all text-center ${selectedMethod === 'card'
+                ? 'border-[#66BD59] shadow-md bg-[#66BD59]/10'
                 : 'border-neutral-200 hover:border-neutral-300'
-            }`}
+              }`}
           >
-            <HiCreditCard className={`w-8 h-8 mb-2 mx-auto ${
-              selectedMethod === 'card' ? 'text-[#66BD59]' : 'text-neutral-400'
-            }`} />
-            <p className={`text-base font-medium ${
-              selectedMethod === 'card' ? 'text-[#66BD59]' : 'text-[#0F1415]'
-            }`}>Card</p>
+            <HiCreditCard className={`w-8 h-8 mb-2 mx-auto ${selectedMethod === 'card' ? 'text-[#66BD59]' : 'text-neutral-400'
+              }`} />
+            <p className={`text-base font-medium ${selectedMethod === 'card' ? 'text-[#66BD59]' : 'text-[#0F1415]'
+              }`}>Card</p>
           </button>
-          
+
           <button
             onClick={() => setSelectedMethod('wallet')}
-            className={`p-4 bg-white border-2 rounded-xl transition-all text-center ${
-              selectedMethod === 'wallet' 
-                ? 'border-[#66BD59] shadow-md bg-[#66BD59]/10' 
+            className={`p-4 bg-white border-2 rounded-xl transition-all text-center ${selectedMethod === 'wallet'
+                ? 'border-[#66BD59] shadow-md bg-[#66BD59]/10'
                 : 'border-neutral-200 hover:border-neutral-300'
-            }`}
+              }`}
           >
-            <IoWallet className={`w-8 h-8 mb-2 mx-auto ${
-              selectedMethod === 'wallet' ? 'text-[#66BD59]' : 'text-neutral-400'
-            }`} />
-            <p className={`text-base font-medium ${
-              selectedMethod === 'wallet' ? 'text-[#66BD59]' : 'text-[#0F1415]'
-            }`}>Wallet/UPI</p>
+            <IoWallet className={`w-8 h-8 mb-2 mx-auto ${selectedMethod === 'wallet' ? 'text-[#66BD59]' : 'text-neutral-400'
+              }`} />
+            <p className={`text-base font-medium ${selectedMethod === 'wallet' ? 'text-[#66BD59]' : 'text-[#0F1415]'
+              }`}>Wallet/UPI</p>
           </button>
         </div>
 
         {selectedMethod === 'card' && (
           <Card className="p-6 bg-green-50/100 border-neutral-200 border-2 rounded-xl">
             <h2 className="text-xl font-bold mb-6 text-[#0F1415]">Add Card</h2>
-            
+
             <div className="space-y-4">
               <Input
                 placeholder="Card Number"
@@ -141,11 +154,11 @@ export default function PaymentSetupPage() {
                 </Button>
                 <Button
                   onClick={handleSaveCard}
-                  disabled={!cardData.number || !cardData.name || !cardData.expiry || !cardData.cvv}
+                  disabled={!cardData.number || !cardData.name || !cardData.expiry || !cardData.cvv || isProcessing}
                   fullWidth
                   size="lg"
                 >
-                  Save
+                  {isProcessing ? 'Saving...' : 'Save'}
                 </Button>
               </div>
             </div>

@@ -1,6 +1,7 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../../lib/supabase';
 import Header from '../../components/feature/Header';
 import Button from '../../components/base/Button';
 import Card from '../../components/base/Card';
@@ -10,15 +11,46 @@ export default function ProfilePage() {
   const navigate = useNavigate();
   const [showLogout, setShowLogout] = useState(false);
 
-  const userProfile = {
-    name: 'Arjun Sharma',
-    phone: '+91 98765 43210',
-    email: 'arjun.sharma@email.com',
-    vehicle: 'Honda City - KA 01 AB 1234',
+  const [userProfile, setUserProfile] = useState({
+    name: 'Loading...',
+    phone: '',
+    email: '',
+    vehicle: 'No vehicle set',
     memberSince: 'January 2024',
-    totalTrips: 12,
+    totalTrips: 0,
     rating: 4.8
-  };
+  });
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData?.user) return;
+
+      const [profileResponse, vehiclesResponse] = await Promise.all([
+        supabase.from('profiles').select('*').eq('id', userData.user.id).single(),
+        supabase.from('vehicles').select('*').eq('user_id', userData.user.id).eq('is_primary', true).single()
+      ]);
+
+      let vehicleStr = 'No primary vehicle';
+      if (vehiclesResponse.data) {
+        const v = vehiclesResponse.data;
+        vehicleStr = `${v.make} ${v.model} - ${v.license_plate}`;
+      }
+
+      if (profileResponse.data) {
+        setUserProfile({
+          name: profileResponse.data.full_name || 'User',
+          phone: profileResponse.data.phone || '',
+          email: profileResponse.data.email || '',
+          vehicle: vehicleStr,
+          memberSince: new Date(profileResponse.data.created_at).toLocaleDateString(undefined, { month: 'long', year: 'numeric' }),
+          totalTrips: 0, // Would query bookings
+          rating: 4.8
+        });
+      }
+    };
+    fetchProfile();
+  }, []);
 
   const menuItems = [
     {
@@ -74,9 +106,9 @@ export default function ProfilePage() {
     }
   ];
 
-  const handleLogout = () => {
-    localStorage.removeItem('userOnboarded');
-      navigate('/welcome');
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate('/welcome');
   };
 
   return (
@@ -86,7 +118,7 @@ export default function ProfilePage() {
       <div className="pt-20 px-4 pb-24">
         {/* Profile Header */}
         <Card className="p-6 mb-6 animate-in" style={{ animationDelay: '0.1s' }}>
-            <div className="flex items-center gap-4 mb-6">
+          <div className="flex items-center gap-4 mb-6">
             <div className="w-20 h-20 rounded-full bg-gradient-to-r from-[#34C0CA] to-[#66BD59] flex items-center justify-center text-white">
               <span className="text-2xl font-bold">
                 {userProfile.name.split(' ').map(n => n[0]).join('')}
@@ -98,7 +130,7 @@ export default function ProfilePage() {
               <p className="text-sm text-neutral-500">Member since {userProfile.memberSince}</p>
             </div>
           </div>
-          
+
           <div className="grid grid-cols-3 gap-4 pt-6 border-t border-neutral-200">
             <div className="text-center">
               <h3 className="text-2xl font-bold text-[#66BD59]">{userProfile.totalTrips}</h3>
@@ -132,19 +164,17 @@ export default function ProfilePage() {
         {/* Menu Items */}
         <div className="space-y-2">
           {menuItems.map((item, index) => (
-            <Card 
-              key={index} 
-              className="p-4 cursor-pointer hover:shadow-lg transition-all animate-in" 
+            <Card
+              key={index}
+              className="p-4 cursor-pointer hover:shadow-lg transition-all animate-in"
               onClick={item.action}
               style={{ animationDelay: `${0.3 + index * 0.05}s` }}
             >
               <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-transform hover:scale-110 ${
-                  item.danger ? 'bg-[#EF4444]/10' : 'bg-[#66BD59]/10'
-                }`}>
-                  <i className={`${item.icon} text-xl transition-transform group-hover:scale-110 ${
-                    item.danger ? 'text-[#EF4444]' : 'text-[#66BD59]'
-                  }`}></i>
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-transform hover:scale-110 ${item.danger ? 'bg-[#EF4444]/10' : 'bg-[#66BD59]/10'
+                  }`}>
+                  <i className={`${item.icon} text-xl transition-transform group-hover:scale-110 ${item.danger ? 'text-[#EF4444]' : 'text-[#66BD59]'
+                    }`}></i>
                 </div>
                 <div className="flex-1">
                   <h3 className={`text-base font-medium transition-colors ${item.danger ? 'text-[#EF4444]' : 'text-[#0F1415]'}`}>
@@ -174,14 +204,14 @@ export default function ProfilePage() {
               <h3 className="text-lg font-semibold mb-2">Logout</h3>
               <p className="text-gray-600 mb-6">Are you sure you want to logout?</p>
               <div className="flex space-x-3">
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={() => setShowLogout(false)}
                   className="flex-1"
                 >
                   Cancel
                 </Button>
-                <Button 
+                <Button
                   variant="danger"
                   onClick={handleLogout}
                   className="flex-1"

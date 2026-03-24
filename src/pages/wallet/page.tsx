@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "../../lib/supabase";
 import Card from "../../components/base/Card";
 import Button from "../../components/base/Button";
 import BottomNav from "../../components/feature/BottomNav";
@@ -7,52 +8,65 @@ import { FaCircle } from "react-icons/fa";
 
 export default function WalletPage() {
   const navigate = useNavigate();
-  const [balance, setBalance] = useState(500);
-  const [totalExpend, setTotalExpend] = useState(200);
-  const [transactions, setTransactions] = useState([
-    {
-      id: 1,
-      type: "debit",
-      amount: 570,
-      description: "Welton",
-      date: "Today",
-      time: "09:20 am",
-      icon: "pink",
-    },
-    {
-      id: 2,
-      type: "credit",
-      amount: 570,
-      description: "Nathsam",
-      date: "Today",
-      time: "09:20 am",
-      icon: "green",
-    },
-  ]);
+  const [balance, setBalance] = useState(0);
+  const [totalExpend, setTotalExpend] = useState(0);
+  const [transactions, setTransactions] = useState<any[]>([]);
 
   useEffect(() => {
-    // Load wallet data from localStorage
-    const walletData = localStorage.getItem("walletData");
-    if (walletData) {
-      const data = JSON.parse(walletData);
-      setBalance(data.balance || 500);
-      setTotalExpend(data.totalExpend || 200);
-    } else {
-      // Initialize wallet data
-      localStorage.setItem(
-        "walletData",
-        JSON.stringify({ balance: 500, totalExpend: 200 })
-      );
-    }
+    const fetchWalletData = async () => {
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData?.user) return;
 
-    // Load transactions from localStorage
-    const savedTransactions = localStorage.getItem("walletTransactions");
-    if (savedTransactions) {
-      setTransactions(JSON.parse(savedTransactions));
-    } else {
-      // Initialize with default transactions
-      localStorage.setItem("walletTransactions", JSON.stringify(transactions));
-    }
+      let { data: walletData, error: walletError } = await supabase
+        .from('wallets')
+        .select('*')
+        .eq('user_id', userData.user.id)
+        .single();
+
+      if (walletError && walletError.code === 'PGRST116') {
+        const { data: newWallet } = await supabase
+          .from('wallets')
+          .insert({ user_id: userData.user.id, balance: 500 }) // Demo starting balance
+          .select()
+          .single();
+        walletData = newWallet;
+      }
+
+      if (walletData) {
+        setBalance(Number(walletData.balance));
+      }
+
+      if (walletData?.id) {
+        const { data: txns } = await supabase
+          .from('wallet_transactions')
+          .select('*')
+          .eq('wallet_id', walletData.id)
+          .order('created_at', { ascending: false });
+
+        if (txns) {
+          const formattedTxns = txns.map((t: any) => {
+            const dateObj = new Date(t.created_at);
+            return {
+              id: t.id,
+              type: t.type,
+              amount: Number(t.amount),
+              description: t.description || 'Transaction',
+              date: dateObj.toLocaleDateString(),
+              time: dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+              icon: t.type === 'debit' ? 'pink' : 'green'
+            }
+          });
+          setTransactions(formattedTxns);
+
+          const expend = txns
+            .filter((t: any) => t.type === 'debit')
+            .reduce((sum: number, t: any) => sum + Number(t.amount), 0);
+          setTotalExpend(expend);
+        }
+      }
+    };
+
+    fetchWalletData();
   }, []);
 
   return (
@@ -106,9 +120,8 @@ export default function WalletPage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div
-                      className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                        txn.icon === "pink" ? "bg-pink-100" : "bg-green-100"
-                      }`}
+                      className={`w-10 h-10 rounded-full flex items-center justify-center ${txn.icon === "pink" ? "bg-pink-100" : "bg-green-100"
+                        }`}
                     >
                       {txn.icon === "pink" ? (
                         <FaCircle className="w-5 h-5 text-pink-600" />
@@ -123,17 +136,19 @@ export default function WalletPage() {
                       <p className="text-sm text-neutral-600">
                         {txn.date} at {txn.time}
                       </p>
+                      <p className="text-sm border border-neutral-200 rounded px-2 py-0.5 mt-1 inline-block capitalize">
+                        {txn.status || 'completed'}
+                      </p>
                     </div>
                   </div>
                   <div className="text-right">
                     <p
-                      className={`text-base font-semibold ${
-                        txn.type === "credit"
-                          ? "text-[#0F1415]"
-                          : "text-red-600"
-                      }`}
+                      className={`text-base font-semibold ${txn.type === "credit"
+                        ? "text-[#0F1415]"
+                        : "text-red-600"
+                        }`}
                     >
-                      {txn.type === "credit" ? "" : "-"}${txn.amount.toFixed(2)}
+                      {txn.type === "credit" ? "+" : "-"}${Number(txn.amount).toFixed(2)}
                     </p>
                   </div>
                 </div>

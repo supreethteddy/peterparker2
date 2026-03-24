@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../../lib/supabase';
 import Header from '../../components/feature/Header';
 import Card from '../../components/base/Card';
 import Button from '../../components/base/Button';
@@ -11,25 +12,27 @@ export default function InsuranceSettingsPage() {
   const [coverageAmount, setCoverageAmount] = useState('50000');
   const [premiumAmount, setPremiumAmount] = useState('99');
 
+  const [isProcessing, setIsProcessing] = useState(false);
+
   useEffect(() => {
-    const saved = localStorage.getItem('insuranceEnabled');
-    if (saved !== null) {
-      setInsuranceEnabled(JSON.parse(saved));
-    }
-    const coverage = localStorage.getItem('insuranceCoverage');
-    if (coverage) {
-      setCoverageAmount(coverage);
-    }
-    const premium = localStorage.getItem('insurancePremium');
-    if (premium) {
-      setPremiumAmount(premium);
-    }
+    const fetchInsurance = async () => {
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData?.user) return;
+      const { data } = await supabase.from('profiles').select('insurance_enabled').eq('id', userData.user.id).single();
+      if (data) {
+        setInsuranceEnabled(data.insurance_enabled);
+      }
+    };
+    fetchInsurance();
   }, []);
 
-  const handleSave = () => {
-    localStorage.setItem('insuranceEnabled', JSON.stringify(insuranceEnabled));
-    localStorage.setItem('insuranceCoverage', coverageAmount);
-    localStorage.setItem('insurancePremium', premiumAmount);
+  const handleSave = async () => {
+    setIsProcessing(true);
+    const { data: userData } = await supabase.auth.getUser();
+    if (userData?.user) {
+      await supabase.from('profiles').update({ insurance_enabled: insuranceEnabled }).eq('id', userData.user.id);
+    }
+    setIsProcessing(false);
     navigate('/profile');
   };
 
@@ -42,8 +45,8 @@ export default function InsuranceSettingsPage() {
 
   return (
     <div className="min-h-screen bg-neutral-50 safe-top safe-bottom animate-in">
-      <Header 
-        title="Insurance Settings" 
+      <Header
+        title="Insurance Settings"
         onLeftClick={() => navigate(-1)}
       />
 
@@ -80,14 +83,12 @@ export default function InsuranceSettingsPage() {
                 className="sr-only"
               />
               <div
-                className={`w-14 h-7 rounded-full transition-all duration-300 ${
-                  insuranceEnabled ? 'bg-gradient-to-r from-[#34C0CA] to-[#66BD59]' : 'bg-neutral-300'
-                }`}
+                className={`w-14 h-7 rounded-full transition-all duration-300 ${insuranceEnabled ? 'bg-gradient-to-r from-[#34C0CA] to-[#66BD59]' : 'bg-neutral-300'
+                  }`}
               >
                 <div
-                  className={`w-7 h-7 bg-white rounded-full shadow-lg transition-transform duration-300 ${
-                    insuranceEnabled ? 'translate-x-7' : 'translate-x-0'
-                  }`}
+                  className={`w-7 h-7 bg-white rounded-full shadow-lg transition-transform duration-300 ${insuranceEnabled ? 'translate-x-7' : 'translate-x-0'
+                    }`}
                 />
               </div>
             </div>
@@ -99,7 +100,7 @@ export default function InsuranceSettingsPage() {
           <>
             <Card className="p-6 mb-6 animate-in" style={{ animationDelay: '0.2s' }}>
               <h3 className="text-lg font-semibold text-[#0F1415] mb-4">Coverage Plan</h3>
-              
+
               <div className="space-y-3 mb-6">
                 {coverageOptions.map((option, index) => (
                   <button
@@ -108,20 +109,18 @@ export default function InsuranceSettingsPage() {
                       setCoverageAmount(option.amount);
                       setPremiumAmount(option.premium);
                     }}
-                    className={`w-full p-4 rounded-xl border-2 transition-all transform hover:scale-[1.02] active:scale-[0.98] ${
-                      coverageAmount === option.amount
+                    className={`w-full p-4 rounded-xl border-2 transition-all transform hover:scale-[1.02] active:scale-[0.98] ${coverageAmount === option.amount
                         ? 'border-[#66BD59] bg-[#66BD59]/10 shadow-md'
                         : 'border-neutral-200 bg-white hover:border-[#34C0CA]/50'
-                    }`}
+                      }`}
                     style={{ animationDelay: `${0.2 + index * 0.1}s` }}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                          coverageAmount === option.amount
+                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${coverageAmount === option.amount
                             ? 'bg-gradient-to-r from-[#34C0CA] to-[#66BD59] text-white'
                             : 'bg-neutral-100 text-neutral-600'
-                        }`}>
+                          }`}>
                           <i className="ri-shield-star-line text-xl"></i>
                         </div>
                         <div className="text-left">
@@ -150,7 +149,7 @@ export default function InsuranceSettingsPage() {
                   { icon: 'ri-file-list-line', text: 'Quick claim processing' },
                   { icon: 'ri-checkbox-circle-line', text: 'No deductibles' },
                 ].map((benefit, index) => (
-                  <div 
+                  <div
                     key={index}
                     className="flex items-center gap-3 p-3 rounded-lg bg-neutral-50 hover:bg-neutral-100 transition-colors"
                     style={{ animationDelay: `${0.3 + index * 0.05}s` }}
@@ -205,8 +204,9 @@ export default function InsuranceSettingsPage() {
             onClick={handleSave}
             fullWidth
             size="lg"
+            disabled={isProcessing}
           >
-            Save Changes
+            {isProcessing ? 'Saving...' : 'Save Changes'}
           </Button>
         </div>
       </div>

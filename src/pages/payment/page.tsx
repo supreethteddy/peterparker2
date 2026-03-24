@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { supabase } from '../../lib/supabase';
 import Header from '../../components/feature/Header';
 import Button from '../../components/base/Button';
 import Card from '../../components/base/Card';
@@ -8,9 +9,10 @@ import { HiCreditCard } from 'react-icons/hi';
 export default function PaymentPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { valet, parkingLocation, distanceCharge = 0, totalTime = 45 } = location.state || {};
+  const { valet, parkingLocation, distanceCharge = 0, totalTime = 45, booking } = location.state || {};
   const [showDispute, setShowDispute] = useState(false);
   const [paymentComplete, setPaymentComplete] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const basePrice = 80;
   const overtimeMinutes = Math.max(0, totalTime - 30);
@@ -19,10 +21,25 @@ export default function PaymentPage() {
   const subtotal = basePrice + overtimeCharge + distanceCharge;
   const total = subtotal + platformFee;
 
-  const handlePayment = () => {
+  const handlePayment = async () => {
+    setIsProcessing(true);
+
+    // Mark booking as completed
+    if (booking?.id) {
+      await supabase
+        .from('bookings')
+        .update({
+          status: 'completed',
+          cost: total,
+          ended_at: new Date().toISOString()
+        })
+        .eq('id', booking.id);
+    }
+
+    setIsProcessing(false);
     setPaymentComplete(true);
     setTimeout(() => {
-      navigate('/review', { state: { valet, total } });
+      navigate('/review', { state: { valet, total, booking } });
     }, 2000);
   };
 
@@ -33,7 +50,7 @@ export default function PaymentPage() {
 
   return (
     <div className="min-h-screen bg-neutral-50 safe-top safe-bottom">
-      <Header 
+      <Header
         title="Payment & Rating"
         onLeftClick={() => navigate(-1)}
       />
@@ -126,16 +143,17 @@ export default function PaymentPage() {
             </Card>
 
             <div className="space-y-3">
-              <Button 
+              <Button
                 onClick={handlePayment}
+                disabled={isProcessing}
                 fullWidth
                 size="lg"
                 icon="check"
               >
-                Confirm Payment
+                {isProcessing ? 'Processing Payment...' : 'Confirm Payment'}
               </Button>
-              <Button 
-                variant="secondary" 
+              <Button
+                variant="secondary"
                 onClick={() => setShowDispute(true)}
                 fullWidth
               >
@@ -157,7 +175,7 @@ export default function PaymentPage() {
             <p className="text-3xl font-bold bg-gradient-to-r from-[#34C0CA] to-[#66BD59] bg-clip-text text-transparent mb-6">
               ₹{total}
             </p>
-            
+
             <Card className="p-4 mb-6">
               <div className="space-y-2">
                 <div className="flex justify-between">
@@ -173,7 +191,7 @@ export default function PaymentPage() {
 
             <div className="space-y-3">
               <p className="text-sm font-semibold text-[#0F1415] mb-2">How is your trip?</p>
-              <Button 
+              <Button
                 onClick={() => navigate('/review', { state: { valet, total } })}
                 fullWidth
                 size="lg"
@@ -206,8 +224,8 @@ export default function PaymentPage() {
                 ))}
               </div>
               <div className="flex space-x-3">
-                <Button 
-                  variant="secondary" 
+                <Button
+                  variant="secondary"
                   onClick={() => setShowDispute(false)}
                   className="flex-1"
                 >

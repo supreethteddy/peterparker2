@@ -1,24 +1,27 @@
 import { useState, useRef, KeyboardEvent, ChangeEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { supabase } from '../../lib/supabase';
 import Button from '../../components/base/Button';
 import logoDesign from '../../assets/Logo-design.svg';
 import { HiArrowLeft, HiBackspace } from 'react-icons/hi';
 
 export default function VerifyOTPPage() {
   const navigate = useNavigate();
-  const [otp, setOtp] = useState<string[]>(Array(5).fill(''));
+  const location = useLocation();
+  const signupData = location.state?.signupData;
+  const [otp, setOtp] = useState<string[]>(Array(6).fill(''));
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const [resendTimer, setResendTimer] = useState(60);
 
   const handleChange = (index: number, value: string) => {
     if (value.length > 1) return;
     if (!/^\d*$/.test(value)) return;
-    
+
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
 
-    if (value && index < 4) {
+    if (value && index < 5) {
       inputRefs.current[index + 1]?.focus();
     }
   };
@@ -46,10 +49,26 @@ export default function VerifyOTPPage() {
     }
   };
 
-  const handleVerify = (otpValue: string) => {
-    if (otpValue.length === 5) {
-      localStorage.setItem('userAuthenticated', 'true');
-      navigate('/set-password');
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleVerify = async (otpValue: string) => {
+    if (otpValue.length === 6) {
+      setIsLoading(true);
+      const email = signupData?.email || '';
+
+      const { data, error } = await supabase.auth.verifyOtp({
+        email,
+        token: otpValue,
+        type: 'email',
+      });
+
+      setIsLoading(false);
+
+      if (error) {
+        alert(error.message);
+      } else if (data?.session) {
+        navigate('/set-password', { state: { signupData } });
+      }
     }
   };
 
@@ -78,9 +97,9 @@ export default function VerifyOTPPage() {
           <HiArrowLeft className="w-5 h-5" />
           Back
         </button>
-        <img 
-          src={logoDesign} 
-          alt="quickParker Logo" 
+        <img
+          src={logoDesign}
+          alt="quickParker Logo"
           className="h-14 w-36 object-cover"
         />
       </div>
@@ -125,14 +144,14 @@ export default function VerifyOTPPage() {
             )}
           </div>
 
-          <Button 
-            onClick={() => handleVerify(otp.join(''))} 
-            disabled={otp.some(d => d === '')} 
+          <Button
+            onClick={() => handleVerify(otp.join(''))}
+            disabled={otp.some(d => d === '') || isLoading}
             fullWidth
             size="lg"
             className="text-lg font-bold mb-8"
           >
-            Verify
+            {isLoading ? 'Verifying...' : 'Verify'}
           </Button>
         </div>
 

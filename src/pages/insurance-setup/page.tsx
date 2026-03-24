@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../../lib/supabase';
 import Card from '../../components/base/Card';
 import Button from '../../components/base/Button';
 import Header from '../../components/feature/Header';
@@ -9,20 +10,21 @@ export default function InsuranceSetupPage() {
   const navigate = useNavigate();
   const [insuranceEnabled, setInsuranceEnabled] = useState(true);
 
-  const handleContinue = () => {
-    localStorage.setItem('insuranceEnabled', JSON.stringify(insuranceEnabled));
-    localStorage.setItem('userOnboarded', 'true');
-    localStorage.setItem('userAuthenticated', 'true');
+  const handleContinue = async () => {
+    const { data: userData } = await supabase.auth.getUser();
+    if (userData?.user) {
+      await supabase.from('profiles').update({ insurance_enabled: insuranceEnabled }).eq('id', userData.user.id);
+    }
     navigate('/home');
   };
 
   return (
     <div className="min-h-screen bg-neutral-50 safe-top safe-bottom">
-      <Header 
-        title="Trip Insurance" 
+      <Header
+        title="Trip Insurance"
         onLeftClick={() => navigate(-1)}
       />
-      
+
       <div className="pt-20 pb-8 px-6 max-w-md mx-auto rounded-2xl">
         <Card className="p-6 mb-6 bg-green-50/100">
           <div className="flex items-start gap-4 mb-6">
@@ -56,14 +58,12 @@ export default function InsuranceSetupPage() {
                   className="sr-only"
                 />
                 <div
-                  className={`w-14 h-7 rounded-full transition-colors ${
-                    insuranceEnabled ? 'bg-primary-accent' : 'bg-neutral-300'
-                  }`}
+                  className={`w-14 h-7 rounded-full transition-colors ${insuranceEnabled ? 'bg-primary-accent' : 'bg-neutral-300'
+                    }`}
                 >
                   <div
-                    className={`w-7 h-7 bg-white rounded-full shadow-sm transition-transform p-2 ${
-                      insuranceEnabled ? 'translate-x-7' : 'translate-x-1'
-                    }`}
+                    className={`w-7 h-7 bg-white rounded-full shadow-sm transition-transform p-2 ${insuranceEnabled ? 'translate-x-7' : 'translate-x-1'
+                      }`}
                   />
                 </div>
               </div>

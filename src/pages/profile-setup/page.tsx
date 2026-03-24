@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { supabase } from '../../lib/supabase';
 import Input from '../../components/base/Input';
 import Button from '../../components/base/Button';
 import Header from '../../components/feature/Header';
@@ -7,6 +8,8 @@ import { HiCamera, HiChevronDown } from 'react-icons/hi';
 
 export default function ProfileSetupPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const signupData = location.state?.signupData;
   const [formData, setFormData] = useState({
     fullName: '',
     mobileNumber: '',
@@ -20,26 +23,31 @@ export default function ProfileSetupPage() {
 
   // Load signup data and auto-fill
   useEffect(() => {
-    const signupDataStr = localStorage.getItem('signupData');
-    if (signupDataStr) {
-      try {
-        const signupData = JSON.parse(signupDataStr);
-        setFormData(prev => ({
-          ...prev,
-          fullName: signupData.fullName || '',
-          email: signupData.email || '',
-          mobileNumber: signupData.phone || '',
-          countryCode: signupData.countryCode || '+880',
-        }));
-      } catch (error) {
-        console.error('Error parsing signup data:', error);
-      }
+    if (signupData) {
+      setFormData(prev => ({
+        ...prev,
+        fullName: signupData.fullName || '',
+        email: signupData.email || '',
+        mobileNumber: signupData.phone || '',
+        countryCode: signupData.countryCode || '+880',
+      }));
     }
-  }, []);
+  }, [signupData]);
 
-  const handleSubmit = () => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = async () => {
     if (formData.fullName && formData.email && formData.mobileNumber) {
-      localStorage.setItem('userProfile', JSON.stringify(formData));
+      setIsLoading(true);
+      const { data: userData } = await supabase.auth.getUser();
+      if (userData?.user) {
+        await supabase.from('profiles').update({
+          full_name: formData.fullName,
+          phone: formData.countryCode + formData.mobileNumber,
+          onboarding_status: 'completed'
+        }).eq('id', userData.user.id);
+      }
+      setIsLoading(false);
       navigate('/vehicle-setup');
     }
   };
@@ -67,11 +75,11 @@ export default function ProfileSetupPage() {
 
   return (
     <div className="min-h-screen bg-white safe-top safe-bottom">
-      <Header 
-        title="Profile" 
+      <Header
+        title="Profile"
         onLeftClick={() => navigate(-1)}
       />
-      
+
       <div className="pt-20 pb-8 px-6 max-w-md mx-auto">
         <div className="space-y-6">
           {/* Profile Photo */}
@@ -183,11 +191,11 @@ export default function ProfileSetupPage() {
             </Button>
             <Button
               onClick={handleSubmit}
-              disabled={!formData.fullName || !formData.email || !formData.mobileNumber}
+              disabled={!formData.fullName || !formData.email || !formData.mobileNumber || isLoading}
               fullWidth
               size="lg"
             >
-              Save
+              {isLoading ? 'Saving...' : 'Save'}
             </Button>
           </div>
         </div>

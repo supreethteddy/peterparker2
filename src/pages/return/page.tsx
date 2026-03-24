@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { supabase } from '../../lib/supabase';
 import Header from '../../components/feature/Header';
 import Button from '../../components/base/Button';
 import Card from '../../components/base/Card';
@@ -10,13 +11,56 @@ import { BiMessageDetail } from 'react-icons/bi';
 export default function ReturnPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { valet, parkingLocation } = location.state || {};
+  const { valet, parkingLocation, booking: stateBooking } = location.state || {};
+  const [booking, setBooking] = useState(stateBooking);
   const [eta, setEta] = useState('8 min');
   const [newPickupPoint, setNewPickupPoint] = useState('');
   const [showLocationChange, setShowLocationChange] = useState(false);
   const [distanceCharge, setDistanceCharge] = useState(0);
 
   useEffect(() => {
+    // Attempt to update status to valet_enroute_return
+    const setReturning = async () => {
+      if (booking?.id && booking.status === 'parked') {
+        const { data } = await supabase
+          .from('bookings')
+          .update({ status: 'valet_enroute_return' })
+          .eq('id', booking.id)
+          .select()
+          .single();
+        if (data) setBooking(data);
+      }
+    };
+    setReturning();
+
+    // Subscribe to real-time updates for this booking
+    const channel = supabase
+      .channel(`return-booking-${booking?.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'bookings',
+          filter: `id=eq.${booking?.id}`,
+        },
+        (payload: any) => {
+          setBooking(payload.new);
+          if (payload.new.status === 'completed') {
+            navigate('/payment', {
+              state: {
+                valet,
+                parkingLocation,
+                distanceCharge,
+                totalTime: 45,
+                booking: payload.new
+              }
+            });
+          }
+        }
+      )
+      .subscribe();
+
     const timer = setInterval(() => {
       setEta(prev => {
         const current = parseInt(prev);
@@ -27,8 +71,11 @@ export default function ReturnPage() {
       });
     }, 10000);
 
-    return () => clearInterval(timer);
-  }, []);
+    return () => {
+      clearInterval(timer);
+      supabase.removeChannel(channel);
+    };
+  }, [booking?.id, booking?.status]);
 
   const handleLocationChange = () => {
     setShowLocationChange(true);
@@ -40,13 +87,14 @@ export default function ReturnPage() {
   };
 
   const handleCarArrived = () => {
-    navigate('/payment', { 
-      state: { 
-        valet, 
-        parkingLocation, 
+    navigate('/payment', {
+      state: {
+        valet,
+        parkingLocation,
         distanceCharge,
-        totalTime: 45
-      } 
+        totalTime: 45,
+        booking
+      }
     });
   };
 
@@ -58,12 +106,12 @@ export default function ReturnPage() {
   return (
     <div className="relative min-h-screen bg-neutral-100 safe-top safe-bottom">
       <div className="absolute inset-0 z-0">
-        <img 
+        <img
           src="https://readdy.ai/api/search-image?query=Bangalore%20city%20map%20view%20with%20location%20pins%2C%20modern%20urban%20area%2C%20streets%20and%20buildings%20visible%2C%20satellite%20view%20style%2C%20clean%20and%20detailed&width=800&height=1200&seq=map1&orientation=portrait"
           alt="Map"
           className="w-full h-full object-cover"
         />
-        
+
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
           <div className="relative">
             <div className="absolute inset-0 w-8 h-8 bg-[#66BD59] rounded-full animate-ping opacity-75"></div>
@@ -80,7 +128,7 @@ export default function ReturnPage() {
       </div>
 
       <div className="absolute top-0 left-0 right-0 z-10 pt-safe-top">
-        <Header 
+        <Header
           title="Car Return"
           onLeftClick={() => navigate('/parking')}
         />
@@ -127,7 +175,7 @@ export default function ReturnPage() {
                     </p>
                   </div>
                 </div>
-                <button 
+                <button
                   onClick={handleLocationChange}
                   className="text-[#34C0CA] text-sm font-semibold hover:underline"
                 >
@@ -192,14 +240,14 @@ export default function ReturnPage() {
               </div>
             </div>
             <div className="flex gap-3">
-              <Button 
-                variant="secondary" 
+              <Button
+                variant="secondary"
                 onClick={() => setShowLocationChange(false)}
                 className="flex-1"
               >
                 Cancel
               </Button>
-              <Button 
+              <Button
                 onClick={handleConfirmLocationChange}
                 disabled={!newPickupPoint}
                 className="flex-1"

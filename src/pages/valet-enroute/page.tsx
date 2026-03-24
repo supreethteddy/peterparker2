@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { supabase } from '../../lib/supabase';
 import Header from '../../components/feature/Header';
 import Button from '../../components/base/Button';
 import Card from '../../components/base/Card';
@@ -11,24 +12,54 @@ export default function ValetEnroutePage() {
   const navigate = useNavigate();
   const location = useLocation();
   const valet = location.state?.valet;
+  const [booking, setBooking] = useState(location.state?.booking);
   const [eta, setEta] = useState(10);
   const [distance, setDistance] = useState(800);
 
+  // Real-time tracking of valet status
   useEffect(() => {
+    if (!booking?.id) return;
+
+    const channel = supabase
+      .channel(`enroute-booking-${booking.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'bookings',
+          filter: `id=eq.${booking.id}`,
+        },
+        (payload: any) => {
+          const updated = payload.new;
+          setBooking(updated);
+          
+          if (updated.status === 'valet_arrived_pickup') {
+            setEta(0);
+            setDistance(0);
+          }
+          
+          // If valet moves to drop-off or next stage, navigate to handover
+          if (updated.status === 'valet_enroute_drop' || updated.status === 'parked') {
+            navigate('/handover', { state: { valet, booking: updated, ...location.state } });
+          }
+        }
+      )
+      .subscribe();
+
     const timer = setInterval(() => {
       setEta(prev => {
-        if (prev <= 0) {
-          clearInterval(timer);
-          navigate('/handover', { state: { valet, ...location.state } });
-          return 0;
-        }
+        if (prev <= 0) return 0;
         return prev - 1;
       });
-      setDistance(prev => Math.max(0, prev - 10));
+      setDistance(prev => Math.max(10, prev - 10));
     }, 1000);
 
-    return () => clearInterval(timer);
-  }, []);
+    return () => {
+      clearInterval(timer);
+      supabase.removeChannel(channel);
+    };
+  }, [booking?.id, valet, navigate, location.state]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);

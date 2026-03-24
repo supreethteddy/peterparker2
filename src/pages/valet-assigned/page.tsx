@@ -1,4 +1,6 @@
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { supabase } from '../../lib/supabase';
 import Header from '../../components/feature/Header';
 import Button from '../../components/base/Button';
 import Card from '../../components/base/Card';
@@ -11,6 +13,42 @@ export default function ValetAssignedPage() {
   const location = useLocation();
   const valet = location.state?.valet;
   const locationData = location.state;
+  const [booking, setBooking] = useState(location.state?.booking);
+
+  // Real-time subscription to track valet progress
+  useEffect(() => {
+    if (!booking?.id) return;
+
+    const channel = supabase
+      .channel(`assigned-booking-${booking.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'bookings',
+          filter: `id=eq.${booking.id}`,
+        },
+        (payload: any) => {
+          const updated = payload.new;
+          setBooking(updated);
+          if (updated.status === 'valet_enroute_pickup' || updated.status === 'valet_arrived_pickup') {
+            navigate('/valet-enroute', { 
+              state: { 
+                valet,
+                booking: updated,
+                ...locationData 
+              } 
+            });
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [booking?.id, valet, navigate, locationData]);
 
   if (!valet) {
     navigate('/request');
@@ -21,6 +59,7 @@ export default function ValetAssignedPage() {
     navigate('/confirm-pickup', { 
       state: { 
         valet,
+        booking,
         ...locationData 
       } 
     });

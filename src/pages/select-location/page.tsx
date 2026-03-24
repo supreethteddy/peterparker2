@@ -27,7 +27,7 @@ export default function SelectLocationPage() {
   const handleConfirm = () => {
     if (from && to) {
       // Save location data and navigate to request page
-      localStorage.setItem('bookingLocation', JSON.stringify({ from, to }));
+      // Removed localStorage item
       navigate('/request', { state: { from, to } });
     }
   };
@@ -36,7 +36,7 @@ export default function SelectLocationPage() {
     <div className="relative min-h-screen bg-neutral-100 safe-top safe-bottom">
       {/* Map Background */}
       <div className="absolute inset-0 z-0">
-        <img 
+        <img
           src="https://readdy.ai/api/search-image?query=Bangalore%20city%20map%20view%20with%20location%20pins%2C%20modern%20urban%20area%2C%20streets%20and%20buildings%20visible%2C%20satellite%20view%20style%2C%20clean%20and%20detailed&width=800&height=1200&seq=map1&orientation=portrait"
           alt="Map"
           className="w-full h-full object-cover"

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../../lib/supabase';
 import Header from '../../components/feature/Header';
 import Card from '../../components/base/Card';
 import Button from '../../components/base/Button';
@@ -18,18 +19,9 @@ interface PaymentMethod {
 
 export default function PaymentMethodsPage() {
   const navigate = useNavigate();
-  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([
-    {
-      id: '1',
-      type: 'card',
-      name: 'Visa Card',
-      details: '**** **** **** 1234',
-      isDefault: true,
-      last4: '1234',
-      expiry: '12/25',
-    },
-  ]);
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [formType, setFormType] = useState<'card' | 'upi' | 'wallet'>('card');
   const [formData, setFormData] = useState({
     cardNumber: '',
@@ -40,11 +32,26 @@ export default function PaymentMethodsPage() {
     walletType: 'Paytm',
   });
 
-  useEffect(() => {
-    const saved = localStorage.getItem('paymentMethods');
-    if (saved) {
-      setPaymentMethods(JSON.parse(saved));
+  const fetchMethods = async () => {
+    const { data: userData } = await supabase.auth.getUser();
+    if (!userData?.user) return;
+    const { data } = await supabase.from('payment_methods').select('*').eq('user_id', userData.user.id).order('created_at', { ascending: true });
+    if (data) {
+      setPaymentMethods(data.map(dbMethod => ({
+        id: dbMethod.id,
+        type: dbMethod.type === 'card' ? 'card' : (dbMethod.type === 'upi' ? 'upi' : 'wallet'),
+        name: dbMethod.details?.name || dbMethod.provider,
+        details: dbMethod.type === 'card'
+          ? `**** **** **** ${dbMethod.details?.number?.replace(/\s/g, '').slice(-4) || '****'}`
+          : dbMethod.details?.number || dbMethod.provider,
+        isDefault: dbMethod.is_default,
+        expiry: dbMethod.details?.expiry
+      })));
     }
+  };
+
+  useEffect(() => {
+    fetchMethods();
   }, []);
 
   const formatCardNumber = (value: string) => {
@@ -62,65 +69,82 @@ export default function PaymentMethodsPage() {
     }
   };
 
-  const handleAddPaymentMethod = () => {
-    let newMethod: PaymentMethod;
+  const handleAddPaymentMethod = async () => {
+    setIsProcessing(true);
+    const { data: userData } = await supabase.auth.getUser();
+    if (!userData?.user) {
+      setIsProcessing(false);
+      return;
+    }
+
+    let typeStr = 'card';
+    let provider = '';
+    let details: any = {};
 
     if (formType === 'card') {
-      if (!formData.cardNumber || !formData.cardName || !formData.expiry || !formData.cvv) return;
-      const last4 = formData.cardNumber.replace(/\s/g, '').slice(-4);
-      newMethod = {
-        id: Date.now().toString(),
-        type: 'card',
+      if (!formData.cardNumber || !formData.cardName || !formData.expiry || !formData.cvv) {
+        setIsProcessing(false);
+        return;
+      }
+      provider = 'Credit Card';
+      details = {
         name: formData.cardName,
-        details: `**** **** **** ${last4}`,
-        isDefault: paymentMethods.length === 0,
-        last4,
+        number: formData.cardNumber,
         expiry: formData.expiry,
+        cvv: formData.cvv
       };
     } else if (formType === 'upi') {
-      if (!formData.upiId) return;
-      newMethod = {
-        id: Date.now().toString(),
-        type: 'upi',
+      if (!formData.upiId) {
+        setIsProcessing(false);
+        return;
+      }
+      typeStr = 'upi';
+      provider = 'UPI';
+      details = {
         name: 'UPI',
-        details: formData.upiId,
-        isDefault: paymentMethods.length === 0,
+        number: formData.upiId
       };
     } else {
-      newMethod = {
-        id: Date.now().toString(),
-        type: 'wallet',
+      typeStr = 'wallet';
+      provider = formData.walletType;
+      details = {
         name: formData.walletType,
-        details: `${formData.walletType} Wallet`,
-        isDefault: paymentMethods.length === 0,
+        number: formData.walletType
       };
     }
 
-    if (newMethod.isDefault) {
-      setPaymentMethods(prev => prev.map(p => ({ ...p, isDefault: false })));
-    }
+    const isFirst = paymentMethods.length === 0;
 
-    const updated = [...paymentMethods, newMethod];
-    setPaymentMethods(updated);
-    localStorage.setItem('paymentMethods', JSON.stringify(updated));
+    await supabase.from('payment_methods').insert({
+      user_id: userData.user.id,
+      type: typeStr,
+      provider: provider,
+      details: details,
+      is_default: isFirst
+    });
+
+    await fetchMethods();
     resetForm();
+    setIsProcessing(false);
   };
 
-  const handleDeletePayment = (id: string) => {
+  const handleDeletePayment = async (id: string) => {
     if (window.confirm('Are you sure you want to remove this payment method?')) {
-      const updated = paymentMethods.filter(p => p.id !== id);
-      setPaymentMethods(updated);
-      localStorage.setItem('paymentMethods', JSON.stringify(updated));
+      await supabase.from('payment_methods').delete().eq('id', id);
+      await fetchMethods();
     }
   };
 
-  const handleSetDefault = (id: string) => {
-    const updated = paymentMethods.map(p => ({
-      ...p,
-      isDefault: p.id === id
-    }));
-    setPaymentMethods(updated);
-    localStorage.setItem('paymentMethods', JSON.stringify(updated));
+  const handleSetDefault = async (id: string) => {
+    const { data: userData } = await supabase.auth.getUser();
+    if (!userData?.user) return;
+
+    // Set all to false
+    await supabase.from('payment_methods').update({ is_default: false }).eq('user_id', userData.user.id);
+    // Set selected to true
+    await supabase.from('payment_methods').update({ is_default: true }).eq('id', id);
+
+    await fetchMethods();
   };
 
   const resetForm = () => {
@@ -151,8 +175,8 @@ export default function PaymentMethodsPage() {
 
   return (
     <div className="min-h-screen bg-neutral-50 safe-top safe-bottom animate-in">
-      <Header 
-        title="Payment Methods" 
+      <Header
+        title="Payment Methods"
         onLeftClick={() => navigate(-1)}
       />
 
@@ -161,20 +185,19 @@ export default function PaymentMethodsPage() {
         {!showAddForm && (
           <div className="space-y-3 mb-6">
             {paymentMethods.map((method, index) => (
-              <Card 
-                key={method.id} 
+              <Card
+                key={method.id}
                 className="p-5 animate-in hover:shadow-lg transition-all"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4 flex-1">
-                    <div className={`w-14 h-14 rounded-xl flex items-center justify-center text-white shadow-md ${
-                      method.type === 'card' 
+                    <div className={`w-14 h-14 rounded-xl flex items-center justify-center text-white shadow-md ${method.type === 'card'
                         ? 'bg-gradient-to-r from-[#34C0CA] to-[#66BD59]'
                         : method.type === 'upi'
-                        ? 'bg-gradient-to-r from-[#66BD59] to-[#34C0CA]'
-                        : 'bg-gradient-to-r from-[#34C0CA] to-[#66BD59]'
-                    }`}>
+                          ? 'bg-gradient-to-r from-[#66BD59] to-[#34C0CA]'
+                          : 'bg-gradient-to-r from-[#34C0CA] to-[#66BD59]'
+                      }`}>
                       <i className={`${getPaymentIcon(method.type)} text-2xl`}></i>
                     </div>
                     <div className="flex-1">
@@ -233,11 +256,10 @@ export default function PaymentMethodsPage() {
                 <button
                   key={type}
                   onClick={() => setFormType(type)}
-                  className={`px-4 py-3 rounded-xl border-2 transition-all transform hover:scale-105 active:scale-95 ${
-                    formType === type
+                  className={`px-4 py-3 rounded-xl border-2 transition-all transform hover:scale-105 active:scale-95 ${formType === type
                       ? 'border-[#66BD59] bg-[#66BD59]/10 text-[#66BD59] font-semibold shadow-md'
                       : 'border-neutral-200 bg-white text-neutral-700 hover:border-[#34C0CA]/50'
-                  }`}
+                    }`}
                 >
                   <i className={`${getPaymentIcon(type)} text-2xl mb-1 block`}></i>
                   <span className="text-xs font-medium capitalize">{type}</span>
@@ -312,11 +334,10 @@ export default function PaymentMethodsPage() {
                       <button
                         key={wallet}
                         onClick={() => setFormData({ ...formData, walletType: wallet })}
-                        className={`px-4 py-3 rounded-xl border-2 transition-all transform hover:scale-105 active:scale-95 ${
-                          formData.walletType === wallet
+                        className={`px-4 py-3 rounded-xl border-2 transition-all transform hover:scale-105 active:scale-95 ${formData.walletType === wallet
                             ? 'border-[#66BD59] bg-[#66BD59]/10 text-[#66BD59] font-semibold shadow-md'
                             : 'border-neutral-200 bg-white text-neutral-700 hover:border-[#34C0CA]/50'
-                        }`}
+                          }`}
                       >
                         {wallet}
                       </button>
@@ -339,11 +360,12 @@ export default function PaymentMethodsPage() {
                   fullWidth
                   size="lg"
                   disabled={
+                    isProcessing ||
                     (formType === 'card' && (!formData.cardNumber || !formData.cardName || !formData.expiry || !formData.cvv)) ||
                     (formType === 'upi' && !formData.upiId)
                   }
                 >
-                  Add Payment Method
+                  {isProcessing ? 'Processing' : 'Add Payment Method'}
                 </Button>
               </div>
             </div>

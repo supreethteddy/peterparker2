@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { supabase } from '../../lib/supabase';
 import Button from '../../components/base/Button';
 import Card from '../../components/base/Card';
 import logoDesign from '../../assets/Logo-design.svg';
@@ -10,89 +11,95 @@ import { HiArrowLeft } from 'react-icons/hi';
 export default function ParkingPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const valet = location.state?.valet;
-  const parkingLocationFromState = location.state?.parkingLocation;
-  const timeLeftFromState = location.state?.timeLeft;
-  
-  const [timeLeft, setTimeLeft] = useState(timeLeftFromState || 30 * 60);
-  const [showExtendOptions, setShowExtendOptions] = useState(false);
-  const [parkingLocation, setParkingLocation] = useState(parkingLocationFromState || '');
+  const valetState = location.state?.valet;
+  const bookingState = location.state?.booking;
 
+  const [booking, setBooking] = useState<any>(bookingState);
+  const [valet, setValet] = useState<any>(valetState);
+  const [timeLeft, setTimeLeft] = useState(30 * 60);
+  const [showExtendOptions, setShowExtendOptions] = useState(false);
+  const [parkingLocation, setParkingLocation] = useState(bookingState?.parking_location || '');
+
+  // Fetch active session if not provided via state
   useEffect(() => {
-    if (!parkingLocationFromState) {
-      setTimeout(() => {
-        const parkingLoc = 'Phoenix MarketCity - Level 2, Zone B, Slot 45';
-        setParkingLocation(parkingLoc);
-        
-        if (valet) {
-          const savedParking = localStorage.getItem('parkingSessions');
-          const sessions = savedParking ? JSON.parse(savedParking) : [];
-          const existingSession = sessions.find((s: any) => 
-            s.status === 'ongoing' && s.valet?.name === valet.name
-          );
-          
-          if (!existingSession) {
-            const newSession = {
-              id: Date.now(),
-              valet: valet,
-              parkingLocation: parkingLoc,
-              startTime: new Date().toISOString(),
-              timeLeft: timeLeft,
-              status: 'ongoing',
-              pickupLocation: location.state?.pickupLocation || location.state?.from || '',
-              dropLocation: location.state?.dropLocation || location.state?.to || ''
-            };
-            sessions.push(newSession);
-            localStorage.setItem('parkingSessions', JSON.stringify(sessions));
+    const fetchActiveSession = async () => {
+      if (bookingState) return;
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData?.user) return;
+
+      const { data } = await supabase
+        .from('bookings')
+        .select('*')
+        .eq('user_id', userData.user.id)
+        .in('status', ['valet_enroute_drop', 'parked'])
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      if (data) {
+        setBooking(data);
+        if (data.parking_location) {
+          setParkingLocation(data.parking_location);
+        }
+      }
+    };
+    fetchActiveSession();
+  }, [bookingState]);
+
+  // Real-time subscription to track booking changes (partner marking as parked, etc.)
+  useEffect(() => {
+    if (!booking?.id) return;
+
+    const channel = supabase
+      .channel(`parking-booking-${booking.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'bookings',
+          filter: `id=eq.${booking.id}`,
+        },
+        (payload: any) => {
+          const updated = payload.new;
+          setBooking(updated);
+          if (updated.parking_location) {
+            setParkingLocation(updated.parking_location);
+          }
+          if (updated.status === 'valet_enroute_return') {
+            navigate('/return', { state: { valet, booking: updated, parkingLocation: updated.parking_location } });
           }
         }
-      }, 3000);
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [booking?.id, valet, navigate]);
+
+  // Timer logic based on parked_at
+  useEffect(() => {
+    let timer: any;
+    if (booking?.status === 'parked' && booking?.parked_at) {
+      const updateTimer = () => {
+        const parkedTime = new Date(booking.parked_at).getTime();
+        const now = new Date().getTime();
+        const diffInSeconds = Math.floor((now - parkedTime) / 1000);
+
+        const baseTime = 30 * 60; // 30 mins
+        const remaining = Math.max(0, baseTime - diffInSeconds);
+        setTimeLeft(remaining);
+      };
+
+      updateTimer();
+      timer = setInterval(updateTimer, 1000);
     } else {
-      const savedParking = localStorage.getItem('parkingSessions');
-      if (savedParking && valet) {
-        const sessions = JSON.parse(savedParking);
-        const updatedSessions = sessions.map((session: any) => {
-          if (session.status === 'ongoing' && session.valet?.name === valet.name) {
-            return {
-              ...session,
-              parkingLocation: parkingLocationFromState,
-              timeLeft: timeLeftFromState || session.timeLeft
-            };
-          }
-          return session;
-        });
-        localStorage.setItem('parkingSessions', JSON.stringify(updatedSessions));
-      }
+      setTimeLeft(30 * 60);
     }
 
-    const timer = setInterval(() => {
-      setTimeLeft((prev: number) => {
-        const newTime = prev <= 0 ? 0 : prev - 1;
-        
-        const savedParking = localStorage.getItem('parkingSessions');
-        if (savedParking && valet) {
-          const sessions = JSON.parse(savedParking);
-          const updatedSessions = sessions.map((session: any) => {
-            if (session.status === 'ongoing' && session.valet?.name === valet.name) {
-              return {
-                ...session,
-                timeLeft: newTime
-              };
-            }
-            return session;
-          });
-          localStorage.setItem('parkingSessions', JSON.stringify(updatedSessions));
-        }
-        
-        if (newTime <= 0) {
-          clearInterval(timer);
-        }
-        return newTime;
-      });
-    }, 1000);
-
     return () => clearInterval(timer);
-  }, [parkingLocationFromState, valet, timeLeftFromState]);
+  }, [booking]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -100,43 +107,29 @@ export default function ParkingPage() {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const handleExtendStay = (minutes: number) => {
-    setTimeLeft((prev: number) => prev + (minutes * 60));
-    setShowExtendOptions(false);
-    
-    const savedParking = localStorage.getItem('parkingSessions');
-    if (savedParking) {
-      const sessions = JSON.parse(savedParking);
-      const updatedSessions = sessions.map((session: any) => {
-        if (session.status === 'ongoing' && session.valet?.name === valet?.name) {
-          return {
-            ...session,
-            timeLeft: timeLeft + (minutes * 60)
-          };
-        }
-        return session;
-      });
-      localStorage.setItem('parkingSessions', JSON.stringify(updatedSessions));
+  const handleExtendStay = async (minutes: number) => {
+    // In a real app, charge the wallet, update `cost` and `parked_at` or `extensions` array
+    // Here we'll just fake it by moving parked_at forward in time
+    if (booking?.id) {
+      const currentParkedAt = new Date(booking.parked_at || new Date());
+      // Moving parked_at into the future extends the remaining time
+      currentParkedAt.setMinutes(currentParkedAt.getMinutes() + minutes);
+
+      const { data } = await supabase
+        .from('bookings')
+        .update({ parked_at: currentParkedAt.toISOString(), cost: (booking.cost || 80) + minutes })
+        .eq('id', booking.id)
+        .select()
+        .single();
+
+      if (data) setBooking(data);
     }
+    setShowExtendOptions(false);
   };
 
   const handleReturnRequest = () => {
-    navigate('/return', { state: { valet, parkingLocation } });
+    navigate('/return', { state: { valet, booking, parkingLocation } });
   };
-
-  useEffect(() => {
-    if (!valet) {
-      const savedParking = localStorage.getItem('parkingSessions');
-      if (savedParking) {
-        const sessions = JSON.parse(savedParking);
-        const ongoingSession = sessions.find((s: any) => s.status === 'ongoing');
-        if (ongoingSession) {
-          setParkingLocation(ongoingSession.parkingLocation || '');
-          setTimeLeft(ongoingSession.timeLeft || 30 * 60);
-        }
-      }
-    }
-  }, [valet]);
 
   return (
     <div className="min-h-screen bg-white safe-top safe-bottom">
@@ -149,9 +142,9 @@ export default function ParkingPage() {
           <HiArrowLeft className="w-5 h-5" />
           Back
         </button>
-        <img 
-          src={logoDesign} 
-          alt="quickParker Logo" 
+        <img
+          src={logoDesign}
+          alt="quickParker Logo"
           className="h-14 w-36 object-cover"
         />
       </div>
@@ -164,7 +157,7 @@ export default function ParkingPage() {
             </div>
             <h2 className="text-2xl font-bold text-[#0F1415] mb-2">Parking in progress...</h2>
             <p className="text-neutral-600 mb-6">{valet?.name || 'Valet'} is finding a secure parking spot</p>
-            
+
             <Card className="p-4 bg-white border border-neutral-200">
               <div className="flex items-center justify-center gap-2">
                 <div className="w-2 h-2 bg-[#66BD59] rounded-full animate-bounce"></div>
@@ -210,7 +203,7 @@ export default function ParkingPage() {
             <Card className="p-4 mb-6 bg-white border border-neutral-200">
               <h3 className="font-semibold mb-3 text-[#0F1415]">Live Location</h3>
               <div className="h-32 bg-gray-200 rounded-lg relative overflow-hidden">
-                <img 
+                <img
                   src="https://readdy.ai/api/search-image?query=Parking%20lot%20aerial%20view%20with%20car%20location%20pin%2C%20modern%20shopping%20mall%20parking%20area%2C%20clear%20markings%20and%20organized%20layout%2C%20satellite%20view%20style&width=400&height=128&seq=parking1&orientation=landscape"
                   alt="Parking location"
                   className="w-full h-full object-cover"
@@ -225,7 +218,7 @@ export default function ParkingPage() {
 
             <div className="grid grid-cols-2 gap-3 mb-6">
               <div className="rounded-xl p-[2px] bg-gradient-to-r from-[#34C0CA] to-[#66BD59]">
-                <button 
+                <button
                   onClick={() => setShowExtendOptions(true)}
                   className="w-full h-full bg-white rounded-[10px] px-4 py-3 font-semibold text-[#0F1415] flex items-center justify-center hover:bg-neutral-50 transition-all min-h-[48px]"
                 >
@@ -234,7 +227,7 @@ export default function ParkingPage() {
                 </button>
               </div>
               <div className="rounded-xl p-[2px] bg-gradient-to-r from-[#34C0CA] to-[#66BD59]">
-                <button 
+                <button
                   onClick={() => navigate('/select-location')}
                   className="w-full h-full bg-white rounded-[10px] px-4 py-3 font-semibold text-[#0F1415] flex items-center justify-center hover:bg-neutral-50 transition-all min-h-[48px]"
                 >
@@ -244,8 +237,8 @@ export default function ParkingPage() {
               </div>
             </div>
 
-            <Button 
-              onClick={handleReturnRequest} 
+            <Button
+              onClick={handleReturnRequest}
               fullWidth
               size="lg"
               className="text-lg font-bold mb-6"
@@ -278,8 +271,8 @@ export default function ParkingPage() {
                       </button>
                     ))}
                   </div>
-                  <Button 
-                    variant="secondary" 
+                  <Button
+                    variant="secondary"
                     onClick={() => setShowExtendOptions(false)}
                     fullWidth
                   >

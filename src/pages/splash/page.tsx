@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { supabase } from '../../lib/supabase';
 import { HiChevronRight } from 'react-icons/hi';
 import splashScreen1 from '../../assets/splash-screen-1.png';
 import splashScreen2 from '../../assets/splash-screen-2.png';
@@ -10,7 +11,7 @@ export default function SplashPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const [index, setIndex] = useState(0);
-  
+
   const isDirectAccess = location.pathname === '/splash';
 
   const slides = [
@@ -34,16 +35,24 @@ export default function SplashPage() {
     }
   ];
 
-  const finish = useCallback(() => {
-    const isOnboarded = localStorage.getItem('userOnboarded') === 'true';
-    const isAuthed = localStorage.getItem('userAuthenticated') === 'true';
-    
-    if (!isOnboarded) {
+  const finish = useCallback(async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+
+    if (!session) {
       navigate('/welcome');
-    } else if (!isAuthed) {
-      navigate('/login');
-    } else {
+      return;
+    }
+
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('onboarding_status')
+      .eq('id', session.user.id)
+      .single();
+
+    if (profile?.onboarding_status === 'completed') {
       navigate('/home');
+    } else {
+      navigate('/profile-setup');
     }
   }, [navigate]);
 
@@ -59,7 +68,7 @@ export default function SplashPage() {
     if (isDirectAccess) {
       return;
     }
-    
+
     const timer = setTimeout(() => {
       if (index < slides.length - 1) {
         setIndex(index + 1);
@@ -75,25 +84,35 @@ export default function SplashPage() {
     if (isDirectAccess) {
       return;
     }
-    
-    const isOnboarded = localStorage.getItem('userOnboarded') === 'true';
-    const isAuthed = localStorage.getItem('userAuthenticated') === 'true';
-    
-    if (isOnboarded && isAuthed) {
-      navigate('/home');
-    }
+
+    const checkUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('onboarding_status')
+        .eq('id', session.user.id)
+        .single();
+
+      if (profile?.onboarding_status === 'completed') {
+        navigate('/home');
+      }
+    };
+
+    checkUser();
   }, [navigate, isDirectAccess]);
 
   return (
     <div className="min-h-screen bg-white safe-top safe-bottom flex flex-col">
       <div className="px-6 mb-4 flex items-center justify-between pt-safe-top">
-        <img 
-          src={logoDesign} 
-          alt="quickParker Logo" 
+        <img
+          src={logoDesign}
+          alt="quickParker Logo"
           className="h-14 w-36 object-cover"
         />
-        <button 
-          onClick={finish} 
+        <button
+          onClick={finish}
           className="text-base text-neutral-600 hover:text-[#0F1415] font-semibold px-3 py-1.5 rounded-lg hover:bg-neutral-100 transition-all duration-200"
         >
           Skip
@@ -101,8 +120,8 @@ export default function SplashPage() {
       </div>
 
       <div className="relative flex-1 flex items-center justify-center px-6 py-4">
-        <img 
-          src={slides[index].illustration} 
+        <img
+          src={slides[index].illustration}
           alt={slides[index].title}
           className="w-full max-w-md h-full object-contain"
         />
@@ -121,9 +140,8 @@ export default function SplashPage() {
         {slides.map((_, i) => (
           <span
             key={i}
-            className={`h-2 rounded-full transition-all duration-300 ${
-              i === index ? 'w-8 bg-gradient-to-r from-[#34C0CA] to-[#66BD59]' : 'w-2 bg-neutral-300'
-            }`}
+            className={`h-2 rounded-full transition-all duration-300 ${i === index ? 'w-8 bg-gradient-to-r from-[#34C0CA] to-[#66BD59]' : 'w-2 bg-neutral-300'
+              }`}
           />
         ))}
       </div>

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../../../lib/supabase';
 import Input from '../../../components/base/Input';
 import Button from '../../../components/base/Button';
 import { HiArrowLeft, HiCreditCard } from 'react-icons/hi';
@@ -18,65 +19,66 @@ export default function AddAmountPage() {
   const [amount, setAmount] = useState('');
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | null>(null);
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
-    // Load payment methods from localStorage
-    const savedMethods = localStorage.getItem('paymentMethods');
-    if (savedMethods) {
-      const methods = JSON.parse(savedMethods);
-      setPaymentMethods(methods);
-      // Auto-select first method if available
-      if (methods.length > 0) {
+    const fetchMethods = async () => {
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData?.user) return;
+
+      const { data } = await supabase.from('payment_methods').select('*').eq('user_id', userData.user.id);
+
+      if (data && data.length > 0) {
+        const methods = data.map((dbMethod: any) => ({
+          id: dbMethod.id,
+          type: dbMethod.type,
+          name: dbMethod.details?.name || dbMethod.provider,
+          number: dbMethod.details?.number || '',
+          expiry: dbMethod.details?.expiry
+        }));
+        setPaymentMethods(methods);
         setSelectedPaymentMethod(methods[0].id);
+      } else {
+        setPaymentMethods([]);
       }
-    } else {
-      // Default payment methods
-      const defaultMethods: PaymentMethod[] = [
-        {
-          id: '1',
-          type: 'card',
-          name: 'VISA',
-          number: '8970',
-          expiry: '12/26',
-        },
-        {
-          id: '2',
-          type: 'card',
-          name: 'Mastercard',
-          number: '5678',
-          expiry: '06/25',
-        },
-        {
-          id: '3',
-          type: 'email',
-          name: 'Email',
-          number: 'mailaddress@mail.com',
-          expiry: '12/26',
-        },
-        {
-          id: '4',
-          type: 'cash',
-          name: 'Cash',
-          number: '',
-          expiry: '12/26',
-        },
-      ];
-      setPaymentMethods(defaultMethods);
-      setSelectedPaymentMethod(defaultMethods[0].id);
-      localStorage.setItem('paymentMethods', JSON.stringify(defaultMethods));
-    }
+    };
+    fetchMethods();
   }, []);
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (amount && selectedPaymentMethod) {
-      // Store transaction data
-      const transactionData = {
-        amount: parseFloat(amount),
-        paymentMethodId: selectedPaymentMethod,
-        timestamp: new Date().toISOString(),
-      };
-      localStorage.setItem('pendingWalletTransaction', JSON.stringify(transactionData));
-      navigate('/wallet/success');
+      setIsProcessing(true);
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData?.user) {
+        setIsProcessing(false);
+        return;
+      }
+
+      let { data: walletData } = await supabase.from('wallets').select('id, balance').eq('user_id', userData.user.id).single();
+
+      if (!walletData) {
+        // Create wallet if needed
+        const { data: newWallet } = await supabase.from('wallets').insert({ user_id: userData.user.id, balance: 0 }).select().single();
+        walletData = newWallet;
+      }
+
+      const addedAmount = parseFloat(amount);
+      const newBalance = Number(walletData?.balance || 0) + addedAmount;
+
+      if (walletData?.id) {
+        await supabase.from('wallets').update({ balance: newBalance }).eq('id', walletData.id);
+
+        await supabase.from('wallet_transactions').insert({
+          wallet_id: walletData.id,
+          amount: addedAmount,
+          type: 'credit',
+          status: 'completed',
+          description: 'Top-up'
+        });
+      }
+
+      setIsProcessing(false);
+      navigate('/wallet/success', { state: { amount: addedAmount } });
     }
   };
 
@@ -130,11 +132,10 @@ export default function AddAmountPage() {
               <button
                 key={method.id}
                 onClick={() => setSelectedPaymentMethod(method.id)}
-                className={`w-full p-4 rounded-xl border-2 text-left transition-all ${
-                  selectedPaymentMethod === method.id
+                className={`w-full p-4 rounded-xl border-2 text-left transition-all ${selectedPaymentMethod === method.id
                     ? 'bg-[#66BD59]/10 border-[#66BD59]'
                     : 'bg-white border-neutral-200 hover:border-neutral-300'
-                }`}
+                  }`}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -175,11 +176,11 @@ export default function AddAmountPage() {
         {/* Confirm Button */}
         <Button
           onClick={handleConfirm}
-          disabled={!amount || !selectedPaymentMethod}
+          disabled={!amount || !selectedPaymentMethod || isProcessing}
           fullWidth
           size="lg"
         >
-          Confirm
+          {isProcessing ? 'Processing...' : 'Confirm'}
         </Button>
       </div>
     </div>

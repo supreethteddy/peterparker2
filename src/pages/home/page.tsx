@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../../lib/supabase';
 import Button from '../../components/base/Button';
 import Card from '../../components/base/Card';
 import BottomNav from '../../components/feature/BottomNav';
@@ -12,29 +13,69 @@ import { HiLocationMarker, HiClock, HiShieldCheck, HiSparkles, HiLightningBolt, 
 
 export default function HomePage() {
   const navigate = useNavigate();
-  const [userName] = useState('Arjun');
+  const [userName, setUserName] = useState('Arjun');
   const [activeParking, setActiveParking] = useState<any>(null);
   const [timeLeft, setTimeLeft] = useState(0);
 
   useEffect(() => {
-    const isOnboarded = localStorage.getItem('userOnboarded') === 'true';
-    const isAuthed = localStorage.getItem('userAuthenticated') === 'true';
-    if (!isOnboarded) navigate('/welcome');
-    else if (!isAuthed) navigate('/login');
+    const checkAuthStatus = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+
+      if (!session) {
+        navigate('/login');
+        return;
+      }
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('full_name, onboarding_status')
+        .eq('id', session.user.id)
+        .single();
+
+      if (profile?.onboarding_status !== 'completed') {
+        navigate('/welcome');
+        return;
+      }
+
+      if (profile?.full_name) {
+        setUserName(profile.full_name);
+      }
+    };
+    checkAuthStatus();
   }, [navigate]);
 
   useEffect(() => {
-    const checkActiveParking = () => {
-      const savedParking = localStorage.getItem('parkingSessions');
-      if (savedParking) {
-        const sessions = JSON.parse(savedParking);
-        const ongoing = sessions.find((s: any) => s.status === 'ongoing');
-        if (ongoing) {
-          setActiveParking(ongoing);
-          setTimeLeft(ongoing.timeLeft || 0);
+    let userId: string | null = null;
+
+    const fetchActiveBooking = async () => {
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData?.user) return;
+      userId = userData.user.id;
+
+      const { data } = await supabase
+        .from('bookings')
+        .select('*')
+        .eq('user_id', userData.user.id)
+        .in('status', ['searching', 'accepted', 'valet_enroute_pickup', 'valet_arrived_pickup', 'valet_enroute_drop', 'parked', 'valet_enroute_return'])
+        .order('created_at', { ascending: false })
+        .limit(1);
+
+      if (data && data.length > 0) {
+        const booking = data[0];
+        setActiveParking({
+          ...booking,
+          valet: null,
+          parkingLocation: booking.parking_location || booking.pickup_location
+        });
+
+        if (booking.status === 'parked' && booking.parked_at) {
+          const parkedTime = new Date(booking.parked_at).getTime();
+          const now = new Date().getTime();
+          const diffInSeconds = Math.floor((now - parkedTime) / 1000);
+          const baseTime = 30 * 60; // 30 mins
+          setTimeLeft(Math.max(0, baseTime - diffInSeconds));
         } else {
-          setActiveParking(null);
-          setTimeLeft(0);
+          setTimeLeft(30 * 60);
         }
       } else {
         setActiveParking(null);
@@ -42,28 +83,63 @@ export default function HomePage() {
       }
     };
 
-    checkActiveParking();
+    fetchActiveBooking();
 
-    const timer = setInterval(() => {
-      const savedParking = localStorage.getItem('parkingSessions');
-      if (savedParking) {
-        const sessions = JSON.parse(savedParking);
-        const ongoing = sessions.find((s: any) => s.status === 'ongoing');
-        if (ongoing) {
-          setTimeLeft(ongoing.timeLeft || 0);
-          const newTime = Math.max(0, (ongoing.timeLeft || 0) - 1);
-          const updatedSessions = sessions.map((s: any) =>
-            s.status === 'ongoing' && s.id === ongoing.id
-              ? { ...s, timeLeft: newTime }
-              : s
-          );
-          localStorage.setItem('parkingSessions', JSON.stringify(updatedSessions));
+    // Real-time subscription for booking changes
+    const channel = supabase
+      .channel('home-bookings')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'bookings',
+        },
+        (payload: any) => {
+          const updated = payload.new;
+          // Only process bookings belonging to this user
+          if (updated && updated.user_id === userId) {
+            const activeStatuses = ['searching', 'accepted', 'valet_enroute_pickup', 'valet_arrived_pickup', 'valet_enroute_drop', 'parked', 'valet_enroute_return'];
+            if (activeStatuses.includes(updated.status)) {
+              setActiveParking({
+                ...updated,
+                valet: null,
+                parkingLocation: updated.parking_location || updated.pickup_location
+              });
+              if (updated.status === 'parked' && updated.parked_at) {
+                const parkedTime = new Date(updated.parked_at).getTime();
+                const now = new Date().getTime();
+                const diffInSeconds = Math.floor((now - parkedTime) / 1000);
+                const baseTime = 30 * 60;
+                setTimeLeft(Math.max(0, baseTime - diffInSeconds));
+              }
+            } else if (updated.status === 'completed' || updated.status === 'cancelled') {
+              setActiveParking(null);
+              setTimeLeft(0);
+            }
+          }
         }
-      }
-    }, 1000);
+      )
+      .subscribe();
 
-    return () => clearInterval(timer);
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
+
+  useEffect(() => {
+    let timer: any;
+    if (activeParking?.status === 'parked' && activeParking?.parked_at) {
+      timer = setInterval(() => {
+        const parkedTime = new Date(activeParking.parked_at).getTime();
+        const now = new Date().getTime();
+        const diffInSeconds = Math.floor((now - parkedTime) / 1000);
+        const baseTime = 30 * 60;
+        setTimeLeft(Math.max(0, baseTime - diffInSeconds));
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [activeParking?.status, activeParking?.parked_at]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -128,7 +204,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-[#F7FAF8] safe-top safe-bottom">
-      
+
       {/* Premium Light Header */}
       <div className="bg-white px-4 pt-safe-top pb-4 shadow-sm border-b border-[#E8F3EF]">
         <div className="flex items-center justify-between">
@@ -159,7 +235,9 @@ export default function HomePage() {
             <div className="flex items-center justify-between mb-3">
               <div>
                 <p className="text-xs text-neutral-500">Active Parking</p>
-                <h2 className="text-lg font-semibold text-[#0F1415]">Your Vehicle Is Parked</h2>
+                <h2 className="text-lg font-semibold text-[#0F1415]">
+                  {activeParking.status === 'parked' ? 'Your Vehicle Is Parked' : 'Valet In Progress'}
+                </h2>
               </div>
               <div className="w-10 h-10 rounded-full bg-[#E8F6E9] flex items-center justify-center">
                 <HiShieldCheck className="w-5 h-5 text-[#66BD59]" />
@@ -179,7 +257,16 @@ export default function HomePage() {
                 </div>
                 <Button
                   size="sm"
-                  onClick={() => navigate('/parking', { state: activeParking })}
+                  onClick={() => {
+                    // Navigate to appropriate page based on status
+                    if (['valet_assigned'].includes(activeParking.status)) {
+                      navigate('/valet-assigned', { state: activeParking });
+                    } else if (activeParking.status === 'valet_enroute_drop') {
+                      navigate('/parking', { state: { booking: activeParking, valet: activeParking.valet } });
+                    } else {
+                      navigate('/parking', { state: { booking: activeParking, valet: activeParking.valet } });
+                    }
+                  }}
                   className="bg-[#34C0CA] text-white rounded-lg px-4 py-1.5 text-xs"
                 >
                   View
@@ -225,11 +312,10 @@ export default function HomePage() {
                   disabled={action.disabled}
                   type="button"
                   className={`p-4 rounded-xl flex flex-col items-center text-center group
-                    transition-all duration-200 active:scale-95 ${action.disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} ${
-                    action.isPrimary 
-                      ? 'bg-white border border-[#E8F3EF] shadow-md' 
+                    transition-all duration-200 active:scale-95 ${action.disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} ${action.isPrimary
+                      ? 'bg-white border border-[#E8F3EF] shadow-md'
                       : 'bg-[#F8FDFC] border border-transparent'
-                  }`}
+                    }`}
                 >
                   {action.isPrimary ? (
                     <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${action.gradient} flex items-center justify-center mb-2 shadow-lg`}>

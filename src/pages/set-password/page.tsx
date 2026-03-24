@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { supabase } from '../../lib/supabase';
 import Input from '../../components/base/Input';
 import Button from '../../components/base/Button';
 import logoDesign from '../../assets/Logo-design.svg';
@@ -7,14 +8,26 @@ import { FaArrowLeft, FaEye, FaEyeSlash } from 'react-icons/fa';
 
 export default function SetPasswordPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const signupData = location.state?.signupData;
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const handleRegister = () => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleRegister = async () => {
     if (password && confirmPassword && password === confirmPassword) {
-      navigate('/profile-setup');
+      setIsLoading(true);
+      const { error } = await supabase.auth.updateUser({ password });
+      setIsLoading(false);
+
+      if (error) {
+        alert(error.message);
+      } else {
+        navigate('/profile-setup', { state: { signupData } });
+      }
     }
   };
 
@@ -29,9 +42,9 @@ export default function SetPasswordPage() {
           <FaArrowLeft className="w-5 h-5" />
           Back
         </button>
-        <img 
-          src={logoDesign} 
-          alt="quickParker Logo" 
+        <img
+          src={logoDesign}
+          alt="quickParker Logo"
           className="h-14 w-36 object-cover"
         />
       </div>
@@ -85,14 +98,14 @@ export default function SetPasswordPage() {
           </div>
 
           <div className="pb-safe-bottom">
-            <Button 
-              onClick={handleRegister} 
-              disabled={!password || !confirmPassword || password !== confirmPassword} 
+            <Button
+              onClick={handleRegister}
+              disabled={!password || !confirmPassword || password !== confirmPassword || isLoading}
               fullWidth
               size="lg"
               className="text-lg font-bold"
             >
-              Register
+              {isLoading ? 'Registering...' : 'Register'}
             </Button>
           </div>
         </div>

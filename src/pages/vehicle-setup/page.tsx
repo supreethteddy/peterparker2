@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../../lib/supabase';
 import Input from '../../components/base/Input';
 import Button from '../../components/base/Button';
 import Header from '../../components/feature/Header';
@@ -31,18 +32,56 @@ export default function VehicleSetupPage() {
 
   const colors = ['White', 'Black', 'Silver', 'Red', 'Blue', 'Gray', 'Other'];
 
-  const handleAddVehicle = () => {
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const fetchVehicles = async () => {
+    const { data: userData } = await supabase.auth.getUser();
+    if (!userData?.user) return;
+    const { data } = await supabase.from('vehicles').select('*').eq('user_id', userData.user.id);
+    if (data) {
+      setVehicles(data.map(dbV => ({
+        id: dbV.id,
+        make: dbV.make,
+        model: dbV.model,
+        color: dbV.color,
+        licensePlate: dbV.license_plate,
+        isDefault: dbV.is_default,
+        nickname: dbV.nickname,
+      })));
+    }
+  };
+
+  useEffect(() => {
+    fetchVehicles();
+  }, []);
+
+  const handleAddVehicle = async () => {
     if (formData.make && formData.model && formData.color && formData.licensePlate) {
-      const newVehicle: Vehicle = {
-        id: Date.now().toString(),
-        ...formData,
-      };
-      
-      if (formData.isDefault) {
-        setVehicles(vehicles.map(v => ({ ...v, isDefault: false })));
+      setIsProcessing(true);
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData?.user) {
+        setIsProcessing(false);
+        return;
       }
-      
-      setVehicles([...vehicles, newVehicle]);
+
+      const isFirst = vehicles.length === 0;
+
+      const { data } = await supabase.from('vehicles').insert({
+        user_id: userData.user.id,
+        make: formData.make,
+        model: formData.model,
+        color: formData.color,
+        license_plate: formData.licensePlate,
+        is_default: formData.isDefault || isFirst,
+        nickname: formData.nickname,
+      }).select().single();
+
+      if (data && (formData.isDefault || isFirst) && vehicles.length > 0) {
+        await supabase.from('vehicles').update({ is_default: false }).eq('user_id', userData.user.id).neq('id', data.id);
+      }
+
+      await fetchVehicles();
+
       setFormData({
         nickname: '',
         make: '',
@@ -52,30 +91,33 @@ export default function VehicleSetupPage() {
         isDefault: vehicles.length === 0,
       });
       setShowAddForm(false);
+      setIsProcessing(false);
     }
   };
 
-  const handleSetDefault = (id: string) => {
-    setVehicles(vehicles.map(v => ({
-      ...v,
-      isDefault: v.id === id
-    })));
+  const handleSetDefault = async (id: string) => {
+    const { data: userData } = await supabase.auth.getUser();
+    if (!userData?.user) return;
+
+    await supabase.from('vehicles').update({ is_default: false }).eq('user_id', userData.user.id);
+    await supabase.from('vehicles').update({ is_default: true }).eq('id', id);
+
+    await fetchVehicles();
   };
 
   const handleContinue = () => {
     if (vehicles.length > 0) {
-      localStorage.setItem('userVehicles', JSON.stringify(vehicles));
       navigate('/payment-setup');
     }
   };
 
   return (
     <div className="min-h-screen bg-white safe-top safe-bottom">
-      <Header 
-        title="Your Vehicles" 
+      <Header
+        title="Your Vehicles"
         onLeftClick={() => navigate(-1)}
       />
-      
+
       <div className="pt-20 pb-8 px-6 max-w-md mx-auto">
         {vehicles.length > 0 && (
           <div className="space-y-3 mb-6">
@@ -121,7 +163,7 @@ export default function VehicleSetupPage() {
                 <HiX className="w-5 h-5 text-neutral-600" />
               </button>
             </div>
-            
+
             <div className="space-y-4">
               <Input
                 placeholder="Vehicle Nickname (Optional)"
@@ -148,11 +190,10 @@ export default function VehicleSetupPage() {
                     <button
                       key={color}
                       onClick={() => setFormData({ ...formData, color })}
-                      className={`px-3 py-2.5 rounded-xl border-2 transition-all text-sm font-medium ${
-                        formData.color === color
-                          ? 'border-[#66BD59] bg-[#66BD59]/10 text-[#66BD59]'
-                          : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300'
-                      }`}
+                      className={`px-3 py-2.5 rounded-xl border-2 transition-all text-sm font-medium ${formData.color === color
+                        ? 'border-[#66BD59] bg-[#66BD59]/10 text-[#66BD59]'
+                        : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300'
+                        }`}
                     >
                       {color}
                     </button>
@@ -189,9 +230,9 @@ export default function VehicleSetupPage() {
                   onClick={handleAddVehicle}
                   fullWidth
                   size="lg"
-                  disabled={!formData.make || !formData.model || !formData.color || !formData.licensePlate}
+                  disabled={!formData.make || !formData.model || !formData.color || !formData.licensePlate || isProcessing}
                 >
-                  Save
+                  {isProcessing ? 'Saving...' : 'Save'}
                 </Button>
               </div>
             </div>

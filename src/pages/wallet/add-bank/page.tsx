@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../../../lib/supabase';
 import Card from '../../../components/base/Card';
 import Input from '../../../components/base/Input';
 import Button from '../../../components/base/Button';
@@ -28,33 +29,55 @@ export default function AddBankPage() {
   ];
 
   useEffect(() => {
-    // Load existing payment methods
-    const savedMethods = localStorage.getItem('paymentMethods');
-    if (savedMethods) {
-      setExistingMethods(JSON.parse(savedMethods));
-    }
+    const fetchExistingMethods = async () => {
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData?.user) return;
+
+      const { data } = await supabase
+        .from('payment_methods')
+        .select('*')
+        .eq('user_id', userData.user.id);
+
+      if (data) {
+        const methods = data.map(dbMethod => ({
+          id: dbMethod.id,
+          type: dbMethod.type,
+          name: dbMethod.details?.name || dbMethod.provider,
+          number: dbMethod.details?.number || '',
+          expiry: dbMethod.details?.expiry
+        }));
+        setExistingMethods(methods);
+      }
+    };
+    fetchExistingMethods();
   }, []);
 
-  const handleSave = () => {
-    if (paymentMethodType && accountNumber) {
-      // Load existing payment methods
-      const savedMethods = localStorage.getItem('paymentMethods');
-      const methods = savedMethods ? JSON.parse(savedMethods) : [];
+  const [isSaving, setIsSaving] = useState(false);
 
-      // Create new payment method
-      const newMethod: PaymentMethod = {
-        id: Date.now().toString(),
-        type: paymentMethodType.toLowerCase().includes('card') ? 'card' : 'bank',
+  const handleSave = async () => {
+    if (paymentMethodType && accountNumber) {
+      setIsSaving(true);
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData?.user) {
+        setIsSaving(false);
+        return;
+      }
+
+      const typeStr = paymentMethodType.toLowerCase().includes('card') ? 'card' : 'bank';
+      const details = {
         name: paymentMethodType,
         number: accountNumber,
         expiry: '12/26',
       };
 
-      // Add to list
-      methods.push(newMethod);
-      localStorage.setItem('paymentMethods', JSON.stringify(methods));
+      await supabase.from('payment_methods').insert({
+        user_id: userData.user.id,
+        type: typeStr,
+        provider: paymentMethodType,
+        details: details
+      });
 
-      // Navigate back to add amount page
+      setIsSaving(false);
       navigate('/wallet/add-amount');
     }
   };
@@ -106,14 +129,13 @@ export default function AddBankPage() {
           />
         </div>
 
-        {/* Save Button */}
         <Button
           onClick={handleSave}
-          disabled={!paymentMethodType || !accountNumber}
+          disabled={!paymentMethodType || !accountNumber || isSaving}
           fullWidth
           size="lg"
         >
-          Save Payment Method
+          {isSaving ? 'Saving...' : 'Save Payment Method'}
         </Button>
 
         {/* Existing Payment Methods Preview */}

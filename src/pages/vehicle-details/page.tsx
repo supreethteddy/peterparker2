@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../../lib/supabase';
 import Header from '../../components/feature/Header';
 import Card from '../../components/base/Card';
 import Button from '../../components/base/Button';
@@ -20,20 +21,10 @@ interface Vehicle {
 
 export default function VehicleDetailsPage() {
   const navigate = useNavigate();
-  const [vehicles, setVehicles] = useState<Vehicle[]>([
-    {
-      id: '1',
-      nickname: 'My Car',
-      make: 'Honda',
-      model: 'City',
-      color: 'White',
-      licensePlate: 'KA 01 AB 1234',
-      year: '2022',
-      isDefault: true,
-    },
-  ]);
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [formData, setFormData] = useState({
     nickname: '',
     make: '',
@@ -46,28 +37,55 @@ export default function VehicleDetailsPage() {
 
   const colors = ['White', 'Black', 'Silver', 'Red', 'Blue', 'Gray', 'Brown', 'Other'];
 
-  useEffect(() => {
-    const saved = localStorage.getItem('userVehicles');
-    if (saved) {
-      setVehicles(JSON.parse(saved));
+  const fetchVehicles = async () => {
+    const { data: userData } = await supabase.auth.getUser();
+    if (!userData?.user) return;
+    const { data } = await supabase.from('vehicles').select('*').eq('user_id', userData.user.id);
+    if (data) {
+      setVehicles(data.map((dbV: any) => ({
+        id: dbV.id,
+        make: dbV.make,
+        model: dbV.model,
+        color: dbV.color,
+        licensePlate: dbV.license_plate,
+        isDefault: dbV.is_default,
+        nickname: dbV.nickname,
+      })));
     }
+  };
+
+  useEffect(() => {
+    fetchVehicles();
   }, []);
 
-  const handleAddVehicle = () => {
+  const handleAddVehicle = async () => {
     if (formData.make && formData.model && formData.color && formData.licensePlate) {
-      const newVehicle: Vehicle = {
-        id: Date.now().toString(),
-        ...formData,
-      };
-      
-      if (formData.isDefault) {
-        setVehicles(vehicles.map(v => ({ ...v, isDefault: false })));
+      setIsProcessing(true);
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData?.user) {
+        setIsProcessing(false);
+        return;
       }
-      
-      const updated = [...vehicles, newVehicle];
-      setVehicles(updated);
-      localStorage.setItem('userVehicles', JSON.stringify(updated));
+
+      const isFirst = vehicles.length === 0;
+
+      const { data } = await supabase.from('vehicles').insert({
+        user_id: userData.user.id,
+        make: formData.make,
+        model: formData.model,
+        color: formData.color,
+        license_plate: formData.licensePlate,
+        is_default: formData.isDefault || isFirst,
+        nickname: formData.nickname,
+      }).select().single();
+
+      if (data && (formData.isDefault || isFirst) && vehicles.length > 0) {
+        await supabase.from('vehicles').update({ is_default: false }).eq('user_id', userData.user.id).neq('id', data.id);
+      }
+
+      await fetchVehicles();
       resetForm();
+      setIsProcessing(false);
     }
   };
 
@@ -85,36 +103,49 @@ export default function VehicleDetailsPage() {
     setShowAddForm(true);
   };
 
-  const handleUpdateVehicle = () => {
+  const handleUpdateVehicle = async () => {
     if (editingId && formData.make && formData.model && formData.color && formData.licensePlate) {
-      if (formData.isDefault) {
-        setVehicles(vehicles.map(v => ({ ...v, isDefault: v.id === editingId })));
+      setIsProcessing(true);
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData?.user) {
+        setIsProcessing(false);
+        return;
       }
-      
-      const updated = vehicles.map(v =>
-        v.id === editingId ? { ...v, ...formData } : v
-      );
-      setVehicles(updated);
-      localStorage.setItem('userVehicles', JSON.stringify(updated));
+
+      await supabase.from('vehicles').update({
+        make: formData.make,
+        model: formData.model,
+        color: formData.color,
+        license_plate: formData.licensePlate,
+        is_default: formData.isDefault,
+        nickname: formData.nickname,
+      }).eq('id', editingId);
+
+      if (formData.isDefault && vehicles.length > 0) {
+        await supabase.from('vehicles').update({ is_default: false }).eq('user_id', userData.user.id).neq('id', editingId);
+      }
+
+      await fetchVehicles();
       resetForm();
+      setIsProcessing(false);
     }
   };
 
-  const handleDeleteVehicle = (id: string) => {
+  const handleDeleteVehicle = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this vehicle?')) {
-      const updated = vehicles.filter(v => v.id !== id);
-      setVehicles(updated);
-      localStorage.setItem('userVehicles', JSON.stringify(updated));
+      await supabase.from('vehicles').delete().eq('id', id);
+      await fetchVehicles();
     }
   };
 
-  const handleSetDefault = (id: string) => {
-    const updated = vehicles.map(v => ({
-      ...v,
-      isDefault: v.id === id
-    }));
-    setVehicles(updated);
-    localStorage.setItem('userVehicles', JSON.stringify(updated));
+  const handleSetDefault = async (id: string) => {
+    const { data: userData } = await supabase.auth.getUser();
+    if (!userData?.user) return;
+
+    await supabase.from('vehicles').update({ is_default: false }).eq('user_id', userData.user.id);
+    await supabase.from('vehicles').update({ is_default: true }).eq('id', id);
+
+    await fetchVehicles();
   };
 
   const resetForm = () => {
@@ -133,8 +164,8 @@ export default function VehicleDetailsPage() {
 
   return (
     <div className="min-h-screen bg-neutral-50 safe-top safe-bottom animate-in">
-      <Header 
-        title="Vehicle Details" 
+      <Header
+        title="Vehicle Details"
         onLeftClick={() => navigate(-1)}
       />
 
@@ -143,8 +174,8 @@ export default function VehicleDetailsPage() {
         {!showAddForm && (
           <div className="space-y-3 mb-6">
             {vehicles.map((vehicle, index) => (
-              <Card 
-                key={vehicle.id} 
+              <Card
+                key={vehicle.id}
                 className="p-5 animate-in hover:shadow-lg transition-all cursor-pointer"
                 style={{ animationDelay: `${index * 0.1}s` }}
                 onClick={() => handleEditVehicle(vehicle)}
@@ -226,7 +257,7 @@ export default function VehicleDetailsPage() {
                 <i className="ri-close-line text-2xl text-neutral-600"></i>
               </button>
             </div>
-            
+
             <div className="space-y-4">
               <Input
                 label="Vehicle Nickname (Optional)"
@@ -270,11 +301,10 @@ export default function VehicleDetailsPage() {
                     <button
                       key={color}
                       onClick={() => setFormData({ ...formData, color })}
-                      className={`px-3 py-2.5 rounded-xl border-2 transition-all transform hover:scale-105 active:scale-95 text-sm font-medium ${
-                        formData.color === color
+                      className={`px-3 py-2.5 rounded-xl border-2 transition-all transform hover:scale-105 active:scale-95 text-sm font-medium ${formData.color === color
                           ? 'border-[#66BD59] bg-[#66BD59]/10 text-[#66BD59] shadow-md'
                           : 'border-neutral-200 bg-white text-neutral-700 hover:border-[#34C0CA]/50'
-                      }`}
+                        }`}
                     >
                       {color}
                     </button>
@@ -314,9 +344,9 @@ export default function VehicleDetailsPage() {
                   onClick={editingId ? handleUpdateVehicle : handleAddVehicle}
                   fullWidth
                   size="lg"
-                  disabled={!formData.make || !formData.model || !formData.color || !formData.licensePlate}
+                  disabled={!formData.make || !formData.model || !formData.color || !formData.licensePlate || isProcessing}
                 >
-                  {editingId ? 'Update' : 'Add Vehicle'}
+                  {isProcessing ? 'Saving...' : (editingId ? 'Update' : 'Add Vehicle')}
                 </Button>
               </div>
             </div>

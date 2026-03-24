@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../../lib/supabase';
 import Card from '../../components/base/Card';
 import BottomNav from '../../components/feature/BottomNav';
 import logoDesign from '../../assets/Logo-design.svg';
@@ -12,52 +13,45 @@ export default function ParkingListPage() {
   const [parkingSessions, setParkingSessions] = useState<any[]>([]);
   const [imageErrors, setImageErrors] = useState<Set<number>>(new Set());
 
-  useEffect(() => {
-    const savedParking = localStorage.getItem('parkingSessions');
-    if (savedParking) {
-      setParkingSessions(JSON.parse(savedParking));
-    } else {
-      const sampleSessions = [
-        {
-          id: 1,
-          valet: {
-            name: 'Rajesh Kumar',
-            photo: 'https://i.pravatar.cc/150?img=12',
-            rating: 4.8
-          },
-          parkingLocation: 'Phoenix MarketCity - Level 2, Zone B, Slot 45',
-          startTime: new Date(Date.now() - 15 * 60 * 1000).toISOString(),
-          timeLeft: 15 * 60,
-          status: 'ongoing',
-          pickupLocation: '123 Main Street',
-          dropLocation: 'Phoenix MarketCity'
+  const fetchBookings = async () => {
+    const { data: userData } = await supabase.auth.getUser();
+    if (!userData?.user) return;
+
+    const { data: bookings } = await supabase
+      .from('bookings')
+      .select('*')
+      .eq('user_id', userData.user.id)
+      .order('created_at', { ascending: false });
+
+    if (bookings) {
+      const formattedSessions = bookings.map(b => ({
+        id: b.id,
+        valet: {
+          name: 'Partner Valet',
+          photo: '',
+          rating: 4.8
         },
-        {
-          id: 2,
-          valet: {
-            name: 'Suresh Patel',
-            photo: 'https://i.pravatar.cc/150?img=13',
-            rating: 4.9
-          },
-          parkingLocation: 'UB City Mall - Level 1, Zone A, Slot 12',
-          startTime: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-          timeLeft: 0,
-          status: 'completed',
-          pickupLocation: '456 Park Avenue',
-          dropLocation: 'UB City Mall',
-          completedAt: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
-          totalAmount: 120
-        }
-      ];
-      setParkingSessions(sampleSessions);
-      localStorage.setItem('parkingSessions', JSON.stringify(sampleSessions));
+        parkingLocation: b.parking_location || 'Location pending',
+        pickupLocation: b.pickup_location,
+        dropLocation: b.parking_location || 'Not specified',
+        status: ['completed', 'cancelled'].includes(b.status) ? 'completed' : 'ongoing',
+        startTime: b.started_at || b.created_at,
+        timeLeft: 0,
+        completedAt: b.ended_at,
+        totalAmount: b.cost || 0
+      }));
+      setParkingSessions(formattedSessions);
     }
+  };
+
+  useEffect(() => {
+    fetchBookings();
   }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
       setParkingSessions(prev => {
-        const updated = prev.map(session => {
+        return prev.map(session => {
           if (session.status === 'ongoing' && session.timeLeft > 0) {
             return {
               ...session,
@@ -66,8 +60,6 @@ export default function ParkingListPage() {
           }
           return session;
         });
-        localStorage.setItem('parkingSessions', JSON.stringify(updated));
-        return updated;
       });
     }, 1000);
 
@@ -82,8 +74,8 @@ export default function ParkingListPage() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      month: 'short', 
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
       day: 'numeric',
       hour: 'numeric',
       minute: '2-digit'
@@ -98,14 +90,14 @@ export default function ParkingListPage() {
 
   const handleParkingClick = (session: any) => {
     if (session.status === 'ongoing') {
-      navigate('/parking', { 
-        state: { 
+      navigate('/parking', {
+        state: {
           valet: session.valet,
           parkingLocation: session.parkingLocation,
           timeLeft: session.timeLeft,
           pickupLocation: session.pickupLocation,
           dropLocation: session.dropLocation
-        } 
+        }
       });
     } else {
       navigate('/trip-details', { state: { trip: session } });
@@ -118,9 +110,9 @@ export default function ParkingListPage() {
   return (
     <div className="min-h-screen bg-white safe-top safe-bottom">
       <div className="px-6 mb-4 flex items-center justify-center pt-2">
-        <img 
-          src={logoDesign} 
-          alt="quickParker Logo" 
+        <img
+          src={logoDesign}
+          alt="quickParker Logo"
           className="h-14 w-36 object-cover"
         />
       </div>
@@ -138,19 +130,17 @@ export default function ParkingListPage() {
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`flex-1 py-3 px-4 rounded-lg text-sm font-semibold transition-all duration-200 ${
-                activeTab === tab.key
+              className={`flex-1 py-3 px-4 rounded-lg text-sm font-semibold transition-all duration-200 ${activeTab === tab.key
                   ? 'bg-white text-[#0F1415] shadow-sm'
                   : 'text-neutral-600'
-              }`}
+                }`}
             >
               {tab.label}
               {tab.count > 0 && (
-                <span className={`ml-2 px-2 py-0.5 rounded-full text-xs ${
-                  activeTab === tab.key
+                <span className={`ml-2 px-2 py-0.5 rounded-full text-xs ${activeTab === tab.key
                     ? 'bg-gradient-to-r from-[#34C0CA] to-[#66BD59] text-white'
                     : 'bg-neutral-200 text-neutral-600'
-                }`}>
+                  }`}>
                   {tab.count}
                 </span>
               )}
@@ -160,16 +150,16 @@ export default function ParkingListPage() {
 
         <div className="space-y-4">
           {filteredSessions.map((session) => (
-            <Card 
-              key={session.id} 
+            <Card
+              key={session.id}
               className="p-4 cursor-pointer hover:shadow-lg transition-all duration-200"
               onClick={() => handleParkingClick(session)}
             >
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
                   {session.valet.photo && !imageErrors.has(session.id) ? (
-                    <img 
-                      src={session.valet.photo} 
+                    <img
+                      src={session.valet.photo}
                       alt={session.valet.name}
                       className="w-16 h-16 rounded-full object-cover border-2 border-[#66BD59]/20"
                       onError={() => {
@@ -257,8 +247,8 @@ export default function ParkingListPage() {
               No {activeTab === 'ongoing' ? 'ongoing' : 'completed'} parking
             </h3>
             <p className="text-neutral-600 text-sm mb-6">
-              {activeTab === 'ongoing' 
-                ? 'You don\'t have any active parking sessions' 
+              {activeTab === 'ongoing'
+                ? 'You don\'t have any active parking sessions'
                 : 'You haven\'t completed any parking sessions yet'}
             </p>
             {activeTab === 'ongoing' && (
